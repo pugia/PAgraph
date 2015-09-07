@@ -2,7 +2,7 @@
 (function ($) {
 
   $.fn.PAgraph = function( options ) {
-
+		
 		// default options
     var settings = $.extend(true, {
 			
@@ -12,6 +12,9 @@
 				graph: [{
 					color: '#88B8C4',
 					legend: 'metric'
+				}, {
+					color: '#808E96',
+					legend: 'compare'
 				}],
 				grid: {
 					x: {
@@ -25,12 +28,15 @@
 						label: '#C1C1C1'
 					}
 				}
-			}			
+			}
+						
 		}, options );
 		
 		var graph = this;
+		graph.addClass('PAgraphContainer');
 		
 		var structure = {
+			legend: null,
 			svg: {
 				element: null,
 				grid: {
@@ -57,20 +63,22 @@
 				},
 				graph: {
 					group: null,
-					elements: [{
-						group: null,
-						elements: {
-							line: null,
-							area: null,
-							points: {
-								coords: [],
-								elements: []
-							}
-						}
-					}]
+					elements: []
 				}
 			}
 		};
+		
+		var graphElementsEmpty = {
+																group: null,
+																elements: {
+																	line: null,
+																	area: null,
+																	points: {
+																		coords: [],
+																		elements: []
+																	}
+																}
+															}
 		
 		var internalSettings = {
 			
@@ -92,17 +100,20 @@
 
 		};
 		
+		// legend
+		structure.legend = d3.selectAll(graph.get()).append('div')
+																								.classed('PAlegend', true)
+		
+		// svg
 		structure.svg.element = d3.selectAll(graph.get()).append('svg')
-																									.classed('PAGraph', true)
-																									.attr('width', graph.width())
-																									.attr('height', graph.height());
+																										 .classed('PAGraph', true)
+																										 .attr('width', graph.width())
+																										 .attr('height', graph.height());
 		structure.svg.grid.group = structure.svg.element.append('g').classed('PAGgrid', true);
 		structure.svg.label.x.group = structure.svg.element.append('g').classed('PAGlabelX', true);
 		structure.svg.label.y.group = structure.svg.element.append('g').classed('PAGlabelY', true);
 		structure.svg.graph.group = structure.svg.element.append('g').classed('PAGgraphs', true);	
-		structure.svg.graph.elements[0].group = structure.svg.graph.group.append('g')
-																																		 .classed('PAGgraph', true)
-																																		 .attr('data-index', 0);	
+																										
 
 		var MODE = {
 			
@@ -112,6 +123,8 @@
 								
 				// start with a week structure
 				init: function() {
+					
+					debug('MODE: history');
 					
 					var self = this;
 					
@@ -126,13 +139,14 @@
 					self.initGridX();
 					self.initGridY();
 					self.initGraph();
-										
+					self.initLegend();
+					
 				},
 				
 				/* INIT */
 				// create empty grid without label
 				initGridX: function() {
-
+					
 					var self = this;
 					
 					var w = graph.width();
@@ -189,17 +203,24 @@
 				},
 			
 				// create flat graph
-				initGraph: function(index) {
+				initGraph: function() {
 					
 					var self = this;
-					
-					var index = index || 0;
-					
+										
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
+					
+					var graphElements = $.extend(true, {}, graphElementsEmpty);
+					
+					graphElements.group = structure.svg.graph.group.insert('g',':first-child')
+																							 					 .classed('PAGgraph', true)
+					structure.svg.graph.elements.push(graphElements);
 										
-					var elementsCount = 8;
+					var index = structure.svg.graph.elements.length - 1;
+					structure.svg.graph.elements[index].group.attr('data-index', index);
+					
+					var elementsCount = structure.svg.grid.x.elements.length || 8;
 
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; }
@@ -230,6 +251,17 @@
 											    											 .attr('stroke-width', 0)
 											    											 .attr('fill', settings.config.graph[index].color)
 					structure.svg.graph.elements[index].elements.area = areaG;
+					
+					// add label to legend
+					var p = structure.legend.append('p')
+																	.attr('data-index', index)
+					p.append('span')
+					 .style('background', settings.config.graph[index].color);
+					p.append('label')
+					 .text(settings.config.graph[index].legend);
+					
+										
+					return index;
 
 				},
 				
@@ -260,7 +292,7 @@
 					self.animateGridX(data);
 					self.animateLabelY(data);
 					setTimeout(function() {
-							self.animateGraph(data, index);
+						self.animateGraph(data, index);
 					}, internalSettings.animateGridTime);					
 					
 				},
@@ -533,17 +565,19 @@
 				animateCircles: function(data, index) {
 					
 					var self = this;
-					
+										
 					for (var i in structure.svg.graph.elements[index].elements.points.coords) {
 						
 						var coords = structure.svg.graph.elements[index].elements.points.coords[i];
-						var circle = structure.svg.graph.elements[0].group.append('circle')
+						var circle = structure.svg.graph.elements[index].group.append('circle')
 																															.attr('cx', coords.x)
 																															.attr('cy', coords.y)
 																															.attr('r', 0)
 																															.attr('stroke-width', 2)
 																															.attr('stroke', settings.config.graph[index].color)
 																															.attr('fill', '#fff')
+																															.attr('data-value', data[i].value)
+																															.attr('data-xStep', i)
 																																.transition()
 																																.delay(i*20)
 																																.attr('r', 4)
@@ -596,14 +630,16 @@
 					pathCoordArea += 'L'+ j + ',' + (h+1);
 					pathCoordArea += 'L'+ j + ',' + lineData[0]['y'];
 			
-					// create flat path with the new grid number of points
-					var lineData = [];
-					for (i = 0; i < data.length; i++) {						
-						var x = (i * spacingNext)	+ j;
-						lineData.push({
-							'x': x,
-							'y': h
-						});
+					if (data.length) {
+						// create flat path with the new grid number of points
+						var lineData = [];
+						for (i = 0; i < data.length; i++) {						
+							var x = (i * spacingNext)	+ j;
+							lineData.push({
+								'x': x,
+								'y': h
+							});
+						}
 					}
 					
 					var lineF = d3.svg.line()
@@ -635,6 +671,53 @@
 																			    					})
 					
 				},
+				
+				// add a graph in back
+				addGraph: function(data) {
+					
+					var self = this;
+										
+					var index = self.initGraph();
+					self.animateGraph(data, index);
+					
+				},
+				
+				// remove last graph
+				removeGraph: function() {
+					
+					var self = this;
+					var index = structure.svg.graph.elements.length - 1;
+					self.flattenGraph([], index, function() {
+						structure.svg.graph.elements[index].group.remove();
+						structure.svg.graph.elements.pop();
+						graph.find('div.PAlegend > p[data-index='+index+']').remove()
+						
+					});
+					
+				},
+				
+				// action on legend
+				initLegend: function() {
+					
+					var self = this;
+					
+					graph.find('div.PAlegend')	
+						.on('click', 'p[data-index]', function() {
+							var index = parseInt($(this).attr('data-index'));
+							self.moveOnFront(index);
+						})
+					
+					
+				},
+				
+				// move the selected graph on front
+				moveOnFront: function(index) {
+					
+					var self = this;
+					var g = graph.find('g.PAGgraphs');
+					g.find('g.PAGgraph[data-index='+index+']').appendTo(g);
+					
+				},
 							
 			},
 						
@@ -647,6 +730,22 @@
 			MODE[settings.mode].drawGraph(data, index);
 			
 		};
+		
+		self.addGraph = function(data) {
+
+			MODE[settings.mode].addGraph(data);
+
+		}
+		
+		self.removeGraph = function() {
+			
+			MODE[settings.mode].removeGraph();
+			
+		}
+		
+		function getRandomColor() {
+			return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+		}
 						
 		function Yspacing(data) {
 			
@@ -683,6 +782,10 @@
 		function getMinValues(data, k) {
 			if (k == undefined) { k = 'value'; }
 			return Math.min.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));		
+		}
+		
+		function debug() {
+			if (settings.debug) { console.debug(arguments);	}
 		}
 					
 		return self;
