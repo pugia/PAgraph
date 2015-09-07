@@ -1,0 +1,183 @@
+svg.PAGraph {
+	
+	g.PAGgrid {
+		
+		fill: #fff;
+		
+		g.PAGgridX {
+			
+			line {
+
+				stroke-width: 1;
+				opacity: 1;
+				
+				&:nth-child(1) {
+					opacity: 0;
+				}
+				
+				&:last-child {
+					opacity: 0;
+				}
+
+			}
+						
+		}
+		
+		g.PAGgridY {
+			
+			line {
+
+				stroke-width: 1;
+				opacity: 1;
+				
+				&:nth-child(1) {
+					opacity: 0;
+				}
+
+			}
+						
+		}
+		
+	}
+	
+	g.PAGlabelX {
+		
+		overflow: hidden;
+		
+		text {
+			font-family: 'Lato', sans-serif;
+			font-weight: 300;
+			font-size: 12px;
+			text-transform: uppercase;
+			background: #fff;
+			opacity: 1;
+			.transition(opacity 300ms);
+			
+			
+			&:first-child, &:last-child, &.hide {
+				opacity: 0 !important;
+			}
+						
+		}
+		
+		&.every1 {
+			text:nth-child(2n+1) {  /* or 4n+1 */
+			    opacity: 0 !important;   
+			}			
+		}
+		
+		&.every2 {
+			text {
+// 				opacity: 0;
+			}
+			text:nth-child(3n+2) {  /* or 4n+1 */
+			    opacity: 0 !important;   
+			}			
+		}
+
+		&.every3 {
+			text {
+// 				opacity: 0;
+			}
+			text:nth-child(4n+3) {  /* or 4n+1 */
+			    opacity: 0 !important;   
+			}			
+		}
+		
+		&.hide {
+			text {
+				opacity: 0;
+				
+				&.show {
+					opacity: 1;
+				}
+				
+			}
+		}
+		
+	}
+	
+	g.PAGlabelY {
+		
+		text {
+			font-family: 'Lato', sans-serif;
+			font-weight: 300;
+			font-size: 12px;
+			text-transform: uppercase;
+			.transition(all 300ms);
+			
+			&:first-child {
+				opacity: 0;
+			}
+			
+		}
+
+		&.hide {
+			text {
+				opacity: 0;
+			}
+		}
+		
+	}
+	
+	g.PAGgraphs {
+		
+		g.PAGgraph {
+		
+			path.PAGgraphArea {
+				opacity: 0.4;
+			}
+			
+			circle {
+				.transition(opacity 300ms);
+				
+				&.hide {
+					opacity: 0;
+				}
+				
+			}
+		
+		}
+		
+	}
+	
+}
+
+
+
+.animation (@name, @duration: 300ms, @delay: 0, @ease: ease) {
+	-webkit-animation: @name @duration @delay @ease;
+	-moz-animation:    @name @duration @delay @ease;
+	-ms-animation:     @name @duration @delay @ease;
+}
+
+.transition (@transition) {
+	-webkit-transition: @transition;  
+	-moz-transition:    @transition;
+	-ms-transition:     @transition; 
+	-o-transition:      @transition;  
+}
+.transform(@string){
+	-webkit-transform: @string;
+	-moz-transform: 	 @string;
+	-ms-transform: 		 @string;
+	-o-transform: 		 @string;
+}
+.transform-origin(@string){
+	-webkit-transform-origin: @string;
+	-moz-transform-origin: 	 @string;
+	-ms-transform-origin: 		 @string;
+	-o-transform-origin: 		 @string;
+}
+.scale (@factor) {
+	-webkit-transform: scale(@factor);
+	-moz-transform: 	 scale(@factor);
+	-ms-transform: 		 scale(@factor);
+	-o-transform: 		 scale(@factor);
+}
+.rotate (@deg) {
+	-webkit-transform: rotate(@deg);
+	-moz-transform: 	 rotate(@deg);
+	-ms-transform: 		 rotate(@deg);
+	-o-transform: 		 rotate(@deg);
+}
