@@ -8,13 +8,13 @@
 	<script src="../node_modules/jquery/dist/jquery.min.js"></script>						
 	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
 
+<!--
 	<link href="../dist/css/PAgraph.min.css" rel="stylesheet" type="text/css">
 	<script src="../dist/js/PAgraph.min.js"></script>
+-->
 	
-<!--
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
 	<script src="../src/js/PAgraph.js"></script>
--->
 			
 </head>
 <body>	
@@ -28,7 +28,7 @@
 		<button id="load13b">Load 13 B</button><br/>
 		<button id="load20">Load 20</button><br/>
 		<button id="load7">Load 7</button><br/><br/>
-		<button id="add">Add graph</button>
+		<button id="compare">Compare with 13 B</button>
 		<button id="remove">Remove graph</button><br/><br/>
 		<button id="test">Test</button>
 	</div>
@@ -55,7 +55,7 @@
 			$.getJSON('response/history_test_13gg.json')
 				.done(function(result) {
 
-					graph.drawGraph(APIdataToValues(result),0);
+					graph.mainGraph(APIdataToValues(result));
 				
 				})
 			
@@ -66,7 +66,7 @@
 			$.getJSON('response/history_test_13gg_b.json')
 				.done(function(result) {
 			
-					graph.drawGraph(APIdataToValues(result),0);
+					graph.mainGraph(APIdataToValues(result),0);
 				
 				})
 			
@@ -77,7 +77,7 @@
 			$.getJSON('response/history_test_20gg.json')
 				.done(function(result) {
 
-					graph.drawGraph(APIdataToValues(result),0);
+					graph.mainGraph(APIdataToValues(result),0);
 				
 				})
 			
@@ -87,19 +87,18 @@
 
 			$.getJSON('response/history_test_7gg.json')
 				.done(function(result) {
-			
-					graph.drawGraph(APIdataToValues(result),0);
+					graph.mainGraph(APIdataToValues(result),0);
 				
 				})
 			
 		})
 		
-		$('#add').on('click', function() {
+		$('#compare').on('click', function() {
 
 			$.getJSON('response/history_test_13gg_b.json')
 				.done(function(result) {
 			
-					graph.addGraph(APIdataToValues(result));
+					graph.compareWith(APIdataToValues(result));
 				
 				})
 			
@@ -107,7 +106,7 @@
 
 		$('#remove').on('click', function() {
 		
-			graph.removeGraph();
+			graph.removeCompare();
 			
 		})
 		
