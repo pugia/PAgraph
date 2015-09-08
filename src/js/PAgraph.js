@@ -37,6 +37,7 @@
 		
 		var structure = {
 			legend: null,
+			tooltip: null,
 			svg: {
 				element: null,
 				grid: {
@@ -102,7 +103,14 @@
 		
 		// legend
 		structure.legend = d3.selectAll(graph.get()).append('div')
-																								.classed('PAlegend', true)
+																								.classed('PAlegend', true);
+																								
+		// tooltip
+		structure.tooltip = d3.selectAll(graph.get()).append('div')
+																								 .classed('PAtooltip', true)
+																								 
+		structure.tooltip.append('span').text('3123');
+		structure.tooltip.append('label').text('metric');	 
 		
 		// svg
 		structure.svg.element = d3.selectAll(graph.get()).append('svg')
@@ -140,6 +148,7 @@
 					self.initGridY();
 					self.initGraph();
 					self.initLegend();
+					self.initCircles();
 					
 				},
 				
@@ -707,6 +716,51 @@
 							self.moveOnFront(index);
 						})
 					
+					
+				},
+				
+				initCircles: function() {
+					var self = this;
+					
+					graph
+						.on('mouseover', 'circle', function() {
+							
+							structure.tooltip.style('display', 'block');
+
+							// label and value
+							var index = $(this).parent('g').attr('data-index');
+							
+							structure.tooltip
+								.style('color', settings.config.graph[index].color)
+								.select('span').text($(this).attr('data-value'));
+
+							structure.tooltip
+								.select('label').text(settings.config.graph[index].legend);
+								
+							// set tooltip position
+							var size = structure.tooltip.node().getBoundingClientRect();
+							
+							var t = $(structure.tooltip[0][0]),
+									w = t.width(),
+									h = t.height()
+							
+							var px = $(this).attr('cx'),
+									py = $(this).attr('cy')
+									
+							var top = py - h - 20,
+									left= px - parseInt(w/2)
+							
+							t.css('top', top)
+							 .css('left',left)
+							 .addClass('show')
+							
+						})
+						.on('mouseout', 'circle', function() {
+							structure.tooltip.classed('show', false);
+							setTimeout(function() {
+								structure.tooltip.style('display', 'none');
+							}, 300)
+						})
 					
 				},
 				

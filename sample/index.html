@@ -3,126 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
-<title>Analytics Test</title>
-
-	<script src="../node_modules/jquery/dist/jquery.min.js"></script>						
-	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
-
-	<link href="../dist/css/PAgraph.min.css" rel="stylesheet" type="text/css">
-	<script src="../dist/js/PAgraph.min.js"></script>
-	
-<!--
-	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
-	<script src="../src/js/PAgraph.js"></script>
--->
+<title>PAgraph</title>
 			
 </head>
 <body>	
 	
-	<div id="graph_0" style="height: 500px; width: 1000px">
-	</div>
+	<h1>Examples</h1>
 	
-	<div style="position: absolute; right: 0; top: 0; padding: 10px;">
-		<button id="load13">Load 13</button><br/>
-		<button id="load13b">Load 13 B</button><br/>
-		<button id="load20">Load 20</button><br/>
-		<button id="load7">Load 7</button><br/><br/>
-		<button id="add">Add graph</button>
-		<button id="remove">Remove graph</button><br/><br/>
-		<button id="test">Test</button>
-	</div>
-
-	<script>	
-	
-	$(function() {
-
-		var graph = $('#graph_0').PAgraph();
-		
-		$('#load13').on('click', function() {
-
-			$.getJSON('response/test_13gg.json')
-				.done(function(result) {
-
-					graph.drawGraph(APIdataToValues(result),0);
-				
-				})
-			
-		}).click();
-
-		$('#load13b').on('click', function() {
-
-			$.getJSON('response/test_13gg_b.json')
-				.done(function(result) {
-			
-					graph.drawGraph(APIdataToValues(result),0);
-				
-				})
-			
-		})
-
-		$('#load20').on('click', function() {
-
-			$.getJSON('response/test_20gg.json')
-				.done(function(result) {
-
-					graph.drawGraph(APIdataToValues(result),0);
-				
-				})
-			
-		})
-
-		$('#load7').on('click', function() {
-
-			$.getJSON('response/test_7gg.json')
-				.done(function(result) {
-			
-					graph.drawGraph(APIdataToValues(result),0);
-				
-				})
-			
-		})
-		
-		$('#add').on('click', function() {
-
-			$.getJSON('response/test_13gg_b.json')
-				.done(function(result) {
-			
-					graph.addGraph(APIdataToValues(result));
-				
-				})
-			
-		})
-
-		$('#remove').on('click', function() {
-		
-			graph.removeGraph();
-			
-		})
-		
-		
-	})	
-	
-	// generate array with label and value
-	function APIdataToValues(data) {
-		
-		var newData = [];
-		var rows = data['rows'];
-		
-		for(var index in rows) {
-						
-			newData.push({
-				label:		rows[index]['c'][0]['v'].replace(' 15', ''),
-				value:		rows[index]['c'][1]['v']
-			})
-			 
-		}
-		
-		return newData;
-		
-	}
-
-
-	</script>
+	<h3>Mode:</h3>
+	<ul>
+		<li><a href="history.html">history</a></li>
+	</ul>
 	
 </body>
 

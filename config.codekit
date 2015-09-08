@@ -54,6 +54,15 @@
 		"randomFootnoteNumbers": 0,
 		"useCompatibilityMode": 0
 		},
+	"\/sample\/history.html": {
+		"fileType": 8192,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/sample\/history.html",
+		"outputAbbreviatedPath": "No Output Path",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0
+		},
 	"\/sample\/index.html": {
 		"fileType": 8192,
 		"ignore": 0,
@@ -63,46 +72,46 @@
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0
 		},
-	"\/sample\/response\/test_13gg.json": {
+	"\/sample\/response\/history_test_13gg.json": {
 		"fileType": 524288,
 		"ignore": 1,
 		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/sample\/response\/test_13gg.json",
+		"inputAbbreviatedPath": "\/sample\/response\/history_test_13gg.json",
 		"orderOutput": 0,
-		"outputAbbreviatedPath": "\/sample\/response\/test_13gg-min.json",
+		"outputAbbreviatedPath": "\/sample\/response\/history_test_13gg-min.json",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1
 		},
-	"\/sample\/response\/test_13gg_b.json": {
+	"\/sample\/response\/history_test_13gg_b.json": {
 		"fileType": 524288,
 		"ignore": 1,
 		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/sample\/response\/test_13gg_b.json",
+		"inputAbbreviatedPath": "\/sample\/response\/history_test_13gg_b.json",
 		"orderOutput": 0,
-		"outputAbbreviatedPath": "\/sample\/response\/test_13gg_b-min.json",
+		"outputAbbreviatedPath": "\/sample\/response\/history_test_13gg_b-min.json",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1
 		},
-	"\/sample\/response\/test_20gg.json": {
+	"\/sample\/response\/history_test_20gg.json": {
 		"fileType": 524288,
 		"ignore": 1,
 		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/sample\/response\/test_20gg.json",
+		"inputAbbreviatedPath": "\/sample\/response\/history_test_20gg.json",
 		"orderOutput": 0,
-		"outputAbbreviatedPath": "\/sample\/response\/test_20gg-min.json",
+		"outputAbbreviatedPath": "\/sample\/response\/history_test_20gg-min.json",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1
 		},
-	"\/sample\/response\/test_7gg.json": {
+	"\/sample\/response\/history_test_7gg.json": {
 		"fileType": 524288,
 		"ignore": 1,
 		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/sample\/response\/test_7gg.json",
+		"inputAbbreviatedPath": "\/sample\/response\/history_test_7gg.json",
 		"orderOutput": 0,
-		"outputAbbreviatedPath": "\/sample\/response\/test_7gg-min.json",
+		"outputAbbreviatedPath": "\/sample\/response\/history_test_7gg-min.json",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1

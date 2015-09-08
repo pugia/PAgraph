@@ -37,6 +37,45 @@
 
 	}
 	
+	div.PAtooltip {
+		
+		height: 50px;
+		position: absolute;
+		min-width: 120px;
+		background: #fff;
+		z-index: 1000;
+		border: 1px solid 	#ccc;
+		border-radius: 10px;
+		opacity: 0;
+		padding: 0 8px;
+		.transition(opacity 300ms);
+		
+		&.show {
+			opacity: 1;
+		}
+		
+		span {
+			margin-top: 2px;
+			display: block;
+			text-align: center;
+			font-family: 'Lato', sans-serif;
+			font-weight: 500;
+			font-size: 18px;
+			line-height: 24px;
+		}
+		
+		label {
+			display: block;
+			text-align: center;
+			font-family: 'Lato', sans-serif;
+			font-weight: 300;
+			font-size: 20px;
+			line-height: 20px;
+			white-space: nowrap;
+		}
+		
+	}
+	
 	svg.PAGraph {
 		
 		g.PAGgrid {
@@ -169,6 +208,7 @@
 				
 				circle {
 					.transition(opacity 300ms);
+					cursor: pointer;
 					
 					&.hide {
 						opacity: 0;
