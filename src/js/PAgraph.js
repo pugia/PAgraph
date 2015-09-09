@@ -549,6 +549,8 @@
 				animateGraph: function(data, index) {
 					var self = this;
 					
+					if (!structure.svg.graph.elements[index]) return;
+					
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
@@ -564,7 +566,7 @@
 					setTimeout(function() {
 						structure.svg.graph.elements[index].group.selectAll('circle.hide').remove();
 					}, 300);
-										
+					
 					// animate line
 					var lineData = [];
 					for(var i in data) {
@@ -640,6 +642,11 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
+					
+					if (!structure.svg.graph.elements[index]) {
+						if (typeof callback == 'function') { callback.call(); }
+						return;
+					}
 					
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
@@ -735,7 +742,7 @@
 					self.removeCompareGraph();
 					setTimeout(function() {
 						self.mainGraph();
-					}, internalSettings.graphAnimationTime+2);
+					}, internalSettings.graphAnimationTime+10);
 					
 				},
 				
