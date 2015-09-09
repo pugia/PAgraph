@@ -29,7 +29,7 @@
 		<button id="test_03">Test 03</button><br/><br/>
 		<button id="compare_01">Compare 01</button>
 		<button id="compare_02">Compare 02</button>
-		<button id="compare_03">Compare 03</button>
+		<button id="compare_03">Compare 03</button><br/>
 		<button id="remove">Remove compare</button><br/><br/>
 	</div>
 
@@ -54,7 +54,7 @@
 			
 			$.getJSON('response/weekday_test_01.json', function(result) {
 					
-					graph.drawGraph(result.data,0);
+					graph.mainGraph(result.data);
 				
 				})
 			
@@ -64,7 +64,7 @@
 			
 			$.getJSON('response/weekday_test_02.json', function(result) {
 					
-					graph.drawGraph(result.data,0);
+					graph.mainGraph(result.data);
 				
 				})
 			
@@ -74,7 +74,7 @@
 			
 			$.getJSON('response/weekday_test_03.json', function(result) {
 					
-					graph.drawGraph(result.data);
+					graph.mainGraph(result.data);
 				
 				})
 			
@@ -108,6 +108,10 @@
 				
 				})
 			
+		});
+		
+		$('#remove').on('click', function() {
+			graph.removeCompare();
 		});
 		
 		

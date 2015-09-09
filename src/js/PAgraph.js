@@ -116,6 +116,7 @@
 		// svg
 		structure.svg.element = d3.selectAll(graph.get()).append('svg')
 																										 .classed('PAGraph', true)
+																										 .classed('PAMode'+settings.mode.capitalizeFirstLetter(), true)
 																										 .attr('width', graph.width())
 																										 .attr('height', graph.height());
 		structure.svg.grid.group = structure.svg.element.append('g').classed('PAGgrid', true);
@@ -275,6 +276,8 @@
 
 				},
 				
+				/* ANIMATE */				
+				// animate main graph
 				mainGraph: function(data) {
 					
 					var self = this;
@@ -300,6 +303,7 @@
 					
 				},
 				
+				// animate compare graph
 				compareWith: function(data) {
 					
 					var self = this;
@@ -320,25 +324,6 @@
 					} else {
 						self.drawGraphAnimation(structure.data[0], 0);
 						self.drawGraphAnimation(structure.data[1], 1);
-					}
-					
-				},
-				
-				/* ANIMATE */
-				// draw graph data
-				drawGraph: function(data, index) {
-					
-					var self = this;
-					
-					if (data.length == 0) return;
-					
-					structure.svg.grid.y.spacing = Yspacing(data);
-					if (data.length != structure.svg.grid.x.elements.length) {
-						self.flattenGraph(data, index, function() {
-							self.drawGraphAnimation(data, index);
-						})	
-					} else {
-						self.drawGraphAnimation(data, index);
 					}
 					
 				},
@@ -730,17 +715,7 @@
 																			    					})
 					
 				},
-				
-				// add a graph in back
-				addGraph: function(data) {
-					
-					var self = this;
-										
-					var index = self.initGraph();
-					self.animateGraph(data, index);
-					
-				},
-				
+								
 				// remove last graph
 				removeCompareGraph: function() {
 					
@@ -942,30 +917,81 @@
 
 				},
 				
-				/* ANIMATE */
-				// draw graph data
-				drawGraph: function(data, index) {
+				initLabelX: function() {
 					
 					var self = this;
+										
+					var w = graph.width();
+					var h = graph.height();
+					var j = 0;
+					
+					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					var spacing = Math.floor(w/7);
+					
+					for (i = 0; i < 7; i++) {
+						
+						var x = (i * spacing) + j + (spacing / 2);
+
+						var label =  structure.svg.label.x.group.append('text')
+																										.attr('x', x)
+																										.attr('y', h+internalSettings.labels.x.marginTop)
+																										.attr('text-anchor','middle')
+																										.attr('fill', settings.config.grid.x.label)
+																										.text(structure.data[0][i].label)
+						structure.svg.label.x.elements.push(label);
+						
+					}					
+					
+				},
+				
+				/* ANIMATE */
+				// animate main graph
+				mainGraph: function(data) {
+					
+					var self = this;
+					var index = 0;
+
+					if (data == undefined) { var data = structure.data[0]; }
 					if (data.length == 0) return;
 					
-					structure.data[index] = data;
-
-					var allData = (structure.svg.graph.elements.length > 1) ? structure.data[0].concat(structure.data[1]) : data;					
-					structure.svg.grid.y.spacing = Yspacing(allData, 5);
+					structure.data[0] = data;
+					if (structure.svg.label.x.elements.length == 0) { self.initLabelX();	}
+					var allData = mergeAndClean(structure.data);
+					structure.svg.grid.y.spacing = Yspacing(allData);
 					self.animateLabelY(allData);
 					
 					setTimeout(function() {
 											
 						self.animateGraph(structure.data[0], 0);
-						if (structure.svg.graph.elements.length > 1) {
-							self.animateGraph(structure.data[1], 1);
-						}
+						if (structure.data[1] != null) { 	self.animateGraph(structure.data[1], 1); }
 						
 					}, internalSettings.animateGridTime);										
 					
 				},
-								
+
+				// animate compare graph
+				compareWith: function(data) {
+					
+					var self = this;
+					var index = (structure.svg.graph.elements.length == 1) ? self.initGraph() : 1;
+
+					if (data == undefined) { var data = structure.data[1]; }
+					if (data.length == 0) return;
+					
+					structure.data[1] = data;
+					var allData = mergeAndClean(structure.data);
+					structure.svg.grid.y.spacing = Yspacing(allData);
+					self.animateLabelY(allData);
+					
+					setTimeout(function() {
+											
+						self.animateGraph(structure.data[0], 0);
+						self.animateGraph(structure.data[1], 1);
+						
+					}, internalSettings.animateGridTime);										
+					
+				},								
 				// fix the number of labels and animate
 				// remove the labels outside the artboard
 				animateLabelY: function(data) {
@@ -1014,7 +1040,7 @@
 					}, internalSettings.animateGridTime*2)
 								
 				},
-				
+								
 				// animate line and area
 				animateGraph: function(data, index) {
 					var self = this;
@@ -1042,48 +1068,39 @@
 																			    												.ease(internalSettings.animateEasing)					
 					}
 										
-				},
-				
-				// comparison
-				compareWith: function(data) {
-														
-					var self = this;
-					var index = (structure.svg.graph.elements.length == 1) ? self.initGraph() : 1;
-					
-					structure.data[index] = data;
-					
-					var allData = structure.data[0].concat(structure.data[1]);
-					structure.svg.grid.y.spacing = Yspacing(allData, 5);
-					
-					self.animateLabelY(allData);
-					
-					self.animateGraph(structure.data[0], 0);
-					self.animateGraph(structure.data[1], 1);
-					
-				},
-				
-								
-				// add a graph in back
-				addGraph: function(data) {
-					
-					var self = this;
-										
-					var index = self.initGraph();
-					self.animateGraph(data, index);
-					
-				},
+				},								
 				
 				// remove last graph
-				removeGraph: function() {
+				removeCompare: function() {
 					
 					var self = this;
-					var index = structure.svg.graph.elements.length - 1;
-					self.flattenGraph([], index, function() {
+					var index = 1;
+					
+					var h = graph.height();
+					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
+
+					structure.data[index] = null;
+					self.mainGraph();
+					
+					// flatten compare
+					for (i in structure.svg.graph.elements[index].elements.area) {
+						
+						structure.svg.graph.elements[index].elements.area[i].transition()
+																			    												.duration(internalSettings.graphAnimationTime)
+																			    												.attr('y', h-1)
+																			    												.attr('height', 1)
+																			    												.ease(internalSettings.animateEasing)
+						
+					}
+					
+					setTimeout(function() {
+					
 						structure.svg.graph.elements[index].group.remove();
 						structure.svg.graph.elements.pop();
 						graph.find('div.PAlegend > p[data-index='+index+']').remove()
-						
-					});
+					
+					}, internalSettings.graphAnimationTime);
+
 					
 				},
 				
@@ -1179,12 +1196,6 @@
 			
 		};
 		
-		self.addGraph = function(data) {
-
-			MODE[settings.mode].addGraph(data);
-
-		}
-		
 		self.removeCompare = function() {
 			
 			MODE[settings.mode].removeCompare();
@@ -1254,6 +1265,6 @@
 
 	};
 
-
-
 }( jQuery ));
+
+String.prototype.capitalizeFirstLetter = function() { return this.charAt(0).toUpperCase() + this.slice(1); }
