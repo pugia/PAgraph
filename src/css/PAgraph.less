@@ -204,24 +204,52 @@
 		}
 		
 		&.PAModeWeekday {
+			
 			g.PAGgraphs {
+				
 				g.PAGgraph {
-					text {
-						opacity: 0;
-						font-family: 'Lato', sans-serif;
-						font-weight: 700;
-						font-size: 13px;
-						.transition(opacity 300ms);
-					}
-					&.percentage {
-						text {
-							opacity: 1;
+					&[data-index="1"] {			
+						rect {
+							opacity: 0.5;
 						}
-					}
+					}					
 				}
-			}			
+				
+			}
+			
 		}
 		
+		&.PAModeDaytime {
+			
+			g.PAGgrid {
+				
+				g.PAGgridY {
+					
+					line {
+						&:nth-child(1) {
+							opacity: 1 !important;
+						}
+					}
+				
+				}
+			
+			}
+			
+			g.PAGgraphs {
+				
+				g.PAGgraph {
+					&[data-index="1"] {			
+						rect {
+							opacity: 0.5;
+						}
+					}					
+				}
+				
+			}
+			
+						
+		}
+					
 	}
 }
 

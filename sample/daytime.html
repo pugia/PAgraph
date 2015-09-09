@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
-<title>PAgraph | weekday</title>
+<title>PAgraph | daytime</title>
 
 	<link href="style.css" rel="stylesheet" type="text/css">
 
@@ -22,19 +22,22 @@
 <body>	
 	
 	<a href="index.html">&laquo; Back to examples list</a>
-	
-	<h1>Mode: weekday</h1>
 
+	<h1>Mode: daytime</h1>
+	
 	<div id="graph_0" style="height: 500px; width: 1000px"></div>
 	
 	<div style="position: absolute; right: 0; top: 0; padding: 10px;">
-		<button id="test_01">Test 01</button><br/>
-		<button id="test_02">Test 02</button><br/>
+		<button id="test_01">Test 01</button>
+		<button id="test_02">Test 02</button>
 		<button id="test_03">Test 03</button><br/><br/>
 		<button id="compare_01">Compare 01</button>
 		<button id="compare_02">Compare 02</button>
 		<button id="compare_03">Compare 03</button><br/>
 		<button id="remove">Remove compare</button><br/><br/>
+		<button id="open9-18">Open 9-18</button>
+		<button id="open11-24">Open 11-24</button>
+		<button id="remove_open">Remove open</button>
 	</div>
 
 	<script>	
@@ -42,8 +45,13 @@
 	$(function() {
 
 		var graph = $('#graph_0').PAgraph({
-			mode: 'weekday',
+			mode: 'daytime',
 			config: {
+				grid: {
+					x: {
+						openTime: true
+					}
+				},
 				graph: [{
 					color: '#88B8C4',
 					legend: 'Main metric'
@@ -56,7 +64,7 @@
 		
 		$('#test_01').on('click', function() {
 			
-			$.getJSON('response/weekday_test_01.json', function(result) {
+			$.getJSON('response/daytime_test_01.json', function(result) {
 					
 					graph.mainGraph(result.data);
 				
@@ -66,7 +74,7 @@
 
 		$('#test_02').on('click', function() {
 			
-			$.getJSON('response/weekday_test_02.json', function(result) {
+			$.getJSON('response/daytime_test_02.json', function(result) {
 					
 					graph.mainGraph(result.data);
 				
@@ -76,7 +84,7 @@
 		
 		$('#test_03').on('click', function() {
 			
-			$.getJSON('response/weekday_test_03.json', function(result) {
+			$.getJSON('response/daytime_test_03.json', function(result) {
 					
 					graph.mainGraph(result.data);
 				
@@ -86,7 +94,7 @@
 
 		$('#compare_01').on('click', function() {
 			
-			$.getJSON('response/weekday_test_01.json', function(result) {
+			$.getJSON('response/daytime_test_01.json', function(result) {
 					
 					graph.compareWith(result.data);
 				
@@ -96,7 +104,7 @@
 
 		$('#compare_02').on('click', function() {
 			
-			$.getJSON('response/weekday_test_02.json', function(result) {
+			$.getJSON('response/daytime_test_02.json', function(result) {
 					
 					graph.compareWith(result.data);
 				
@@ -106,7 +114,7 @@
 		
 		$('#compare_03').on('click', function() {
 			
-			$.getJSON('response/weekday_test_03.json', function(result) {
+			$.getJSON('response/daytime_test_03.json', function(result) {
 					
 					graph.compareWith(result.data);
 				
@@ -116,6 +124,16 @@
 		
 		$('#remove').on('click', function() {
 			graph.removeCompare();
+		});
+
+		$('#open9-18').on('click', function() {
+			graph.setOpeningTime(9, 18);
+		});
+		$('#open11-24').on('click', function() {
+			graph.setOpeningTime(11, 24);
+		});
+		$('#remove_open').on('click', function() {
+			graph.removeOpeningTime();
 		});
 		
 		
