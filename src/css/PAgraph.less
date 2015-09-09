@@ -48,7 +48,7 @@
 		border-radius: 10px;
 		opacity: 0;
 		padding: 0 8px;
-		.transition(opacity 300ms);
+		.transition(all 300ms);
 		
 		&.show {
 			opacity: 1;
@@ -200,7 +200,26 @@
 					}
 				}
 			}
-			
+						
+		}
+		
+		&.PAModeWeekday {
+			g.PAGgraphs {
+				g.PAGgraph {
+					text {
+						opacity: 0;
+						font-family: 'Lato', sans-serif;
+						font-weight: 700;
+						font-size: 13px;
+						.transition(opacity 300ms);
+					}
+					&.percentage {
+						text {
+							opacity: 1;
+						}
+					}
+				}
+			}			
 		}
 		
 	}

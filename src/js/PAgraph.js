@@ -756,10 +756,13 @@
 				initCircles: function() {
 					var self = this;
 					
+					var displayNoneTimer = null;
+
 					graph
 						.on('mouseover', 'circle', function() {
 							
 							structure.tooltip.style('display', 'block');
+							clearTimeout(displayNoneTimer);
 
 							// label and value
 							var index = $(this).parent('g').attr('data-index');
@@ -791,7 +794,7 @@
 						})
 						.on('mouseout', 'circle', function() {
 							structure.tooltip.classed('show', false);
-							setTimeout(function() {
+							displayNoneTimer = setTimeout(function() {
 								structure.tooltip.style('display', 'none');
 							}, 300)
 						})
@@ -829,7 +832,7 @@
 					self.initGridY();
 					self.initGraph();
 					self.initLegend();
-					self.initCircles();
+					self.initRects();
 					
 				},
 				
@@ -983,12 +986,14 @@
 					var allData = mergeAndClean(structure.data);
 					structure.svg.grid.y.spacing = Yspacing(allData);
 					self.animateLabelY(allData);
+
+					structure.svg.graph.elements[0].group.classed('percentage', false);
+
+					self.animateGraph(structure.data[0], 0);
+					self.animateGraph(structure.data[1], 1);
 					
 					setTimeout(function() {
-											
-						self.animateGraph(structure.data[0], 0);
-						self.animateGraph(structure.data[1], 1);
-						
+						self.initCompareValues();
 					}, internalSettings.animateGridTime);										
 					
 				},								
@@ -1065,6 +1070,7 @@
 																			    												.duration(internalSettings.graphAnimationTime)
 																			    												.attr('y', y)
 																			    												.attr('height', h-y)
+																			    												.attr('data-value', data[i].value)
 																			    												.ease(internalSettings.animateEasing)					
 					}
 										
@@ -1081,6 +1087,7 @@
 
 					structure.data[index] = null;
 					self.mainGraph();
+					structure.svg.graph.elements[0].group.classed('percentage', false);
 					
 					// flatten compare
 					for (i in structure.svg.graph.elements[index].elements.area) {
@@ -1118,12 +1125,16 @@
 					
 				},
 				
-				initCircles: function() {
+				// tooltip
+				initRects: function() {
 					var self = this;
 					
+					var displayNoneTimer = null;
+					
 					graph
-						.on('mouseover', 'circle', function() {
+						.on('mouseover', 'g.PAGgraph > rect', function() {
 							
+							clearTimeout(displayNoneTimer);
 							structure.tooltip.style('display', 'block');
 
 							// label and value
@@ -1143,23 +1154,68 @@
 									w = t.width(),
 									h = t.height()
 							
-							var px = $(this).attr('cx'),
-									py = $(this).attr('cy')
+							var px = $(this).attr('x'),
+									py = $(this).attr('y'),
+									pw = $(this).attr('width')
 									
 							var top = py - h - 20,
-									left= px - parseInt(w/2)
+									left= px - parseInt((w/2) - (pw/2))
 							
 							t.css('top', top)
 							 .css('left',left)
 							 .addClass('show')
 							
 						})
-						.on('mouseout', 'circle', function() {
+						.on('mouseout', 'g.PAGgraph > rect', function() {
 							structure.tooltip.classed('show', false);
-							setTimeout(function() {
+							displayNoneTimer = setTimeout(function() {
 								structure.tooltip.style('display', 'none');
 							}, 300)
 						})
+					
+				},
+				
+				initCompareValues: function() {
+					
+					var self = this;
+					
+					if (structure.data[1] == null) return;
+										
+					var h = graph.height();
+					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
+					
+					for (i in structure.data[0]) {
+
+						var diff = structure.data[0][i].value - structure.data[1][i].value;
+						var perc = Math.round(diff / structure.data[1][i].value * 100);
+						
+						perc = (perc > 0) ? '+'+perc+'%' : (perc == 0) ? '' : perc+'%';
+						
+						if (structure.svg.graph.elements[0].elements.points.elements[i]) {
+
+							structure.svg.graph.elements[0].elements.points.elements[i].text(perc);
+
+						} else {
+							
+							var rect = structure.svg.graph.elements[0].elements.area[i];
+							var x = parseInt(rect.attr('x')) + parseInt(rect.attr('width') / 2);
+							
+							var text = structure.svg.graph.elements[0].group.append('text')
+																															.attr('x', x)
+																															.attr('y', h - (internalSettings.labels.x.marginTop/2))
+																															.attr('text-anchor','middle')
+																															.attr('fill', '#fff')
+																															.text(perc)
+	
+							structure.svg.graph.elements[0].elements.points.elements.push(text);
+
+						}
+					}
+					
+					setTimeout(function() {
+						structure.svg.graph.elements[0].group.classed('percentage', true);
+					}, internalSettings.graphAnimationTime)
+
 					
 				},
 				
