@@ -7,7 +7,7 @@
 		
 		position: absolute;
 		background: #fff;
-		right: 0;
+		right: 100px;
 		
 		p[data-index] {
 
@@ -48,6 +48,7 @@
 		border-radius: 10px;
 		opacity: 0;
 		padding: 0 8px;
+		display: none;
 		.transition(all 300ms);
 		
 		&.show {
@@ -72,6 +73,39 @@
 			font-size: 20px;
 			line-height: 20px;
 			white-space: nowrap;
+		}
+		
+	}
+	
+	div.PAfilters {
+		
+		position: absolute;
+		right: 0;
+		opacity: 1;
+		.transition (opacity 300);
+		
+		p {
+			text-align: right;
+			color: #C1C1C1;
+			font-family: 'Lato', sans-serif;
+			font-size: 12px;
+			line-height: 14px;
+			text-transform: uppercase;
+			cursor: pointer;
+			font-weight: 300;
+			
+			&.selected {
+				font-weight: 500;
+			}
+			
+			&.hide {
+				display: none;
+			}
+			
+		}
+		
+		&.hide {
+			opacity: 0;
 		}
 		
 	}

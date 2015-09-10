@@ -10,8 +10,8 @@
 	<script src="../node_modules/jquery/dist/jquery.min.js"></script>						
 	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
 
-	<link href="../dist/css/PAgraph.min.css" rel="stylesheet" type="text/css">
-	<script src="../dist/js/PAgraph.min.js"></script>
+	<link href="../dist/css/PAgraph.min.css?1" rel="stylesheet" type="text/css">
+	<script src="../dist/js/PAgraph.min.js?1"></script>
 	
 <!--
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
@@ -36,7 +36,7 @@
 		<button id="compare_03">Compare 03</button><br/>
 		<button id="remove">Remove compare</button><br/><br/>
 		<button id="open9-18">Open 9-18</button>
-		<button id="open11-24">Open 11-24</button>
+		<button id="open6-14">Open 6-14</button>
 		<button id="remove_open">Remove open</button>
 	</div>
 
@@ -129,8 +129,10 @@
 		$('#open9-18').on('click', function() {
 			graph.setOpeningTime(9, 18);
 		});
-		$('#open11-24').on('click', function() {
-			graph.setOpeningTime(11, 24);
+		setTimeout(function() { $('#open9-18').click(); }, 1500);
+		
+		$('#open6-14').on('click', function() {
+			graph.setOpeningTime(6, 14);
 		});
 		$('#remove_open').on('click', function() {
 			graph.removeOpeningTime();

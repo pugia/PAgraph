@@ -11,6 +11,15 @@
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0
 		},
+	"\/data.php": {
+		"fileType": 8192,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/data.php",
+		"outputAbbreviatedPath": "No Output Path",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0
+		},
 	"\/dist\/css\/PAgraph.min.css": {
 		"fileType": 16,
 		"ignore": 1,
@@ -145,6 +154,28 @@
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1
 		},
+	"\/sample\/response\/history_test_200gg.json": {
+		"fileType": 524288,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/sample\/response\/history_test_200gg.json",
+		"orderOutput": 0,
+		"outputAbbreviatedPath": "\/sample\/response\/history_test_200gg-min.json",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1
+		},
+	"\/sample\/response\/history_test_200gg_b.json": {
+		"fileType": 524288,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/sample\/response\/history_test_200gg_b.json",
+		"orderOutput": 0,
+		"outputAbbreviatedPath": "\/sample\/response\/history_test_200gg_b-min.json",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1
+		},
 	"\/sample\/response\/history_test_20gg.json": {
 		"fileType": 524288,
 		"ignore": 1,
@@ -152,6 +183,28 @@
 		"inputAbbreviatedPath": "\/sample\/response\/history_test_20gg.json",
 		"orderOutput": 0,
 		"outputAbbreviatedPath": "\/sample\/response\/history_test_20gg-min.json",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1
+		},
+	"\/sample\/response\/history_test_50gg.json": {
+		"fileType": 524288,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/sample\/response\/history_test_50gg.json",
+		"orderOutput": 0,
+		"outputAbbreviatedPath": "\/sample\/response\/history_test_50gg-min.json",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1
+		},
+	"\/sample\/response\/history_test_50gg_b.json": {
+		"fileType": 524288,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/sample\/response\/history_test_50gg_b.json",
+		"orderOutput": 0,
+		"outputAbbreviatedPath": "\/sample\/response\/history_test_50gg_b-min.json",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1

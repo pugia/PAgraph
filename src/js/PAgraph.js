@@ -7,7 +7,10 @@
     var settings = $.extend(true, {
 			
 			mode: 'history',
-	
+			filter: {  // only for history mode
+				mode: 'daily',
+				labels: ['daily', 'weekly', 'monthly']
+			},
 			config: {
 				graph: [{
 					color: '#88B8C4',
@@ -40,6 +43,7 @@
 			legend: null,
 			tooltip: null,
 			data: [null,null],
+			filters: null,
 			svg: {
 				element: null,
 				grid: {
@@ -131,7 +135,8 @@
 			
 			history: {
 			
-				mode: 'daily', // daily, weekly, monthly 
+				filter: 'daily', // daily, weekly, monthly 
+				computedData: [null,null],
 								
 				// start with a week structure
 				init: function() {
@@ -140,6 +145,9 @@
 					
 					var self = this;
 					
+					self.initLegend();
+					self.initCircles();
+					self.initFilters();
 					self.grid();
 					
 				},
@@ -151,8 +159,6 @@
 					self.initGridX();
 					self.initGridY();
 					self.initGraph();
-					self.initLegend();
-					self.initCircles();
 					
 				},
 				
@@ -279,6 +285,29 @@
 
 				},
 				
+				// create filters menu
+				initFilters: function() {
+
+					var self = this;
+					
+					structure.filters = d3.selectAll(graph.get()).insert('div',":first-child")
+																											 .classed('PAfilters', true);
+																											 
+					structure.filters.append('p').attr('data-mode', 'daily').text(settings.filter.labels[0]);
+					structure.filters.append('p').attr('data-mode', 'weekly').text(settings.filter.labels[1]);
+					structure.filters.append('p').attr('data-mode', 'monthly').text(settings.filter.labels[2]);
+					
+					graph.find('div.PAfilters')
+						.on('click', 'p[data-mode]', function() {
+
+							// control values
+							settings.filter.mode = $(this).attr('data-mode');
+							self.applyFilter();
+														
+						})
+					
+				},
+				
 				/* ANIMATE */				
 				// animate main graph
 				mainGraph: function(data) {
@@ -286,22 +315,41 @@
 					var self = this;
 					var index = 0;
 					
-					if (data == undefined) { var data = structure.data[0]; }
+					if (data == undefined) { var data = structure.data[0]; } else { structure.data[0] = data; }
 					if (data.length == 0) return;
 					
-					structure.data[0] = data;
-					var allData = mergeAndClean(structure.data);
-					structure.svg.grid.y.spacing = Yspacing(allData);
+					// show filters based on elements number
+					structure.filters.classed('hide', true);
+					if (structure.data[0].length >= 28) {
 
-					if (data.length != structure.svg.grid.x.elements.length) {
-						if (structure.data[1]) { self.removeCompareGraph() }
-						structure.svg.grid.y.spacing = Yspacing(data);
-						self.flattenGraph(data, 0, function() {
-							self.drawGraphAnimation(structure.data[0], 0);
+						if (structure.data[0].length > 40 && settings.filter.mode == 'daily') { settings.filter.mode = 'weekly'; }
+						structure.filters.select('p[data-mode="daily"]').classed('hide', (structure.data[0].length > 60));
+						structure.filters.select('p[data-mode="monthly"]').classed('hide', (structure.data[0].length < 120));
+
+						structure.filters.selectAll('p').classed('selected', false);
+						structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
+
+						setTimeout(function() { structure.filters.classed('hide', false);	}, internalSettings.animateGridTime);
+					} else {
+						settings.filter.mode = 'daily';
+						structure.filters.selectAll('p').classed('selected', false);
+						structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
+					}
+					
+					// animate graph
+					self.computedData[0] = self.applyFilterToData(data, settings.filter.mode);
+					var allData = mergeAndClean(self.computedData);
+					structure.svg.grid.y.spacing = Yspacing(allData);
+					
+					if (self.computedData[0].length != structure.svg.grid.x.elements.length) {
+						if (self.computedData[1]) { self.removeCompareGraph() }
+						structure.svg.grid.y.spacing = Yspacing(self.computedData[0]);
+						self.flattenGraph(self.computedData[0], 0, function() {
+							self.drawGraphAnimation(self.computedData[0], 0);
 						})	
 					} else {
-						self.drawGraphAnimation(structure.data[0], 0);
-						if (structure.data[1]) { self.drawGraphAnimation(structure.data[1], 1); }
+						self.drawGraphAnimation(self.computedData[0], 0);
+						if (self.computedData[1]) { self.drawGraphAnimation(self.computedData[1], 1); }
 					}
 					
 				},
@@ -310,24 +358,43 @@
 				compareWith: function(data) {
 					
 					var self = this;
-					var index = structure.svg.graph.elements.length == 1 ? self.initGraph() : 1;
 					
-					if (data == undefined) { var data = structure.data[index]; }
+					if (data == undefined) { var data = structure.data[1]; } else { structure.data[1] = data; }
 					if (data.length == 0) return;
+					if (structure.data[1].length != structure.data[0].length) {
+						alert('Compare metric has a different scale'); // TODO transform in console.error
+						return;
+					}
 
-					structure.data[index] = data;
-					var allData = mergeAndClean(structure.data);
+					var index = structure.svg.graph.elements.length == 1 ? self.initGraph() : 1;
+
+					self.computedData[1] = self.applyFilterToData(data, settings.filter.mode);
+					var allData = mergeAndClean(self.computedData);
 					structure.svg.grid.y.spacing = Yspacing(allData);
 					
-					if (data.length != structure.svg.grid.x.elements.length) {
-						self.flattenGraph(data, index, function() {
-							self.drawGraphAnimation(structure.data[0], 0);
-							self.drawGraphAnimation(structure.data[1], 1);
-						})	
-					} else {
-						self.drawGraphAnimation(structure.data[0], 0);
-						self.drawGraphAnimation(structure.data[1], 1);
-					}
+					self.drawGraphAnimation(self.computedData[0], 0);
+					self.drawGraphAnimation(self.computedData[1], 1);
+					
+				},
+				
+				applyFilter: function() {
+					
+					var self = this;
+					
+					structure.filters.selectAll('p').classed('selected', false);
+					structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
+					
+					self.computedData[0] = self.applyFilterToData(structure.data[0], settings.filter.mode);
+					self.computedData[1] = self.applyFilterToData(structure.data[1], settings.filter.mode);
+										
+					var allData = mergeAndClean(self.computedData);
+					structure.svg.grid.y.spacing = Yspacing(allData);
+
+					if (self.computedData[1]) { self.flattenGraph(self.computedData[1], 1); }
+					self.flattenGraph(self.computedData[0], 0, function() {
+						self.drawGraphAnimation(self.computedData[0], 0);
+						if (self.computedData[1]) { self.drawGraphAnimation(self.computedData[1], 1); }
+					})	
 					
 				},
 				
@@ -356,7 +423,7 @@
 					var j = 0;
 					
 					var elementsCount = data.length;
-					
+										
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 					
@@ -464,7 +531,7 @@
 						for (a = 0; a < diff; a++) {
 							
 							var i = a + elementsCount;
-							structure.svg.label.x.elements[i].remove();
+							if (structure.svg.label.x.elements[i]) { structure.svg.label.x.elements[i].remove(); }
 								
 						}
 						
@@ -735,6 +802,7 @@
 						structure.svg.graph.elements.pop();
 						graph.find('div.PAlegend > p[data-index=1]').remove()
 						structure.data[1] = null;
+						self.computedData[1] = null;
 					});
 					
 				},
@@ -763,6 +831,7 @@
 					
 				},
 				
+				// action on circles
 				initCircles: function() {
 					var self = this;
 					
@@ -817,6 +886,87 @@
 					var self = this;
 					var g = graph.find('g.PAGgraphs');
 					g.find('g.PAGgraph[data-index='+index+']').appendTo(g);
+					
+				},
+				
+				// filter data
+				applyFilterToData: function(data, filter) {
+					
+					var self = this;
+					var filter = filter || 'daily';
+					var newData = data;
+					
+					if (data == null) { return null; }
+					
+					switch(filter) {
+						case 'weekly': newData = weekly(data); break;
+						case 'monthly': newData = monthly(data); break;
+						case 'daily': newData = daily(data); break;
+					}
+
+					return newData;
+					
+					// in daily mode there are no filter applied
+					function daily(data) { return data; 	}
+					
+					// in weekly mode the data are groupped in 7 days
+					// TODO verify if this shoud group by week (mon/sun)
+					//				verify how to group the labels
+					function weekly(data) {
+						
+						var newData = [],
+								tmpObjModel = {
+									"label": "",
+									"value": 0
+								},
+								tmpObj = {},
+								index = 0;
+								
+						for (i in data) {
+
+							// first
+							if (i % 7 == 0) {
+								tmpObj = $.extend(true, {}, tmpObjModel);	
+								tmpObj.label = data[i].label;
+								newData.push(tmpObj);
+								index = newData.length - 1;
+							}
+							
+							newData[index].value += data[i].value;							
+							
+						}
+						
+						return newData;
+					}
+
+					// in monthly mode the data are groupped in 30 days
+					// TODO verify if this shoud group by month
+					function monthly(data) {
+						
+						var newData = [],
+								tmpObjModel = {
+									"label": "",
+									"value": 0
+								},
+								tmpObj = {},
+								index = 0;
+								
+						for (i in data) {
+
+							// first
+							if (i % 30 == 0) {
+								tmpObj = $.extend(true, {}, tmpObjModel);	
+								tmpObj.label = data[i].label;
+								newData.push(tmpObj);
+								index = newData.length - 1;
+							}
+							
+							newData[index].value += data[i].value;							
+							
+						}
+						
+						return newData;
+					}
 					
 				},
 							
@@ -1767,16 +1917,16 @@
 		}
 		
 		MODE[settings.mode].init();
-		
-		self.drawGraph = function(data, index) {
-			
-			MODE[settings.mode].drawGraph(data, index);
-			
-		};
-		
+				
 		self.mainGraph = function(data) {
 			
 			MODE[settings.mode].mainGraph(data);
+			
+		};
+		
+		self.applyFilter = function(data, filter) {
+			
+			MODE[settings.mode].applyFilterToData(data, filter);
 			
 		};
 		

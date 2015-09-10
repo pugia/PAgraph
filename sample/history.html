@@ -10,8 +10,8 @@
 	<script src="../node_modules/jquery/dist/jquery.min.js"></script>						
 	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
 
-	<link href="../dist/css/PAgraph.min.css" rel="stylesheet" type="text/css">
-	<script src="../dist/js/PAgraph.min.js"></script>
+	<link href="../dist/css/PAgraph.min.css?1" rel="stylesheet" type="text/css">
+	<script src="../dist/js/PAgraph.min.js?1"></script>
 	
 <!--
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
@@ -25,14 +25,24 @@
 	
 	<h1>Mode: history</h1>
 	
-	<div id="graph_0" style="height: 500px; width: 1000px"></div>
+	<div id="graph_0" style="height: 500px; width: 1000px">
+<!--
+		<div class="PAfilters">
+			<p data-mode="daily">Daily</p>
+			<p data-mode="weekly">Weekl</p>
+			<p data-mode="monthly">Monthly</p>
+		</div>
+-->
+	</div>
 	
 	<div style="position: absolute; right: 0; top: 0; padding: 10px;">
-		<button id="load13">Load 13</button><br/>
+		<button id="load7">Load 7</button><br/>
+		<button id="load13">Load 13</button> <button id="compare13">Compare with 13 B</button><br/>
 		<button id="load13b">Load 13 B</button><br/>
 		<button id="load20">Load 20</button><br/>
-		<button id="load7">Load 7</button><br/><br/>
-		<button id="compare">Compare with 13 B</button>
+		<button id="load50">Load 50</button><button id="compare50">Compare with 50 B</button><br/>
+		<button id="load200">Load 200</button><button id="compare200">Compare with 200 B</button><br/>
+		<br/>
 		<button id="remove">Remove graph</button><br/><br/>
 		<button id="test">Test</button>
 	</div>
@@ -87,6 +97,41 @@
 			
 		})
 
+		$('#load50').on('click', function() {
+
+			$.getJSON('response/history_test_50gg.json')
+				.done(function(result) {
+
+					graph.mainGraph(result.data);
+				
+				})
+			
+		})
+
+		$('#load200').on('click', function() {
+
+			$.getJSON('response/history_test_200gg.json')
+				.done(function(result) {
+
+					graph.mainGraph(result.data);
+				
+				})
+			
+		})
+		
+		$('#compare200').on('click', function() {
+
+			$.getJSON('response/history_test_200gg_b.json')
+				.done(function(result) {
+
+					graph.compareWith(result.data);
+				
+				})
+			
+		})
+
+		
+
 		$('#load7').on('click', function() {
 
 			$.getJSON('response/history_test_7gg.json')
@@ -97,7 +142,7 @@
 			
 		})
 		
-		$('#compare').on('click', function() {
+		$('#compare13').on('click', function() {
 
 			$.getJSON('response/history_test_13gg_b.json')
 				.done(function(result) {
@@ -107,10 +152,32 @@
 				})
 			
 		})
+		
+		$('#compare50').on('click', function() {
+
+			$.getJSON('response/history_test_50gg_b.json')
+				.done(function(result) {
+
+					graph.compareWith(result.data);
+				
+				})
+			
+		})
 
 		$('#remove').on('click', function() {
 		
 			graph.removeCompare();
+			
+		})
+		
+		$('#test').on('click', function() {
+			
+			$.getJSON('response/history_test_20gg.json')
+				.done(function(result) {
+
+					graph.applyFilter(APIdataToValues(result),'weekly');
+				
+				})
 			
 		})
 		
