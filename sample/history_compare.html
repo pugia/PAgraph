@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<title>PAgraph | history</title>
+
+	<link href="style.css" rel="stylesheet" type="text/css">
+
+	<script src="../node_modules/jquery/dist/jquery.min.js"></script>						
+	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
+
+	<link href="../dist/css/PAgraph.min.css?2" rel="stylesheet" type="text/css">
+	<script src="../dist/js/PAgraph.min.js?2"></script>
+	
+<!--
+	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
+	<script src="../src/js/PAgraph.js"></script>
+-->
+			
+</head>
+<body>	
+	
+	<a href="index.html">&laquo; Back to examples list</a>
+	
+	<h1>Mode: history</h1>
+	
+	<div id="graph_0" style="height: 500px; width: 1000px">
+		<div class="PAcompare">
+			<div>
+				<span style="background-color: #88B8C4"></span> 
+				<label>Metric 1</label>
+				<svg width="7px" height="5px" viewBox="0 0 8 5">
+					<path d="M0,1 L3.5,4 L7,1" fill="none" stroke="#444444"></path>
+				</svg>
+				<ul>
+					<li class="m1">Metric 1</li>
+					<li class="m2">Metric 2</li>
+					<li class="m3">Metric 3</li>
+				</ul>
+			</div>
+			<span>versus</span>
+			<div>
+				<span style="background-color: #808E96"></span> 
+				<label>nothing</label>
+				<svg width="7px" height="5px" viewBox="0 0 8 5">
+					<path d="M0,1 L3.5,4 L7,1" fill="none" stroke="#444444"></path>
+				</svg>
+				<ul>
+					<li class="rm">nothing</li>
+					<li class="m1">Metric 1</li>
+					<li class="m2">Metric 2</li>
+					<li class="m3">Metric 3</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<script>	
+	
+	$(function() {
+		
+		var graph = $('#graph_0').PAgraph({
+			mode: 'history',
+			config: {
+				graph: [{
+					color: '#88B8C4',
+					legend: 'Main metric'
+				}, {
+					color: '#808E96',
+					legend: 'Compare metric'
+				}]
+			},
+			preFetch: function(data) {
+				return data.data;
+			}
+		});
+	
+		
+		$('.PAcompare > div')
+			.on('click', 'svg', function() {
+				var div = $(this).parent('div');
+				$('div.PAoverlay').remove();
+				if (!div.hasClass('open')) {
+					$('.PAcompare > div').removeClass('open')
+					$('body').append($('<div></div>').addClass('PAoverlay').on('click', function() {
+						$(this).remove();
+						div.removeClass('open');
+					}));
+					div.addClass('open');
+				} else {
+					div.removeClass('open');
+				}
+			})
+			.on('click', 'li', function() {
+				
+				$('div.PAoverlay').remove();
+				$('.PAcompare > div').removeClass('open')
+				
+				var div = $(this).parent('ul').parent('div');
+				div.find('label').text($(this).text());
+				var index = div.index() == 0 ? 0 : 1;
+				var url = null;
+				switch ($(this).attr('class')) {
+					
+					case 'm1': 	var url = 'response/history_test_20gg.json';
+											var fn = (index == 0) ? 'mainGraph': 'compareWith';
+											break;
+					case 'm2': 	var url = 'response/history_test_20gg_b.json';
+											var fn = (index == 0) ? 'mainGraph': 'compareWith';
+											break;
+					case 'm3': 	var url = 'response/history_test_20gg_c.json';
+											var fn = (index == 0) ? 'mainGraph': 'compareWith';
+											break;
+					case 'rm':		var fn = 'removeCompare';
+											break;
+					
+				}
+				
+				if (url) {
+					
+					$.getJSON(url)
+						.done(function(result) {
+							graph[fn](result);
+						})
+						
+				} else {
+
+					graph[fn]();
+
+				}
+				
+			})
+			
+			$.getJSON('response/history_test_20gg.json')
+				.done(function(result) {
+					graph.mainGraph(result);
+				})
+			
+	})	
+	
+	// generate array with label and value
+	function APIdataToValues(data) {
+		
+		var newData = [];
+		var rows = data['rows'];
+		
+		for(var index in rows) {
+						
+			newData.push({
+				label:		rows[index]['c'][0]['v'].replace(' 15', ''),
+				value:		rows[index]['c'][1]['v']
+			})
+			 
+		}
+		
+		return newData;
+		
+	}
+
+
+	</script>
+	
+</body>
+
+</html>

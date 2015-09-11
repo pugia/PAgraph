@@ -32,7 +32,9 @@
 						label: '#C1C1C1'
 					}
 				}
-			}
+			},
+			lineInterpolation: 'cardinal',
+			preFetch: null,
 						
 		}, options );
 		
@@ -104,7 +106,7 @@
 			graphAnimationTime: 600,
 			animateGridTime: 500,
 			animateEasing: 'cubic-in-out',
-			graphLineInterpolation: 'cardinal'
+			graphLineInterpolation: settings.lineInterpolation
 
 		};
 		
@@ -795,7 +797,7 @@
 								
 				// remove last graph
 				removeCompareGraph: function() {
-					
+										
 					var self = this;
 					self.flattenGraph([], 1, function() {
 						structure.svg.graph.elements[1].group.remove();
@@ -808,8 +810,11 @@
 				},
 				
 				removeCompare: function() {
-					
+				
 					var self = this;
+
+					if (structure.data[1] == null) return;
+					
 					self.removeCompareGraph();
 					setTimeout(function() {
 						self.mainGraph();
@@ -1241,6 +1246,8 @@
 					
 					var self = this;
 					var index = 1;
+				
+					if (structure.data[1] == null) return;				
 					
 					var h = graph.height();
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
@@ -1674,6 +1681,8 @@
 					
 					var self = this;
 					var index = 1;
+				
+					if (structure.data[1] == null) return;
 					
 					var h = graph.height();
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
@@ -1920,18 +1929,14 @@
 				
 		self.mainGraph = function(data) {
 			
+			if (typeof settings.preFetch == 'function') { var data = settings.preFetch(data); }
 			MODE[settings.mode].mainGraph(data);
-			
-		};
-		
-		self.applyFilter = function(data, filter) {
-			
-			MODE[settings.mode].applyFilterToData(data, filter);
 			
 		};
 		
 		self.compareWith = function(data) {
 			
+			if (typeof settings.preFetch == 'function') { var data = settings.preFetch(data); }
 			MODE[settings.mode].compareWith(data);
 			
 		};
@@ -1941,6 +1946,14 @@
 			MODE[settings.mode].removeCompare();
 			
 		}
+
+		self.applyFilter = function(data, filter) {
+			
+			if (settings.mode != 'history') return;
+			if (typeof settings.preFetch == 'function') { var data = settings.preFetch(data); }
+			MODE[settings.mode].applyFilterToData(data, filter);
+			
+		};
 		
 		self.setOpeningTime = function(open, close) {
 			

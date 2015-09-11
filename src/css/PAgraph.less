@@ -1,7 +1,104 @@
+div.PAoverlay {
+	position: absolute;
+	position: fixed !important;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0.3;
+}
+
 .PAgraphContainer {
 	
 	overflow: visible;
 	position: relative;
+	
+	div.PAcompare {
+		
+		position: absolute;
+		z-index: 10000;
+		background: #fff;
+		margin-left: 60px;
+		
+		& > div, & > span {
+			float: left;
+			font-family: 'Lato', sans-serif;
+			color: #444;
+			font-size: 14px;
+			line-height: 20px;
+			font-weight: 100;
+			height: 20px;
+			position: relative;
+			margin-right: 10px; 
+						
+			& > span {
+				float: left;
+				width: 16px;
+				height: 16px;
+				border-radius: 5px;
+				margin-right: 8px;
+				margin-top: 2px;
+			}
+			
+			& > label {
+				float: left;
+			}
+			
+			& > svg {
+				float: left;
+				width: 8px;
+				height: 5px;
+				padding: 8px 6px 7px;
+				cursor: pointer;
+				.transition (all 0.5s);
+			}
+									
+			& > ul {
+				display: none;
+				position: absolute;
+				z-index: 20000;
+				top: 21px;
+				left: 18px;
+				background: 0;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				border: 1px solid #E2E6E9;
+				background: #fff;
+
+				& > li {
+					white-space: nowrap;
+					line-height: 26px;
+					cursor: pointer;
+					padding: 0 20px 0 4px ;
+					
+					&:hover {
+						font-weight: 300;
+						color: #666;
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		& > div.open {
+			
+			& > svg {
+				.transform(rotate(180deg));
+			}
+			
+			& > ul {
+				display: block;
+			}
+		}
+		
+		& > span {
+			margin-right: 20px;
+		}
+		
+	}
 	
 	div.PAlegend {
 		
@@ -49,6 +146,7 @@
 		opacity: 0;
 		padding: 0 8px;
 		display: none;
+		margin-top: 0 !important;
 		.transition(all 300ms);
 		
 		&.show {
