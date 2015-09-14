@@ -385,6 +385,78 @@ div.PAoverlay {
 	}
 }
 
+.PAcounterContainer {
+
+	&.PAinactive {
+		
+		& > span {
+			opacity: 0;
+		}
+		
+	}
+
+	
+	& > span {
+		display: block;
+		font-family: 'Lato', sans-serif;
+		opacity: 1;
+		.transition (opacity 500ms);
+		
+		&.PAicon {
+			padding: 5px 0;
+			text-align: center;
+			svg {
+				height: 30px;
+				margin: 0 auto;
+			}
+			
+		}
+		
+		&.PAmain {
+			font-weight: 700;
+			font-size: 28px;
+		}
+		
+		&.PAcompare {
+			font-weight: 700;
+			font-size: 18px;
+			color: #42802D;
+			
+			&:after {
+				content: "%";
+				font-size: 11px;
+			}
+			
+			&:before {
+				content: "+";
+			}
+			
+			&.PAnegative {
+				
+				color: #B3472D;
+				
+				&:before {
+					content: "" !important;
+				}
+				
+			}
+			
+			&.PAnull {
+				
+				color: #444;
+				
+				&:before {
+					content: "" !important;
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+}
+
 
 .animation (@name, @duration: 300ms, @delay: 0, @ease: ease) {
 	-webkit-animation: @name @duration @delay @ease;

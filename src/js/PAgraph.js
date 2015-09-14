@@ -1,6 +1,7 @@
 // PAgraph Plugin
 (function ($) {
 
+	// graphics
   $.fn.PAgraph = function( options ) {
 		
 		// default options
@@ -2031,6 +2032,71 @@
 		return self;
 
 	};
+	
+	
+	// counter
+  $.fn.PAcounter = function( options ) {
+		
+		// default options
+    var settings = $.extend(true, {
+			icon: '',
+			value: 0,
+			diff: 0
+		}, options );
+		
+		var graph = this;
+		
+		graph.addClass('PAcounterContainer PAinactive');
+		
+		var iconCounter = $('<span></span>').addClass('PAicon');
+		
+		var mainCounter = $('<span></span>').attr('data-value', settings.value)
+																				.text(settings.value)
+																				.addClass('PAmain PAcount');
+																				
+		var compareCounter = $('<span></span>').attr('data-value', settings.diff)
+																					 .text(settings.diff)
+																					 .addClass('PAcompare PAcount')
+																					 .toggleClass('PAnegative', settings.diff < 0)
+																					 .toggleClass('PAnull', settings.diff == 0)
+		
+		graph.append(iconCounter)
+		graph.append(mainCounter)
+		graph.append(compareCounter)
+		
+		$.get(settings.icon, function(svg) {
+			iconCounter.append($(svg));
+			animateNumber(graph.find('span.PAcount'), 1000);
+			graph.removeClass('PAinactive');
+		}, 'text');
+		
+		function animateNumber(selector, time) {
+			
+			selector.each(function () {
+			  var el = $(this).text('0');
+	
+			  // backup
+				var timer = setTimeout(function(){ el.text(el.attr('data-value')); }, time+10);
+	
+			  $({ c:0 }).animate({ c: el.attr('data-value') }, {
+			    duration: time,
+			    step: function () {
+				    var v = Math.ceil(this.c);
+				    if (v == el.attr('data-value')) { clearInterval(timer); }
+			      el.text(v);
+			    }
+			  });
+			  
+			});
+			
+		}
+		
+		return graph;
+		
+	};
+	
+	
+	
 
 }( jQuery ));
 

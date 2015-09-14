@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<title>PAgraph | counter</title>
+
+	<link href="style.css" rel="stylesheet" type="text/css">
+
+	<script src="../node_modules/jquery/dist/jquery.min.js"></script>						
+	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
+
+<!--
+	<link href="../dist/css/PAgraph.min.css?2" rel="stylesheet" type="text/css">
+	<script src="../dist/js/PAgraph.min.js?2"></script>
+-->
+	
+	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
+	<script src="../src/js/PAgraph.js"></script>
+			
+</head>
+<body>	
+	
+	<a href="index.html">&laquo; Back to examples list</a>
+	
+	<h1>Mode: counter</h1>
+	
+	<div class="widget" id="w1">
+		<h3>Purus Egestas</h3>
+		<div class="graph"></div>
+		<p class="description">Maecenas faucibus mollis interdum.</p>
+	</div>
+
+	<div class="widget" id="w2">
+		<h3>Purus Euismod</h3>
+		<div class="graph"></div>
+		<p class="description">Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+	</div>
+
+	<div class="widget" id="w3">
+		<h3>Sit Consectetur</h3>
+		<div class="graph"></div>
+		<p class="description">Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
+	</div>
+	
+	<script>	
+	
+	$(function() {
+		
+		var config = {
+			icon: 'response/counter_icon_1.svg',
+			value: 4123,
+			diff: 12
+		};
+		
+		$('#w1 > div.graph').PAcounter({
+			icon: 'response/counter_icon_1.svg',
+			value: 4123,
+			diff: 12
+		});
+
+		$('#w2 > div.graph').PAcounter({
+			icon: 'response/counter_icon_1.svg',
+			value: 346,
+			diff: -26
+		});
+
+		$('#w3 > div.graph').PAcounter({
+			icon: 'response/counter_icon_1.svg',
+			value: 12023,
+			diff: 0
+		});
+		
+	})	 	
+
+	</script>
+	
+</body>
+
+</html>
