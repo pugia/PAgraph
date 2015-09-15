@@ -551,22 +551,42 @@
 				
 				// hide some labels when there are too much
 				hideThickLabels: function() {
-			
+					
+					var self = this;
+					var labelGroup = graph.find('g.PAGlabelX')
+					
 					var nthChildX = 1;
 					var l1_index = 1;
-					var l1_size = structure.svg.label.x.elements[l1_index][0][0].getBBox();
-
+					var l1_element = labelGroup.find('text:eq('+(l1_index)+')');
+					var l1_size = {
+						width: textWidth(l1_element),
+						x: l1_element.position().left
+					};
 					var l2_index = 2;					
-					var l2_size = structure.svg.label.x.elements[l2_index][0][0].getBBox();
+					var l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
 					
-					while (l1_size.x + l1_size.width + 10 > l2_size.x) {
+					while (l1_size.x + l1_size.width + 10 > l2_size) {
 						nthChildX++; l2_index++;
-						l2_size = structure.svg.label.x.elements[l2_index][0][0].getBBox();
-					}			
-		
+						l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
+					}
+					
 					structure.svg.label.x.group.selectAll('text:nth-child('+nthChildX+'n+2)')
 																		 .classed('show', true);
 					
+					
+					function textWidth(element) {
+						
+						var fake = $('<span>').hide().appendTo(document.body);
+						fake.text(element.text())
+								.css('font-family', element.css('font-family'))
+								.css('font-weight', element.css('font-weight'))
+								.css('font-size', element.css('font-size'))
+								.css('text-transform', element.css('text-transform'))
+						var w = fake.width(); fake.remove();
+						return w;
+						
+					}
+										
 				},
 
 				// fix the number of labels and animate
