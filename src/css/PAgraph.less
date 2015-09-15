@@ -196,13 +196,13 @@ div.PAoverlay {
 				font-weight: 500;
 			}
 			
-			&.hide {
+			&.PAhide {
 				display: none;
 			}
 			
 		}
 		
-		&.hide {
+		&.PAhide {
 			opacity: 0;
 		}
 		
@@ -261,11 +261,12 @@ div.PAoverlay {
 				text-transform: uppercase;
 				background: #fff;
 				opacity: 1;
+				display: block !important;
 				.transition(opacity 300ms);
 				
 			}
 						
-			&.hide {
+			&.PAhide {
 				text {
 					opacity: 0;
 					
@@ -293,7 +294,7 @@ div.PAoverlay {
 				
 			}
 	
-			&.hide {
+			&.PAhide {
 				text {
 					opacity: 0;
 				}
@@ -313,7 +314,7 @@ div.PAoverlay {
 					.transition(opacity 300ms);
 					cursor: pointer;
 					
-					&.hide {
+					&.PAhide {
 						opacity: 0;
 					}
 					
@@ -327,7 +328,7 @@ div.PAoverlay {
 			
 			g.PAGlabelX {
 				text {
-					&:first-child, &:last-child, &.hide {
+					&:first-child, &:last-child, &.PAhide {
 						opacity: 0 !important;
 					}
 				}

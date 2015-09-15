@@ -322,17 +322,17 @@
 					if (data.length == 0) return;
 					
 					// show filters based on elements number
-					structure.filters.classed('hide', true);
+					structure.filters.classed('PAhide', true);
 					if (structure.data[0].length >= 28) {
 
 						if (structure.data[0].length > 40 && settings.filter.mode == 'daily') { settings.filter.mode = 'weekly'; }
-						structure.filters.select('p[data-mode="daily"]').classed('hide', (structure.data[0].length > 60));
-						structure.filters.select('p[data-mode="monthly"]').classed('hide', (structure.data[0].length < 120));
+						structure.filters.select('p[data-mode="daily"]').classed('PAhide', (structure.data[0].length > 60));
+						structure.filters.select('p[data-mode="monthly"]').classed('PAhide', (structure.data[0].length < 120));
 
 						structure.filters.selectAll('p').classed('selected', false);
 						structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
 
-						setTimeout(function() { structure.filters.classed('hide', false);	}, internalSettings.animateGridTime);
+						setTimeout(function() { structure.filters.classed('PAhide', false);	}, internalSettings.animateGridTime);
 					} else {
 						settings.filter.mode = 'daily';
 						structure.filters.selectAll('p').classed('selected', false);
@@ -495,7 +495,7 @@
 					var spacing = Math.floor(w / (data.length-1) );
 					
 					// hide current labels
-					structure.svg.label.x.group.classed('hide', true)
+					structure.svg.label.x.group.classed('PAhide', true)
 																		 .selectAll('text')
 																		 .classed('show', false);
 					
@@ -607,7 +607,7 @@
 					var spacing = Math.floor(h / elementsCount);
 					
 					// hide current labels
-					structure.svg.label.y.group.classed('hide', true);
+					structure.svg.label.y.group.classed('PAhide', true);
 					
 					// fix the number of labels and position
 					setTimeout(function() {
@@ -633,7 +633,7 @@
 										
 					setTimeout(function() {
 						// show current labels
-						structure.svg.label.y.group.classed('hide', false);
+						structure.svg.label.y.group.classed('PAhide', false);
 					}, internalSettings.animateGridTime*2)
 								
 				},
@@ -655,9 +655,9 @@
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
 					
 					// remove circles
-					structure.svg.graph.elements[index].group.selectAll('circle').classed('hide', 'true');
+					structure.svg.graph.elements[index].group.selectAll('circle').classed('PAhide', 'true');
 					setTimeout(function() {
-						structure.svg.graph.elements[index].group.selectAll('circle.hide').remove();
+						structure.svg.graph.elements[index].group.selectAll('circle.PAhide').remove();
 					}, 300);
 					
 					// animate line
@@ -748,9 +748,9 @@
 					var spacingNext = Math.floor(w / (data.length - 1) );
 
 					// remove circles
-					structure.svg.graph.elements[index].group.selectAll('circle').classed('hide', true);
+					structure.svg.graph.elements[index].group.selectAll('circle').classed('PAhide', true);
 					setTimeout(function() {
-						structure.svg.graph.elements[index].group.selectAll('circle.hide').remove();
+						structure.svg.graph.elements[index].group.selectAll('circle.PAhide').remove();
 					}, 300);
 
 					
@@ -1201,7 +1201,7 @@
 					var spacing = Math.floor(h / elementsCount);
 					
 					// hide current labels
-					structure.svg.label.y.group.classed('hide', true);
+					structure.svg.label.y.group.classed('PAhide', true);
 					
 					// fix the number of labels and position
 					setTimeout(function() {
@@ -1227,7 +1227,7 @@
 										
 					setTimeout(function() {
 						// show current labels
-						structure.svg.label.y.group.classed('hide', false);
+						structure.svg.label.y.group.classed('PAhide', false);
 					}, internalSettings.animateGridTime*2)
 								
 				},
@@ -1635,7 +1635,7 @@
 					var spacing = Math.floor(h / elementsCount);
 					
 					// hide current labels
-					structure.svg.label.y.group.classed('hide', true);
+					structure.svg.label.y.group.classed('PAhide', true);
 					
 					// fix the number of labels and position
 					setTimeout(function() {
@@ -1661,7 +1661,7 @@
 										
 					setTimeout(function() {
 						// show current labels
-						structure.svg.label.y.group.classed('hide', false);
+						structure.svg.label.y.group.classed('PAhide', false);
 					}, internalSettings.animateGridTime*2)
 								
 				},
