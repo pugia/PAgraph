@@ -2087,7 +2087,7 @@
 		graph.addClass('PAcounterContainer PAinactive');
 		
 		// clean data
-		graph.find('.PAicon, .PAmail, .PAcompare').remove();
+		graph.find('.PAicon, .PAmain, .PAcompare').remove();
 		
 		if (settings.icon) {
 			var iconCounter = $('<span></span>').addClass('PAicon');		
