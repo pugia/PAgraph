@@ -1948,27 +1948,27 @@
 		
 		MODE[settings.mode].init();
 				
-		self.mainGraph = function(data) {
+		graph.mainGraph = function(data) {
 			
 			if (typeof settings.preFetch == 'function') { var data = settings.preFetch(data); }
 			MODE[settings.mode].mainGraph(data);
 			
 		};
 		
-		self.compareWith = function(data) {
+		graph.compareWith = function(data) {
 			
 			if (typeof settings.preFetch == 'function') { var data = settings.preFetch(data); }
 			MODE[settings.mode].compareWith(data);
 			
 		};
 		
-		self.removeCompare = function() {
+		graph.removeCompare = function() {
 			
 			MODE[settings.mode].removeCompare();
 			
 		}
 
-		self.applyFilter = function(data, filter) {
+		graph.applyFilter = function(data, filter) {
 			
 			if (settings.mode != 'history') return;
 			if (typeof settings.preFetch == 'function') { var data = settings.preFetch(data); }
@@ -1976,14 +1976,14 @@
 			
 		};
 		
-		self.setOpeningTime = function(open, close) {
+		graph.setOpeningTime = function(open, close) {
 			
 			if (settings.mode != 'daytime') return;
 			MODE['daytime'].openingTime(open,close);
 			
 		}
 		
-		self.removeOpeningTime = function() {
+		graph.removeOpeningTime = function() {
 			
 			if (settings.mode != 'daytime') return;
 			MODE['daytime'].removeOpeningTime();
@@ -2049,7 +2049,7 @@
 			if (settings.debug) { console.debug(arguments);	}
 		}
 					
-		return self;
+		return graph;
 
 	};
 	
