@@ -2076,17 +2076,18 @@
 					kSeparator: '',
 					dSeparator: '',
 					prefix: '',
-					suffix: '%'
+					suffix: ''
 				}
 			},
 			icon: null
 		}, options );
 		
 		var graph = this;
-		
-		console.log(settings);
-		
+				
 		graph.addClass('PAcounterContainer PAinactive');
+		
+		// clean data
+		graph.find('.PAicon, .PAmail, .PAcompare').remove();
 		
 		if (settings.icon) {
 			var iconCounter = $('<span></span>').addClass('PAicon');		
@@ -2100,14 +2101,15 @@
 		graph.append(mainCounter)
 		
 		if (settings.diff.value) {
+
 			var compareCounter = $('<span></span>').attr('data-value', settings.diff.value)
 																						 .attr('data-type', 'diff')
 																						 .text(settings.diff.value)
 																						 .addClass('PAcompare PAcount')
 																						 .toggleClass('PAnegative', settings.diff.value < 0)
 																						 .toggleClass('PAnull', settings.diff.value == 0)
-			
 			graph.append(compareCounter)
+
 		}
 		
 		if (settings.icon) {
@@ -2145,10 +2147,8 @@
 		function formatNumber(number, type) {
 			
 			format = (type == undefined || type != 'main') ? settings.diff.format : settings.main.format;
-			
-			var x = number.format(format.decimals, format.kSeparator, format.dSeparator)
-			
-			return x;
+			var x = number.format(format.decimals, format.kSeparator, format.dSeparator)			
+			return format.prefix + x + format.suffix;
 			
 		}
 		
