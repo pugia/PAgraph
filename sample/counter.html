@@ -10,13 +10,13 @@
 	<script src="../node_modules/jquery/dist/jquery.min.js"></script>						
 	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
 
-<!--
-	<link href="../dist/css/PAgraph.min.css?2" rel="stylesheet" type="text/css">
-	<script src="../dist/js/PAgraph.min.js?2"></script>
--->
+	<link href="../dist/css/PAgraph.min.css?3" rel="stylesheet" type="text/css">
+	<script src="../dist/js/PAgraph.min.js?3"></script>
 	
+<!--
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
 	<script src="../src/js/PAgraph.js"></script>
+-->
 			
 </head>
 <body>	
@@ -42,33 +42,50 @@
 		<div class="graph"></div>
 		<p class="description">Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
 	</div>
+
+	<div class="widget" id="w4">
+		<h3>Euismod Sem</h3>
+		<div class="graph"></div>
+		<p class="description">Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+	</div>
 	
 	<script>	
 	
 	$(function() {
 		
-		var config = {
-			icon: 'response/counter_icon_1.svg',
-			value: 4123,
-			diff: 12
-		};
-		
 		$('#w1 > div.graph').PAcounter({
 			icon: 'response/counter_icon_1.svg',
-			value: 4123,
-			diff: 12
+			main: {
+				value: 4123
+			},
+			diff: {
+				value: 12
+			}
 		});
 
 		$('#w2 > div.graph').PAcounter({
-			icon: 'response/counter_icon_1.svg',
-			value: 346,
-			diff: -26
+			main: {
+				value: 346
+			},
+			diff: {
+				value: -26
+			}
 		});
 
 		$('#w3 > div.graph').PAcounter({
 			icon: 'response/counter_icon_1.svg',
-			value: 12023,
-			diff: 0
+			main: {
+				value: 12023
+			}
+		});
+
+		$('#w4 > div.graph').PAcounter({
+			main: {
+				value: -4736.23,
+				format: {
+					decimals: 2
+				}
+			}
 		});
 		
 	})	 	

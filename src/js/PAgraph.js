@@ -2059,36 +2059,67 @@
 		
 		// default options
     var settings = $.extend(true, {
-			icon: '',
-			value: 0,
-			diff: 0
+			main: {
+				value: 0,
+				format: {
+					decimals: 0,	
+					kSeparator: ',',
+					dSeparator: '.',
+					prefix: '',
+					suffix: ''
+				}
+			},
+			diff: {
+				value: null,
+				format: {
+					decimals: 0,	
+					kSeparator: '',
+					dSeparator: '',
+					prefix: '',
+					suffix: '%'
+				}
+			},
+			icon: null
 		}, options );
 		
 		var graph = this;
 		
+		console.log(settings);
+		
 		graph.addClass('PAcounterContainer PAinactive');
 		
-		var iconCounter = $('<span></span>').addClass('PAicon');
+		if (settings.icon) {
+			var iconCounter = $('<span></span>').addClass('PAicon');		
+			graph.append(iconCounter)
+		}
 		
-		var mainCounter = $('<span></span>').attr('data-value', settings.value)
-																				.text(settings.value)
+		var mainCounter = $('<span></span>').attr('data-value', settings.main.value)
+																				.attr('data-type', 'main')
+																				.text(settings.main.value)
 																				.addClass('PAmain PAcount');
-																				
-		var compareCounter = $('<span></span>').attr('data-value', settings.diff)
-																					 .text(settings.diff)
-																					 .addClass('PAcompare PAcount')
-																					 .toggleClass('PAnegative', settings.diff < 0)
-																					 .toggleClass('PAnull', settings.diff == 0)
-		
-		graph.append(iconCounter)
 		graph.append(mainCounter)
-		graph.append(compareCounter)
 		
+		if (settings.diff.value) {
+			var compareCounter = $('<span></span>').attr('data-value', settings.diff.value)
+																						 .attr('data-type', 'diff')
+																						 .text(settings.diff.value)
+																						 .addClass('PAcompare PAcount')
+																						 .toggleClass('PAnegative', settings.diff.value < 0)
+																						 .toggleClass('PAnull', settings.diff.value == 0)
+			
+			graph.append(compareCounter)
+		}
+		
+		if (settings.icon) {
 		$.get(settings.icon, function(svg) {
-			iconCounter.append($(svg));
+				iconCounter.append($(svg));
+				animateNumber(graph.find('span.PAcount'), 1000);
+				graph.removeClass('PAinactive');
+			}, 'text');
+		} else {
 			animateNumber(graph.find('span.PAcount'), 1000);
 			graph.removeClass('PAinactive');
-		}, 'text');
+		}
 		
 		function animateNumber(selector, time) {
 			
@@ -2096,18 +2127,28 @@
 			  var el = $(this).text('0');
 	
 			  // backup
-				var timer = setTimeout(function(){ el.text(el.attr('data-value')); }, time+10);
+				var timer = setTimeout(function(){ el.text( formatNumber(el.attr('data-value')*1, el.attr('data-type')) ); }, time+10);
 	
 			  $({ c:0 }).animate({ c: el.attr('data-value') }, {
 			    duration: time,
 			    step: function () {
-				    var v = Math.ceil(this.c);
+				    var v = this.c;
 				    if (v == el.attr('data-value')) { clearInterval(timer); }
-			      el.text(v);
+			      el.text(formatNumber(v, el.attr('data-type')));
 			    }
 			  });
 			  
 			});
+			
+		}
+		
+		function formatNumber(number, type) {
+			
+			format = (type == undefined || type != 'main') ? settings.diff.format : settings.main.format;
+			
+			var x = number.format(format.decimals, format.kSeparator, format.dSeparator)
+			
+			return x;
 			
 		}
 		
@@ -2121,3 +2162,12 @@
 }( jQuery ));
 
 String.prototype.capitalizeFirstLetter = function() { return this.charAt(0).toUpperCase() + this.slice(1); }
+
+// Format number
+// start from http://stackoverflow.com/questions/149055/how-can-i-format-numbers-as-money-in-javascript
+Number.prototype.format = function(n, s, c) {
+    var re = '\\d(?=(\\d{3})+' + (n > 0 ? '\\D' : '$') + ')',
+        num = this.toFixed(Math.max(0, ~~n));
+    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
+};
+
