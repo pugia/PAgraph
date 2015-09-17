@@ -328,15 +328,19 @@
 						if (structure.data[0].length > 40 && settings.filter.mode == 'daily') { settings.filter.mode = 'weekly'; }
 						structure.filters.select('p[data-mode="daily"]').classed('PAhide', (structure.data[0].length > 60));
 						structure.filters.select('p[data-mode="monthly"]').classed('PAhide', (structure.data[0].length < 120));
-
+// 						if ( structure.data[0].length < 120 && settings.filter.mode == 'monthly' ) { settings.filter.mode = 'daily' };
+						
 						structure.filters.selectAll('p').classed('selected', false);
 						structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
 
 						setTimeout(function() { structure.filters.classed('PAhide', false);	}, internalSettings.animateGridTime);
+
 					} else {
+
 						settings.filter.mode = 'daily';
 						structure.filters.selectAll('p').classed('selected', false);
 						structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
+
 					}
 					
 					// animate graph
@@ -2000,22 +2004,23 @@
 			
 			var max = getMaxValues(data);
 			var min = getMinValues(data);
-
-			var perc = Math.ceil((max - min) * 0.05);
-			max += perc;
-			min -= perc;
-
 			
+			var percMin = Math.ceil((max - min) * 0.05);
+			var percMax = Math.ceil((max - min) * 0.05);
+			min -= percMin;
+			max += percMax;
+
 			var space = Math.round((max - min) / lines);
 			var divisor = (space.toString().length - 1) * 10;
-			var spacer = Math.round(space / divisor) * divisor
+			var spacer = (Math.round(2 * space / divisor) / 2) * divisor
 			
 			var bottom = Math.floor(min / spacer) * spacer;
-			var top = Math.ceil(max / spacer) * spacer;
 			
-			var labels = [];
-			
-			for (i = bottom; i <= top; i=i+spacer) { labels.push(i); }
+			var labels = [];			
+			for (i = 0; i <= lines; i++) {
+				labels.push(bottom);
+				bottom += spacer;
+			}
 			
 			return labels;
 						
