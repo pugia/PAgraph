@@ -8,7 +8,7 @@
 		"url": "https://github.com/pugia/PAgraph.git"
 	},
 	"dependencies": {
-		"jquery": "^2.*",
+		"jquery": "^1.7.2",
 		"d3": "^3.5.0"
 	}
 }
