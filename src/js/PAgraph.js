@@ -15,10 +15,12 @@
 			config: {
 				graph: [{
 					color: '#88B8C4',
-					legend: 'metric'
+					legend: 'metric',
+					format: null
 				}, {
 					color: '#808E96',
-					legend: 'compare'
+					legend: 'compare',
+					format: null
 				}],
 				grid: {
 					x: {
@@ -30,7 +32,8 @@
 					y: {
 						show: true,
 						color: '#C6CED3',
-						label: '#C1C1C1'
+						label: '#C1C1C1',
+						format: null
 					}
 				}
 			},
@@ -328,7 +331,7 @@
 						if (structure.data[0].length > 40 && settings.filter.mode == 'daily') { settings.filter.mode = 'weekly'; }
 						structure.filters.select('p[data-mode="daily"]').classed('PAhide', (structure.data[0].length > 60));
 						structure.filters.select('p[data-mode="monthly"]').classed('PAhide', (structure.data[0].length < 120));
-// 						if ( structure.data[0].length < 120 && settings.filter.mode == 'monthly' ) { settings.filter.mode = 'daily' };
+						if ( structure.data[0].length < 120 && settings.filter.mode == 'monthly' ) { settings.filter.mode = 'daily' };
 						
 						structure.filters.selectAll('p').classed('selected', false);
 						structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
@@ -627,7 +630,7 @@
 																	.attr('y', h - (i*spacing))
 																	.attr('text-anchor','end')
 																	.attr('fill', settings.config.grid.y.label)
-																	.text(structure.svg.grid.y.spacing[i])
+																	.html(structure.svg.grid.y.spacing[i].format(settings.config.grid.y.format))
 								structure.svg.label.y.elements.push(label);
 							}
 															
@@ -861,6 +864,16 @@
 					
 				},
 				
+				// change legend labels on the go
+				setLegendLabel: function(label, index) {
+					
+					var self = this;
+					settings.config.graph[index].legend = label;
+					structure.legend.select('p[data-index="'+ index +'"] > label').text(label);
+					
+				},
+				
+				
 				// action on circles
 				initCircles: function() {
 					var self = this;
@@ -875,10 +888,11 @@
 
 							// label and value
 							var index = $(this).parent('g').attr('data-index');
+							var value = $(this).attr('data-value');
 							
 							structure.tooltip
 								.style('color', settings.config.graph[index].color)
-								.select('span').text($(this).attr('data-value'));
+								.select('span').html(Number(value).format(settings.config.graph[index].format));
 
 							structure.tooltip
 								.select('label').text(settings.config.graph[index].legend);
@@ -1317,6 +1331,15 @@
 					
 				},
 				
+				// change legend labels on the go
+				setLegendLabel: function(label, index) {
+					
+					var self = this;
+					settings.config.graph[index].legend = label;
+					structure.legend.select('p[data-index="'+ index +'"] > label').text(label);
+					
+				},				
+				
 				// tooltip
 				initRects: function() {
 					var self = this;
@@ -1753,6 +1776,15 @@
 					
 				},
 				
+				// change legend labels on the go
+				setLegendLabel: function(label, index) {
+					
+					var self = this;
+					settings.config.graph[index].legend = label;
+					structure.legend.select('p[data-index="'+ index +'"] > label').text(label);
+					
+				},
+				
 				// tooltip
 				initRects: function() {
 					var self = this;
@@ -1994,6 +2026,12 @@
 			
 		}
 		
+		graph.setLegendLabel = function(label, index) {
+			
+			MODE[settings.mode].setLegendLabel(label, index);
+		
+		}
+		
 		function getRandomColor() {
 			return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
 		}
@@ -2068,20 +2106,20 @@
 				value: 0,
 				format: {
 					decimals: 0,	
-					kSeparator: ',',
-					dSeparator: '.',
-					prefix: '',
-					suffix: ''
+					decimal: ',',
+					thousand: '',
+					before: '',
+					after: ''
 				}
 			},
 			diff: {
 				value: null,
 				format: {
 					decimals: 0,	
-					kSeparator: '',
-					dSeparator: '',
-					prefix: '',
-					suffix: ''
+					decimal: ',',
+					thousand: '',
+					before: '',
+					after: ''
 				}
 			},
 			icon: null
@@ -2134,14 +2172,14 @@
 			  var el = $(this).text('0');
 	
 			  // backup
-				var timer = setTimeout(function(){ el.text( formatNumber(el.attr('data-value')*1, el.attr('data-type')) ); }, time+10);
+				var timer = setTimeout(function(){ el.html( formatNumber(el.attr('data-value')*1, el.attr('data-type')) ); }, time+10);
 	
 			  $({ c:0 }).animate({ c: el.attr('data-value') }, {
 			    duration: time,
 			    step: function () {
 				    var v = this.c;
 				    if (v == el.attr('data-value')) { clearInterval(timer); }
-			      el.text(formatNumber(v, el.attr('data-type')));
+			      el.html(formatNumber(v, el.attr('data-type')));
 			    }
 			  });
 			  
@@ -2151,9 +2189,7 @@
 		
 		function formatNumber(number, type) {
 			
-			format = (type == undefined || type != 'main') ? settings.diff.format : settings.main.format;
-			var x = number.format(format.decimals, format.kSeparator, format.dSeparator)			
-			return format.prefix + x + format.suffix;
+			return number.format((type == undefined || type != 'main') ? settings.diff.format : settings.main.format);
 			
 		}
 		
@@ -2170,9 +2206,10 @@ String.prototype.capitalizeFirstLetter = function() { return this.charAt(0).toUp
 
 // Format number
 // start from http://stackoverflow.com/questions/149055/how-can-i-format-numbers-as-money-in-javascript
-Number.prototype.format = function(n, s, c) {
-    var re = '\\d(?=(\\d{3})+' + (n > 0 ? '\\D' : '$') + ')',
-        num = this.toFixed(Math.max(0, ~~n));
-    return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), '$&' + (s || ','));
-};
-
+Number.prototype.format = function(settings) {
+	if (!settings) { return this.valueOf(); }
+	var re = '\\d(?=(\\d{3})+' + (settings.decimals > 0 ? '\\D' : '$') + ')',
+      num = this.toFixed(Math.max(0, ~~settings.decimals)),
+			formatted = (settings.decimal ? num.replace('.', settings.decimal) : num).replace(new RegExp(re, 'g'), '$&' + (settings.thousand || ''));
+	return (settings.before || '') + formatted + (settings.after || '');
+}

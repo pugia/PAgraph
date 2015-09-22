@@ -48,6 +48,12 @@
 		<div class="graph"></div>
 		<p class="description">Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
 	</div>
+
+	<div class="widget" id="w5">
+		<h3>Vestibulum Purus</h3>
+		<div class="graph"></div>
+		<p class="description">Cras mattis consectetur purus sit amet fermentum.</p>
+	</div>
 	
 	<script>	
 	
@@ -59,7 +65,10 @@
 				value: 4123
 			},
 			diff: {
-				value: 12
+				value: 12,
+				format: {
+					after: '<small>%</small>'
+				}
 			}
 		});
 
@@ -67,12 +76,15 @@
 			main: {
 				value: 346,
 				format: {
-					prefix: '$ ',
-					suffix: 'k'
+					before: '$ ',
+					after: 'k'
 				}
 			},
 			diff: {
-				value: -26
+				value: -26,
+				format: {
+					after: '%'
+				}
 			}
 		});
 
@@ -89,6 +101,12 @@
 				format: {
 					decimals: 2
 				}
+			}
+		});
+
+		$('#w5 > div.graph').PAcounter({
+			main: {
+				value: 12345,
 			}
 		});
 		

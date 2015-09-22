@@ -65,7 +65,7 @@
 			config: {
 				graph: [{
 					color: '#88B8C4',
-					legend: 'Main metric'
+					legend: 'Metric 1'
 				}, {
 					color: '#808E96',
 					legend: 'Compare metric'
@@ -100,6 +100,9 @@
 				var div = $(this).parent('ul').parent('div');
 				div.find('label').text($(this).text());
 				var index = div.index() == 0 ? 0 : 1;
+				
+				graph.setLegendLabel($(this).text(), index);
+				
 				var url = null;
 				switch ($(this).attr('class')) {
 					

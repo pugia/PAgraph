@@ -1,14 +1,14 @@
 {
-	"name": "PAgraph",
-	"description": "jQuery Plugin for D3.js graph",
-	"version": "0.0.1",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/pugia/PAgraph.git"
-	},
-	"dependencies": {
-		"jquery": "^1.7.2",
-		"d3": "^3.5.0"
-	}
+  "name": "PAgraph",
+  "description": "jQuery Plugin for D3.js graph",
+  "version": "0.0.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pugia/PAgraph.git"
+  },
+  "dependencies": {
+    "d3": "^3.5.0",
+    "jquery": "^1.7.2"
+  }
 }

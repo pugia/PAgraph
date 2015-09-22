@@ -347,7 +347,7 @@
 		"fileType": 1,
 		"ieCompatibility": 1,
 		"ignore": 0,
-		"ignoreWasSetByUser": 0,
+		"ignoreWasSetByUser": 1,
 		"inputAbbreviatedPath": "\/src\/css\/PAgraph.less",
 		"outputAbbreviatedPath": "\/dist\/css\/PAgraph.min.css",
 		"outputPathIsOutsideProject": 0,

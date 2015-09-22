@@ -25,15 +25,7 @@
 	
 	<h1>Mode: history</h1>
 	
-	<div id="graph_0" style="height: 500px; width: 1000px">
-<!--
-		<div class="PAfilters">
-			<p data-mode="daily">Daily</p>
-			<p data-mode="weekly">Weekl</p>
-			<p data-mode="monthly">Monthly</p>
-		</div>
--->
-	</div>
+	<div id="graph_0" style="height: 500px; width: 1000px"></div>
 	
 	<div style="position: absolute; right: 0; top: 0; padding: 10px;">
 		<button id="load7">Load 7</button><br/>
@@ -56,11 +48,21 @@
 			config: {
 				graph: [{
 					color: '#88B8C4',
-					legend: 'Main metric'
+					legend: 'Main metric',
+					format: {
+						after: 'k'
+					}
 				}, {
 					color: '#808E96',
 					legend: 'Compare metric'
-				}]
+				}],
+				grid: {
+					y: {
+						format: {
+							decimals: 2
+						}
+					}
+				}
 			}
 		});
 		
