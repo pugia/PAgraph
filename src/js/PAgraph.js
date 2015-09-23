@@ -2097,21 +2097,13 @@
 			main: {
 				value: 0,
 				format: {
-					decimals: 0,	
-					decimal: ',',
-					thousand: '',
-					before: '',
-					after: ''
+					decimals: 0
 				}
 			},
 			diff: {
 				value: null,
 				format: {
-					decimals: 0,	
-					decimal: ',',
-					thousand: '',
-					before: '',
-					after: ''
+					decimals: 0
 				}
 			},
 			icon: null
