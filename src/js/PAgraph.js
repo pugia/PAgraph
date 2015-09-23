@@ -2003,14 +2003,12 @@
 			MODE[settings.mode].removeCompare();
 			
 		}
-
-		graph.applyFilter = function(data, filter) {
+		
+		graph.setLegendLabel = function(label, index) {
 			
-			if (settings.mode != 'history') return;
-			if (typeof settings.preFetch == 'function') { var data = settings.preFetch(data); }
-			MODE[settings.mode].applyFilterToData(data, filter);
-			
-		};
+			MODE[settings.mode].setLegendLabel(label, index);
+		
+		}		
 		
 		graph.setOpeningTime = function(open, close) {
 			
@@ -2025,13 +2023,7 @@
 			MODE['daytime'].removeOpeningTime();
 			
 		}
-		
-		graph.setLegendLabel = function(label, index) {
-			
-			MODE[settings.mode].setLegendLabel(label, index);
-		
-		}
-		
+				
 		function getRandomColor() {
 			return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
 		}
@@ -2156,11 +2148,12 @@
 		}
 		
 		if (settings.icon) {
-		$.get(settings.icon, function(svg) {
-				iconCounter.append($(svg));
+			var img = $('<img src="'+ settings.icon +'" />');
+			img.load(function() {
+				iconCounter.append(img);
 				animateNumber(graph.find('span.PAcount'), 1000);
 				graph.removeClass('PAinactive');
-			}, 'text');
+			});
 		} else {
 			animateNumber(graph.find('span.PAcount'), 1000);
 			graph.removeClass('PAinactive');
