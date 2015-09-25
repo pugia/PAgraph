@@ -1978,8 +1978,8 @@
 					
 				}
 							
-			},
-						
+			}
+									
 		}
 		
 		MODE[settings.mode].init();
@@ -2069,17 +2069,7 @@
 			return result;
 			
 		}
-		
-		function getMaxValues(data, k) {
-			if (k == undefined) { k = 'value'; }
-			return Math.max.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));		
-		}
-	
-		function getMinValues(data, k) {
-			if (k == undefined) { k = 'value'; }
-			return Math.min.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));		
-		}
-		
+				
 		function debug() {
 			if (settings.debug) { console.debug(arguments);	}
 		}
@@ -2183,6 +2173,241 @@
 	};
 	
 	
+	// custom
+  $.fn.PAcustom = function( options ) {
+		
+		// default options
+    var settings = $.extend(true, {
+	    mode: 'horizontal_bar',
+			data: [],
+			main: {
+				color: '#808F96',
+				format: null
+			},
+			compare: {
+				color: '#88b8c4',
+				format: null
+			}
+		}, options );
+		
+		var graph = this;
+				
+		graph.addClass('PAcustomContainer');
+		
+		MODE = {
+			
+			// classic horizontal bar graph
+			horizontal_bar: {
+				
+				init: function() {
+					
+					var self = this;
+					
+					graph.addClass('PACustomHBars');
+					
+					var ul = d3.selectAll(graph.get()).append('ul');
+					
+					// params to zoom on the data
+					var coeff = Math.abs(getMaxValues(data) - getMinValues(data)) / 90;
+							
+					for (i in settings.data) {
+						
+						var li = ul.append('li');
+						
+						// label
+						li.append('label')
+							.text(settings.data[i].label);
+						
+						// bar
+						li.append('div').append('span')
+																			.attr('data-perc', (settings.data[i].value / coeff))
+																			.style('background', settings.main.color)
+						
+						// value
+						li.append('span').html(Number(settings.data[i].value).format(settings.main.format))
+														 .attr('data-value', settings.data[i].value);;
+									
+					}
+					
+					setTimeout(function() {
+						self.animate();
+					}, 100);
+					
+					
+				},
+				
+				animate: function() {
+					
+					graph.find('span[data-perc]').each(function() {
+						$(this).width(parseInt($(this).attr('data-perc'))+'%')
+					})
+					
+					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100);
+					
+				}
+				
+			},
+			
+			gender_distribution_v1: {
+				
+				female_icon: '<svg viewBox="0 0 58 58"><g fill="none"><rect fill="#808F96" x="0" y="0" width="58" height="58" rx="40"></rect><circle stroke="#FFFFFF" stroke-width="2" cx="29" cy="29" r="26.88"></circle><path d="M34.52496,40.79136 C34.49584,40.46992 34.47456,39.9536 34.45776,39.41824 C39.32416,38.91984 42.73792,37.7528 42.73792,36.39312 C42.72448,36.39088 42.7256,36.33712 42.7256,36.31472 C39.08784,33.03648 45.87952,9.73936 33.23584,10.212 C32.44176,9.54 31.05184,8.94304 29.05824,8.94304 C11.93232,10.23888 19.50464,32.23904 15.60256,36.392 C15.60032,36.39312 15.59696,36.39312 15.59472,36.39312 C15.59472,36.39536 15.59584,36.3976 15.59584,36.39984 C15.59584,36.40096 15.59472,36.40208 15.59472,36.40208 C15.59472,36.40208 15.59584,36.40208 15.59696,36.4032 C15.61264,37.73488 18.91104,38.88064 23.63632,39.39136 C23.62288,39.71616 23.59488,40.11824 23.53328,40.79136 C22.09744,44.652 14.62032,44.89392 10.4752,48.7344 C12.74096,50.71232 20.63584,56.02336 29.10528,56.02336 C37.57472,56.02336 44.60832,52.00368 47.4128,48.6224 C43.25872,44.89056 35.94624,44.61392 34.52496,40.79136 L34.52496,40.79136 Z" fill="#FFFFFF"></path></g></svg>',
+				male_icon: '<svg viewBox="0 0 58 58"><g fill="none"><rect fill="#88b8c4" x="0" y="0" width="58" height="58" rx="40"></rect><circle stroke="#FFFFFF" stroke-width="2" cx="29" cy="29" r="26.88"></circle><path d="M34.52496,40.79136 C34.36144,38.98592 34.42416,37.72592 34.42416,36.07616 C35.24176,35.6472 36.70672,32.91216 36.95424,30.6016 C37.59712,30.54896 38.61072,29.92176 38.90752,27.44544 C39.06768,26.116 38.43152,25.36784 38.044,25.13264 C39.09008,21.98656 41.26288,12.25376 34.02544,11.248 C33.28064,9.93984 31.37328,9.27792 28.89472,9.27792 C18.97824,9.46048 17.78208,16.76624 19.956,25.13264 C19.5696,25.36784 18.93344,26.116 19.09248,27.44544 C19.3904,29.92176 20.40288,30.54896 21.04576,30.6016 C21.29216,32.91104 22.81536,35.6472 23.6352,36.07616 C23.6352,37.72592 23.6968,38.98592 23.53328,40.79136 C22.12096,44.58816 14.86784,44.88496 10.68352,48.54624 C15.05824,52.9512 22.14784,56.10176 29.62944,56.10176 C37.11104,56.10176 45.90528,50.19488 47.36912,48.5832 C43.21056,44.88832 35.94064,44.6016 34.52496,40.79136 L34.52496,40.79136 Z" fill="#FFFFFF"></path></g></svg>',
+				donutContainer: null,
+				donutForeground: null,				
+				
+				init: function() {
+					
+					var self = this;
+					graph.addClass('PACustomGender1');
+					
+					self.structure();
+					
+					self.animate();
+					
+				},
+				
+				structure: function() {
+					
+					var self = this;
+					
+					self.donutContainer = d3.selectAll(graph.get()).append('div')
+																												 .classed('PAdonut', true);
+					var dataContainer = d3.selectAll(graph.get()).append('div')
+																											 .classed('PAdata', true);
+					// male
+					var pMale = dataContainer.append('p')
+					pMale.html(self.male_icon)
+							 .append('span')
+							   .attr('data-value', settings.data[0].value)
+							   .html(Number(settings.data[0].value).format(settings.main.format))
+
+					// female
+					var pFemale = dataContainer.append('p')
+					pFemale.html(self.female_icon)
+								 .append('span')
+								   .attr('data-value', settings.data[1].value)
+								   .html(Number(settings.data[1].value).format(settings.compare.format))
+
+					pMale.select('rect').style('fill', settings.main.color);
+					pFemale.select('rect').style('fill', settings.compare.color);
+					
+					// donut
+					var τ = 2 * Math.PI;
+					var arc = d3.svg.arc()
+											    .innerRadius(65)
+											    .outerRadius(65)
+											    .startAngle(0);
+					var svg = self.donutContainer.append("svg")
+					    .attr("width", 150)
+					    .attr("height", 150)
+								.append("g")
+								.attr("transform", "translate(" + 75 + "," + 75 + ")")
+			    		
+					var background = svg.append("path")
+												    .datum({endAngle: τ})
+												    .style('stroke', settings.main.color)
+												    .style('stroke-width', 15)
+													    .attr("d", arc)
+													    
+					// Add the foreground arc in orange, currently showing 12.7%.
+					self.donutForeground = svg.append("path")
+					    .datum({endAngle: 0 })
+					    .style('stroke', settings.compare.color)
+					    .style('stroke-width', 15)
+					    .style('opacity', 0)
+					    .style('stroke-linejoin', 'round')
+					    .attr("d", arc);	
+					
+				},
+				
+				animate: function() {
+					
+					var self = this;
+					
+					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100);					
+					
+					var τ = 2 * Math.PI;
+					var arc = d3.svg.arc()
+											    .innerRadius(65)
+											    .outerRadius(65)
+											    .startAngle(0);
+
+					self.donutForeground.style('opacity', 1)
+										.transition()
+							      .duration(1000)
+							      .call(arcTween, settings.data[1].value / 100 * τ);
+							      
+					// see http://bl.ocks.org/mbostock/5100636
+					function arcTween(transition, newAngle) {
+					  transition.attrTween("d", function(d) {
+					    var interpolate = d3.interpolate(d.endAngle, newAngle);
+					    return function(t) {
+					      d.endAngle = interpolate(t);
+					      return arc(d);
+					    };
+					  });
+					}
+					
+				}
+				
+				
+				
+			}
+			
+		}
+
+	
+
+		function animateNumber(selector, time, format, wait) {
+
+		  selector.text('0');
+			
+			setTimeout(function() {
+
+				selector.each(function () {
+					
+					var el = $(this);
+					
+				  // backup
+					var timer = setTimeout(function(){ el.html( Number(el.attr('data-value')*1).format(format) ); }, time+10);
+		
+				  $({ c:0 }).animate({ c: el.attr('data-value') }, {
+				    duration: time,
+				    step: function () {
+					    var v = this.c;
+					    if (v == el.attr('data-value')) { clearInterval(timer); }
+				      el.html(v.format(format));
+				    }
+				  });
+				  
+				});
+			
+			}, wait || 1);
+
+			
+		}
+				
+		MODE[settings.mode].init();
+		
+		return graph;
+		
+	};
+	
+	function getMaxValues(data, k) {
+		if (k == undefined) { k = 'value'; }
+		return Math.max.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));		
+	}
+
+	function getMinValues(data, k) {
+		if (k == undefined) { k = 'value'; }
+		return Math.min.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));		
+	}
+	
+	function getSumValues(data, k) {
+		if (k == undefined) { k = 'value'; }
+		var r = 0; for (i in data) { r += data[i][k]; }
+		return r;
+	}
 	
 
 }( jQuery ));
