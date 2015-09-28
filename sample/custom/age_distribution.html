@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<title>PAgraph | age distribution</title>
+
+	<link href="../style.css" rel="stylesheet" type="text/css">
+
+	<script src="../../node_modules/jquery/dist/jquery.min.js"></script>						
+	<script src="../../node_modules/d3/d3.min.js" charset="utf-8"></script>
+
+<!--
+	<link href="../../dist/css/PAgraph.min.css?4" rel="stylesheet" type="text/css">
+	<script src="../../dist/js/PAgraph.min.js?4"></script>
+-->
+	
+	<link href="../../src/css/PAgraph.css" rel="stylesheet" type="text/css">
+	<script src="../../src/js/PAgraph.js"></script>
+			
+</head>
+<body>	
+	
+	<a href="../index.html">&laquo; Back to examples list</a>
+	
+	<h1>Mode: age distribution</h1>
+	
+	<div id="graph_0" style="height: 300px; width: 500px" class="PACustomHBars"></div>
+	
+	<script>	
+	// 44,50 + 20,64 + 9,47 + 7,5 + 6,4 + 3,78 + (2,57*3)
+	var data = [
+		{
+			label: '< 20',
+			value: {
+				m: 25.5,
+				f: 19
+			}
+		},
+		{
+			label: '20 - 25',
+			value: {
+				m: 12.5,
+				f: 8.14
+			}
+		},
+		{
+			label: '25 - 30',
+			value: {
+				m: 5.2,
+				f: 4.27
+			}
+		},
+		{
+			label: '30 - 35',
+			value: {
+				m: 3.3,
+				f: 4.2
+			}
+		},
+		{
+			label: '35 - 40',
+			value: {
+				m: 4.5,
+				f: 1.9
+			}
+		},
+		{
+			label: '40 - 45',
+			value: {
+				m: 3.12,
+				f: 0.66
+			}
+		},
+/*
+		{
+			label: '45 - 50',
+			value: {
+				m: 3.3,
+				f: 4.2
+			}
+		},
+*/
+		{
+			label: '> 50',
+			value: {
+				m: 3.3,
+				f: 4.2
+			}
+		},
+	];
+	
+	$(function() {
+		
+		var graph = $('#graph_0').PAcustom( {
+			mode: 'age_distribution',
+			data: data.reverse(),
+			main: {
+				format: {
+					decimals: 1,
+					after: '<small>%</small>'
+				}
+			}
+		} );
+		
+		
+	})
+	
+	</script>
+	
+</body>
+
+</html>

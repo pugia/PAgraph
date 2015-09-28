@@ -2181,11 +2181,11 @@
 	    mode: 'horizontal_bar',
 			data: [],
 			main: {
-				color: '#808F96',
+				color: '#88b8c4',
 				format: null
 			},
 			compare: {
-				color: '#88b8c4',
+				color: '#808f96',
 				format: null
 			}
 		}, options );
@@ -2352,26 +2352,134 @@
 				
 				
 				
-			}
+			},
+			
+			age_distribution: {
+				
+				male_icon: '<svg viewBox="0 0 17 15"><path d="M14.0801524,14.4567109 C15.7050178,12.9316006 16.7199993,10.764331 16.7199993,8.35999966 C16.7199993,3.74289934 12.9771,0 8.35999966,0 C3.74289934,0 0,3.74289934 0,8.35999966 C0,10.7678635 1.01796621,12.9379685 2.64701267,14.4634289 C2.65246531,14.4552179 2.65791339,14.4471119 2.66335656,14.4391127 C3.96472984,13.3004111 6.22053641,13.2081028 6.65978473,12.0272528 C6.71064139,11.4657395 6.69148306,11.0738645 6.69148306,10.5607696 C6.43650307,10.4273579 5.96276976,9.57637961 5.88613642,8.8581163 C5.6861931,8.84174464 5.37129978,8.64667798 5.27864312,7.87651301 C5.22917979,7.46304136 5.42703311,7.2303547 5.54720811,7.15720471 C4.87109313,4.55515481 5.24311312,2.28297657 8.32725632,2.22619824 C9.09811796,2.22619824 9.6913296,2.43206323 9.92297126,2.83891655 C12.1739012,3.15171987 11.4981345,6.17873641 11.1727912,7.15720471 C11.2933145,7.2303547 11.4911679,7.46304136 11.4413562,7.87651301 C11.3490479,8.64667798 11.0338062,8.84174464 10.8338629,8.8581163 C10.7568812,9.57672794 10.3012612,10.4273579 10.0469779,10.5607696 C10.0469779,11.0738645 10.0274713,11.4657395 10.0783279,12.0272528 C10.5186212,13.2122828 12.7796528,13.3014561 14.0730144,14.4506077 C14.0753917,14.4526194 14.077771,14.4546538 14.0801524,14.4567109 Z"></path></svg>',
+				female_icon: '<svg viewBox="0 0 17 15"><path d="M14.0799816,14.4559844 C15.7049466,12.9309593 16.7199993,10.7637549 16.7199993,8.35948679 C16.7199993,3.74266972 12.9771,0 8.35999966,0 C3.74289934,0 0,3.74266972 0,8.35948679 C0,10.7645778 1.0157477,12.9324428 2.64168654,14.4575501 C3.93892102,13.3005812 6.21815684,13.2138769 6.65978473,12.026515 C6.67894306,11.8171795 6.68765139,11.6921355 6.69183139,11.5911251 C5.22221312,11.4322948 4.19637149,11.0759717 4.19323649,10.6583457 C5.40682978,9.36680495 3.05174821,2.52491332 8.37811299,2.1219164 C8.9981463,2.1219164 9.43042795,2.30756667 9.67739627,2.51655384 C13.6097311,2.36956619 11.4974379,9.61480306 12.6326561,10.658694 C12.6326561,11.0815447 11.5709362,11.4444857 10.0574279,11.5994845 C10.0626529,11.7659777 10.0692713,11.9265495 10.0783279,12.026515 C10.5196091,13.2132765 12.7868802,13.3010401 14.0799816,14.4559844 Z"></path></svg>',				
+				
+				init: function() {
+					
+					var self = this;
+					
+					graph.addClass('PACustomAgeDist');
+					
+					var ul = d3.selectAll(graph.get()).append('ul');
+					
+					// detail male/female data
+					var detail = d3.selectAll(graph.get()).append('div').classed('PAdetail hide', true);
+					var detailM = detail.append('p').classed('PAmale', true).html(self.male_icon).style('color', settings.main.color);
+					var datailMT = detailM.append('label')
+					var detailF = detail.append('p').classed('PAfemale', true).html(self.female_icon).style('color', settings.compare.color);
+					var detailFT = detailF.append('label')
+					
+					// params to zoom on the data
+					var max = 0, min = 100;
+					for (i in settings.data) {
+						var v = settings.data[i].value.m + settings.data[i].value.f;
+						max = v > max ? v : max;
+						min = v < min ? v : min;
+					}					
+					var coeff = Math.abs(max - min) / 80;
+							
+					for (i in settings.data) {
+						
+						var li = ul.append('li')
+											.attr('data-male', settings.data[i].value.m)
+											.attr('data-female', settings.data[i].value.f)
+						var perc = settings.data[i].value.m + settings.data[i].value.f;
+						if (perc > 0) {
+						
+							// label
+							li.append('label')
+								.text(settings.data[i].label)
+							
+							// bar
+							var bar  = li.append('div').append('span')
+																				.attr('data-perc', perc / coeff)
+																				.style('background', settings.main.color)
+
+							// female bar
+							var percf = settings.data[i].value.f / (settings.data[i].value.m + settings.data[i].value.f);
+							bar.append('span')
+								.classed('PAhide', true)
+								.attr('data-perc', percf * 100)
+								.style('background', settings.compare.color)
+							
+							// value
+							li.append('span').html(Number(settings.data[i].value).format(settings.main.format))
+															 .attr('data-value', perc);;
+															 															 
+						}
+															
+					}
+					
+					graph.on('click', 'li', function() {
+						
+						var fbar = $(this).find('span > span');
+						graph.find('li span > span').not(fbar).addClass('PAhide');
+						fbar.toggleClass('PAhide');
+						
+						graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length == 0)
+						
+						var m = $(this).attr('data-male') * 1
+						var f = $(this).attr('data-female') * 1
+						var percm = m / (m+f) * 100;	
+
+						datailMT.attr('data-value', percm);
+						detailFT.attr('data-value', 100 - percm);
+						
+						animateNumber(graph.find('div.PAdetail label[data-value]'), 1000, settings.main.format, null , true);
+						
+					})
+					
+					setTimeout(function() {
+						self.animate();
+					}, 100);
+					
+					
+				},
+				
+				animate: function() {
+					
+					graph.find('span[data-perc]').each(function() {
+						$(this).width(parseInt($(this).attr('data-perc'))+'%')
+					})
+					
+					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100);
+					
+				}
+				
+			},
+			
 			
 		}
 
 	
 
-		function animateNumber(selector, time, format, wait) {
-
-		  selector.text('0');
+		function animateNumber(selector, time, format, wait, startFromActual) {
+			
+			if (!startFromActual) {
+			  selector.html(Number(0).format(format));
+			}
 			
 			setTimeout(function() {
-
+								
 				selector.each(function () {
 					
 					var el = $(this);
 					
+					var start = 0;
+					if (startFromActual) {
+						start = (parseFloat(el.text())) || 0;
+					}
+
+					
 				  // backup
 					var timer = setTimeout(function(){ el.html( Number(el.attr('data-value')*1).format(format) ); }, time+10);
 		
-				  $({ c:0 }).animate({ c: el.attr('data-value') }, {
+				  $({ c:start}).animate({ c: el.attr('data-value') }, {
 				    duration: time,
 				    step: function () {
 					    var v = this.c;
