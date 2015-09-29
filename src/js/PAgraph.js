@@ -1712,6 +1712,7 @@
 					
 					for (i in structure.svg.graph.elements[index].elements.area) {
 						
+						var v = data[i] ? data[i].value : 0;
 						var y = parseInt(h - ((data[i].value - structure.svg.grid.y.spacing[0])  * spacingY ));						
 						
 						structure.svg.graph.elements[index].elements.area[i].transition()
