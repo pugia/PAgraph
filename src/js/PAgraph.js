@@ -2382,7 +2382,7 @@
 						max = v > max ? v : max;
 						min = v < min ? v : min;
 					}					
-					var coeff = Math.abs(max - min) / 80;
+					var coeff = Math.abs(max - min) / 50;
 							
 					for (i in settings.data) {
 						
@@ -2402,20 +2402,20 @@
 																				.style('background', settings.main.color)
 
 							// female bar
-							var percf = settings.data[i].value.f / (settings.data[i].value.m + settings.data[i].value.f);
+							var percf = settings.data[i].value.f / (perc);
 							bar.append('span')
 								.classed('PAhide', true)
 								.attr('data-perc', percf * 100)
 								.style('background', settings.compare.color)
 							
 							// value
-							li.append('span').html(Number(settings.data[i].value).format(settings.main.format))
-															 .attr('data-value', perc);;
+							li.append('span').html(Number(perc).format(settings.main.format))
+															 .attr('data-value', perc);
 															 															 
 						}
-															
+						
 					}
-					
+																								
 					graph.on('click', 'li', function() {
 						
 						var fbar = $(this).find('span > span');
@@ -2433,23 +2433,92 @@
 						
 						animateNumber(graph.find('div.PAdetail label[data-value]'), 1000, settings.main.format, null , true);
 						
-					})
-					
-					setTimeout(function() {
-						self.animate();
-					}, 100);
-					
+					})					
 					
 				},
 				
-				animate: function() {
+				animate: function(data) {
+					
+					console.log('animate');
+					
+					// params to zoom on the data
+					var max = 0, min = 100;
+					for (i in data) {
+						var v = data[i].value.m + data[i].value.f;
+						max = v > max ? v : max;
+						min = v < min ? v : min;
+					}					
+					var coeff = Math.abs(max - min) / 50;
+					
+					// hide unused rows
+					d3.selectAll(graph.get()).selectAll('li:nth-child(n+'+ parseInt(data.length+1) +')')
+						.transition()
+						.duration(300)
+							.style('opacity', '0')
+							.delay(300)
+							.remove();
+					
+					var lis = d3.selectAll(graph.get()).selectAll('ul li');
+					
+					for (i in data) {
+						
+						var element = d3.select(lis[0][i]);
+						var perc = data[i].value.m + data[i].value.f;
+						
+						// create missing rows
+						if (!element[0][0]) {
+
+							var element = d3.selectAll(graph.get()).select('ul').append('li')
+
+							if (perc > 0) {
+							
+								// label
+								element.append('label')
+								
+								// bar
+								var bar  = element.append('div').append('span').style('background', settings.main.color)
+	
+								// female bar
+								var percf = data[i].value.f / (data[i].value.m + data[i].value.f);
+								bar.append('span')
+									.classed('PAhide', true)
+									.style('background', settings.compare.color)
+								
+								// value
+								element.append('span').html(Number(perc).format(settings.main.format))
+																 															 
+							}
+							
+						}
+												
+						element
+							.attr('data-male', data[i].value.m)
+							.attr('data-female', data[i].value.f)
+						
+						element
+							.select('label').text(data[i].label);
+
+						var percf = data[i].value.f / (perc)  * 100;
+						element
+							.select('div > span').attr('data-perc', perc / coeff)
+							.select('span')
+								.classed('PAhide', true)
+								.attr('data-perc', percf)
+							
+						element
+							.select('span[data-value]').attr('data-value', perc);
+							
+						graph.find('div.PAdetail').addClass('hide');
+							
+						
+					}
+					
 					
 					graph.find('span[data-perc]').each(function() {
 						$(this).width(parseInt($(this).attr('data-perc'))+'%')
 					})
-					
-					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100);
-					
+					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, null, true);
+											
 				}
 				
 			},
@@ -2497,6 +2566,10 @@
 		}
 				
 		MODE[settings.mode].init();
+		
+		graph.animate = function(data) {
+			MODE[settings.mode].animate(data);
+		}
 		
 		return graph;
 		

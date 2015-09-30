@@ -29,9 +29,11 @@
 		<div id="graph_0" class="PACustomHBars"></div>
 	</div>
 	
+	<button id="d0">data 0</button>
+	<button id="d1">data 1</button>
+	
 	<script>	
-	// 44,50 + 20,64 + 9,47 + 7,5 + 6,4 + 3,78 + (2,57*3)
-	var data = [
+	var data0 = [
 		{
 			label: '< 20',
 			value: {
@@ -53,6 +55,7 @@
 				f: 4.27
 			}
 		},
+/*
 		{
 			label: '30 - 35',
 			value: {
@@ -67,6 +70,7 @@
 				f: 1.9
 			}
 		},
+*/
 		{
 			label: '40 - 45',
 			value: {
@@ -74,15 +78,58 @@
 				f: 0.66
 			}
 		},
-/*
 		{
-			label: '45 - 50',
+			label: '> 50',
 			value: {
 				m: 3.3,
 				f: 4.2
 			}
 		},
-*/
+	];
+
+	var data1 = [
+		{
+			label: '< 20',
+			value: {
+				m: 5.5,
+				f: 19
+			}
+		},
+		{
+			label: '20 - 25',
+			value: {
+				m: 17.5,
+				f: 8.14
+			}
+		},
+		{
+			label: '25 - 30',
+			value: {
+				m: 10.2,
+				f: 4.27
+			}
+		},
+		{
+			label: '30 - 35',
+			value: {
+				m: 3.3,
+				f: 4.2
+			}
+		},
+		{
+			label: '35 - 40',
+			value: {
+				m: 4.5,
+				f: 6.9
+			}
+		},
+		{
+			label: '40 - 45',
+			value: {
+				m: 3.12,
+				f: 5.66
+			}
+		},
 		{
 			label: '> 50',
 			value: {
@@ -94,16 +141,26 @@
 	
 	$(function() {
 		
+		data0.reverse();
+		data1.reverse();
+		
 		var graph = $('#graph_0').PAcustom( {
 			mode: 'age_distribution',
-			data: data.reverse(),
+			data: data0,
 			main: {
 				format: {
 					decimals: 1,
 					after: '<small>%</small>'
 				}
 			}
-		} );
+		});
+		
+		$('button#d0').on('click', function() {
+			graph.animate(data0);
+		})
+		$('button#d1').on('click', function() {
+			graph.animate(data1);
+		})
 		
 		
 	})
