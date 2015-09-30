@@ -10,13 +10,13 @@
 	<script src="../../node_modules/jquery/dist/jquery.min.js"></script>						
 	<script src="../../node_modules/d3/d3.min.js" charset="utf-8"></script>
 
+<!--
 	<link href="../../dist/css/PAgraph.min.css?4" rel="stylesheet" type="text/css">
 	<script src="../../dist/js/PAgraph.min.js?4"></script>
+-->
 	
-<!--
 	<link href="../../src/css/PAgraph.css" rel="stylesheet" type="text/css">
 	<script src="../../src/js/PAgraph.js"></script>
--->
 			
 </head>
 <body>	
@@ -30,10 +30,11 @@
 		<div id="graph_1"></div>
 	
 	</div>
-	
+	<button id="d0">data 0</button>
+	<button id="d1">data 1</button>
 	<script>	
 	
-	var data = [
+	var data0 = [
 		{
 			label: 'Male',
 			value: 32.5
@@ -43,6 +44,17 @@
 			value: 67.5
 		}
 	];
+
+	var data1 = [
+		{
+			label: 'Male',
+			value: 82.5
+		},
+		{
+			label: 'Female',
+			value: 17.5
+		}
+	];
 	
 	$(function() {
 		
@@ -50,7 +62,7 @@
 		
 		graph.PAcustom( {
 			mode: 'gender_distribution_v1',
-			data: data,
+			data: null,
 			main: {
 				format: {
 					decimals: 1,
@@ -63,6 +75,13 @@
 					after: '<small>%</small>'
 				}
 			}
+		})
+		
+		$('button#d0').on('click', function() {
+			graph.animate(data0);
+		})
+		$('button#d1').on('click', function() {
+			graph.animate(data1);
 		})
 				
 	})

@@ -2255,7 +2255,7 @@
 				male_icon: '<svg viewBox="0 0 58 58"><g fill="none"><rect fill="#88b8c4" x="0" y="0" width="58" height="58" rx="40"></rect><circle stroke="#FFFFFF" stroke-width="2" cx="29" cy="29" r="26.88"></circle><path d="M34.52496,40.79136 C34.36144,38.98592 34.42416,37.72592 34.42416,36.07616 C35.24176,35.6472 36.70672,32.91216 36.95424,30.6016 C37.59712,30.54896 38.61072,29.92176 38.90752,27.44544 C39.06768,26.116 38.43152,25.36784 38.044,25.13264 C39.09008,21.98656 41.26288,12.25376 34.02544,11.248 C33.28064,9.93984 31.37328,9.27792 28.89472,9.27792 C18.97824,9.46048 17.78208,16.76624 19.956,25.13264 C19.5696,25.36784 18.93344,26.116 19.09248,27.44544 C19.3904,29.92176 20.40288,30.54896 21.04576,30.6016 C21.29216,32.91104 22.81536,35.6472 23.6352,36.07616 C23.6352,37.72592 23.6968,38.98592 23.53328,40.79136 C22.12096,44.58816 14.86784,44.88496 10.68352,48.54624 C15.05824,52.9512 22.14784,56.10176 29.62944,56.10176 C37.11104,56.10176 45.90528,50.19488 47.36912,48.5832 C43.21056,44.88832 35.94064,44.6016 34.52496,40.79136 L34.52496,40.79136 Z" fill="#FFFFFF"></path></g></svg>',
 				donutContainer: null,
 				donutForeground: null,				
-				
+								
 				init: function() {
 					
 					var self = this;
@@ -2263,7 +2263,7 @@
 					
 					self.structure();
 					
-					self.animate();
+// 					self.animate();
 					
 				},
 				
@@ -2279,15 +2279,15 @@
 					var pMale = dataContainer.append('p')
 					pMale.html(self.male_icon)
 							 .append('span')
-							   .attr('data-value', settings.data[0].value)
-							   .html(Number(settings.data[0].value).format(settings.main.format))
+							   .attr('data-value', 0)
+							   .html(Number(0).format(settings.main.format))
 
 					// female
 					var pFemale = dataContainer.append('p')
 					pFemale.html(self.female_icon)
 								 .append('span')
-								   .attr('data-value', settings.data[1].value)
-								   .html(Number(settings.data[1].value).format(settings.compare.format))
+								   .attr('data-value', 0)
+								   .html(Number(0).format(settings.compare.format))
 
 					pMale.select('rect').style('fill', settings.main.color);
 					pFemale.select('rect').style('fill', settings.compare.color);
@@ -2321,11 +2321,14 @@
 					
 				},
 				
-				animate: function() {
+				animate: function(data) {
 					
 					var self = this;
 					
-					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100);					
+					graph.find('div.PAdata p:eq(0) > span').attr('data-value', data[0].value)
+					graph.find('div.PAdata p:eq(1) > span').attr('data-value', data[1].value)
+					
+					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);					
 					
 					var τ = 2 * Math.PI;
 					var arc = d3.svg.arc()
@@ -2336,7 +2339,7 @@
 					self.donutForeground.style('opacity', 1)
 										.transition()
 							      .duration(1000)
-							      .call(arcTween, settings.data[1].value / 100 * τ);
+							      .call(arcTween, data[1].value / 100 * τ);
 							      
 					// see http://bl.ocks.org/mbostock/5100636
 					function arcTween(transition, newAngle) {
