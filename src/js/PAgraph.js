@@ -1713,13 +1713,13 @@
 					for (i in structure.svg.graph.elements[index].elements.area) {
 						
 						var v = data[i] ? data[i].value : 0;
-						var y = parseInt(h - ((data[i].value - structure.svg.grid.y.spacing[0])  * spacingY ));						
+						var y = parseInt(h - ((v - structure.svg.grid.y.spacing[0])  * spacingY ));						
 						
 						structure.svg.graph.elements[index].elements.area[i].transition()
 																			    												.duration(internalSettings.graphAnimationTime)
 																			    												.attr('y', y)
 																			    												.attr('height', h-y)
-																			    												.attr('data-value', data[i].value)
+																			    												.attr('data-value', v)
 																			    												.ease(internalSettings.animateEasing)					
 					}
 										
