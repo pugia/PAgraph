@@ -2195,7 +2195,7 @@
 				
 		graph.addClass('PAcustomContainer');
 		
-		MODE = {
+		var MODE = {
 			
 			// classic horizontal bar graph
 			horizontal_bar: {
