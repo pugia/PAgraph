@@ -13,6 +13,8 @@
 				labels: ['daily', 'weekly', 'monthly']
 			},
 			config: {
+				graph: [],
+/*
 				graph: [{
 					color: '#88B8C4',
 					legend: 'metric',
@@ -22,6 +24,7 @@
 					legend: 'compare',
 					format: null
 				}],
+*/
 				grid: {
 					x: {
 						show: true,
@@ -164,7 +167,6 @@
 					
 					self.initGridX();
 					self.initGridY();
-					self.initGraph();
 					
 				},
 				
@@ -199,7 +201,6 @@
 					}					
 					
 				},
-				
 				initGridY: function() {
 					var self = this;
 					
@@ -229,10 +230,10 @@
 				},
 			
 				// create flat graph
-				initGraph: function() {
+				initGraph: function(color, legend, format) {
 					
 					var self = this;
-										
+															
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
@@ -245,6 +246,17 @@
 										
 					var index = structure.svg.graph.elements.length - 1;
 					structure.svg.graph.elements[index].group.attr('data-index', index);
+					
+					// create settings structure
+					var color = color || "#"+((1<<24)*Math.random()|0).toString(16);
+					var legend = legend || 'Graph '+index;
+					var format = format || null;
+
+					settings.config.graph.push({
+						color: color,
+						legend: legend,
+						format: format
+					});
 					
 					var elementsCount = structure.svg.grid.x.elements.length || 8;
 
@@ -290,7 +302,22 @@
 					return index;
 
 				},
-				
+
+				// action on legend
+				initLegend: function() {
+					
+					var self = this;
+					
+					graph.find('div.PAlegend')	
+						.addClass('PAhide')
+						.on('click', 'p[data-index]', function() {
+							var index = parseInt($(this).attr('data-index'));
+							self.moveOnFront(index);
+						})
+					
+					
+				},
+								
 				// create filters menu
 				initFilters: function() {
 
@@ -304,6 +331,7 @@
 					structure.filters.append('p').attr('data-mode', 'monthly').text(settings.filter.labels[2]);
 					
 					graph.find('div.PAfilters')
+						.addClass('PAhide')
 						.on('click', 'p[data-mode]', function() {
 
 							// control values
@@ -314,7 +342,98 @@
 					
 				},
 				
-				/* ANIMATE */				
+				/* ANIMATE */
+				setData: function(data, index) {
+					
+					var self = this;
+					var dfrd = $.Deferred();
+					var index = index || 0;
+					
+					// check data's scale
+					if (!data || data.length == 0) { dfrd.reject('no'); }
+					if (index != 0 && structure.data[0] && structure.data[0].length != data.length) { console.log('Compare metric has a different scale'); dfrd.reject('no'); }
+					else {
+					
+						// store data
+						structure.data[index] = data;
+						
+						// if it's first graph
+						if (index == 0) {
+							
+							// show filters based on elements number
+							structure.filters.classed('PAhide', true);
+							if (structure.data[0].length >= 28) {
+		
+								if (structure.data[0].length > 40 && settings.filter.mode == 'daily') { settings.filter.mode = 'weekly'; }
+								structure.filters.select('p[data-mode="daily"]').classed('PAhide', (structure.data[0].length > 60));
+								structure.filters.select('p[data-mode="monthly"]').classed('PAhide', (structure.data[0].length < 120));
+								if ( structure.data[0].length < 120 && settings.filter.mode == 'monthly' ) { settings.filter.mode = 'daily' };
+								
+								structure.filters.selectAll('p').classed('selected', false);
+								structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
+		
+								setTimeout(function() { structure.filters.classed('PAhide', false);	}, internalSettings.animateGridTime);
+		
+							} else {
+		
+								settings.filter.mode = 'daily';
+								structure.filters.selectAll('p').classed('selected', false);
+								structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
+		
+							}
+							
+						}
+	
+						self.computedData[index] = self.applyFilterToData(data, settings.filter.mode);
+						var allData = mergeAndClean(self.computedData);
+						structure.svg.grid.y.spacing = Yspacing(allData);
+						
+						self.flattenGraph(data, index, function() {
+							dfrd.resolve('ok');
+						});
+					
+					}
+					
+					return dfrd.promise();
+					
+				},
+				
+				draw: function() {
+					
+					var self = this;
+					
+					self.animateGridX(structure.data[0]);
+					self.animateLabelY(structure.data[0]);
+
+					setTimeout(function() {
+						for (i in structure.data) {
+							self.animateGraph(structure.data[i], i);
+						}
+					}, internalSettings.animateGridTime);					
+															
+				},
+				
+				// remove graph with index 
+				removeGraph: function(index) {
+					
+					var self = this;
+					var dfrd = $.Deferred();
+
+					self.flattenGraph([], index, function() {
+						structure.svg.graph.elements[index].group.remove();
+						structure.svg.graph.elements.splice(index,1);
+						graph.find('div.PAlegend > p[data-index='+index+']').remove()
+						structure.data[index] = null;
+						self.computedData[index] = null;
+						dfrd.resolve();
+					});
+					
+					return dfrd.promise();
+					
+				},
+				
+				
+				
 				// animate main graph
 				mainGraph: function(data) {
 					
@@ -418,6 +537,68 @@
 					setTimeout(function() {
 						self.animateGraph(data, index);
 					}, internalSettings.animateGridTime);					
+					
+				},
+				
+				// animate line and area
+				animateGraph: function(data, index) {
+					var self = this;
+					
+					if (!structure.svg.graph.elements[index]) return;
+					
+					var w = graph.width();
+					var h = graph.height();
+					var j = 0;
+					
+					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+
+					var spacingX = Math.floor(w / (data.length - 1) );
+					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
+					
+					// remove circles
+					structure.svg.graph.elements[index].group.selectAll('circle').classed('PAhide', 'true');
+					setTimeout(function() {
+						structure.svg.graph.elements[index].group.selectAll('circle.PAhide').remove();
+					}, 300);
+					
+					// animate line
+					var lineData = [];
+					for(var i in data) {
+						
+						var x = (i * spacingX)	+ j;
+						var y = parseInt(h - ((data[i].value - structure.svg.grid.y.spacing[0])  * spacingY ));
+																																																						
+						lineData.push({
+							'x': x,
+							'y': y
+						});
+						
+					}
+					structure.svg.graph.elements[index].elements.points.coords = lineData;
+					
+					var lineF = d3.svg.line()
+			                      .x(function(d) { return d.x; })
+			                      .y(function(d) { return d.y; })
+			                      .interpolate(internalSettings.graphLineInterpolation);
+			    var pathCoord = lineF(lineData);
+					// complete the area
+					pathCoordArea = pathCoord;
+					pathCoordArea += 'L'+ getMaxValues(lineData,'x') + ',' + h;
+					pathCoordArea += 'L'+ j + ',' + h;
+					pathCoordArea += 'L'+ j + ',' + lineData[0]['y'];
+			
+			    structure.svg.graph.elements[index].elements.area.transition()
+												    												.duration(internalSettings.graphAnimationTime)
+												    												.attr('d', pathCoordArea)
+												    												.ease(internalSettings.animateEasing)
+			    structure.svg.graph.elements[index].elements.line.transition()
+												    												.duration(internalSettings.graphAnimationTime)
+																			    					.attr('d', pathCoord)
+																			    					.ease(internalSettings.animateEasing)
+																			    					.each("end",function() {
+																				    					self.animateCircles(data, index);
+																			    					})
 					
 				},
 				
@@ -644,69 +825,7 @@
 					}, internalSettings.animateGridTime*2)
 								
 				},
-				
-				// animate line and area
-				animateGraph: function(data, index) {
-					var self = this;
-					
-					if (!structure.svg.graph.elements[index]) return;
-					
-					var w = graph.width();
-					var h = graph.height();
-					var j = 0;
-					
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
-
-					var spacingX = Math.floor(w / (data.length - 1) );
-					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
-					
-					// remove circles
-					structure.svg.graph.elements[index].group.selectAll('circle').classed('PAhide', 'true');
-					setTimeout(function() {
-						structure.svg.graph.elements[index].group.selectAll('circle.PAhide').remove();
-					}, 300);
-					
-					// animate line
-					var lineData = [];
-					for(var i in data) {
-						
-						var x = (i * spacingX)	+ j;
-						var y = parseInt(h - ((data[i].value - structure.svg.grid.y.spacing[0])  * spacingY ));
-																																																						
-						lineData.push({
-							'x': x,
-							'y': y
-						});
-						
-					}
-					structure.svg.graph.elements[index].elements.points.coords = lineData;
-					
-					var lineF = d3.svg.line()
-			                      .x(function(d) { return d.x; })
-			                      .y(function(d) { return d.y; })
-			                      .interpolate(internalSettings.graphLineInterpolation);
-			    var pathCoord = lineF(lineData);
-					// complete the area
-					pathCoordArea = pathCoord;
-					pathCoordArea += 'L'+ getMaxValues(lineData,'x') + ',' + h;
-					pathCoordArea += 'L'+ j + ',' + h;
-					pathCoordArea += 'L'+ j + ',' + lineData[0]['y'];
-			
-			    structure.svg.graph.elements[index].elements.area.transition()
-												    												.duration(internalSettings.graphAnimationTime)
-												    												.attr('d', pathCoordArea)
-												    												.ease(internalSettings.animateEasing)
-			    structure.svg.graph.elements[index].elements.line.transition()
-												    												.duration(internalSettings.graphAnimationTime)
-																			    					.attr('d', pathCoord)
-																			    					.ease(internalSettings.animateEasing)
-																			    					.each("end",function() {
-																				    					self.animateCircles(data, index);
-																			    					})
-					
-				},
-				
+								
 				// animate the circles
 				animateCircles: function(data, index) {
 					
@@ -836,7 +955,6 @@
 					});
 					
 				},
-				
 				removeCompare: function() {
 				
 					var self = this;
@@ -847,20 +965,6 @@
 					setTimeout(function() {
 						self.mainGraph();
 					}, internalSettings.graphAnimationTime+10);
-					
-				},
-				
-				// action on legend
-				initLegend: function() {
-					
-					var self = this;
-					
-					graph.find('div.PAlegend')	
-						.on('click', 'p[data-index]', function() {
-							var index = parseInt($(this).attr('data-index'));
-							self.moveOnFront(index);
-						})
-					
 					
 				},
 				
@@ -1985,6 +2089,31 @@
 		
 		MODE[settings.mode].init();
 				
+		graph.initGraph = function(color, legend, format) {
+			
+			return MODE[settings.mode].initGraph(color, legend, format);
+			
+		};
+
+		graph.setData = function(data, index) {
+			
+			if (typeof settings.preFetch == 'function') { var data = settings.preFetch(data); }
+			return MODE[settings.mode].setData(data, index);
+			
+		};
+
+		graph.removeGraph = function(index) {
+			
+			return MODE[settings.mode].removeGraph(index);
+			
+		};
+		
+		graph.draw = function() {
+			
+			MODE[settings.mode].draw();
+			
+		}
+
 		graph.mainGraph = function(data) {
 			
 			if (typeof settings.preFetch == 'function') { var data = settings.preFetch(data); }
