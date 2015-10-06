@@ -14,17 +14,6 @@
 			},
 			config: {
 				graph: [],
-/*
-				graph: [{
-					color: '#88B8C4',
-					legend: 'metric',
-					format: null
-				}, {
-					color: '#808E96',
-					legend: 'compare',
-					format: null
-				}],
-*/
 				grid: {
 					x: {
 						show: true,
@@ -51,7 +40,7 @@
 		var structure = {
 			legend: null,
 			tooltip: null,
-			data: [null,null],
+			data: [],
 			filters: null,
 			svg: {
 				element: null,
@@ -188,7 +177,7 @@
 					var spacing = Math.floor(w / (elementsCount-1) );
 					structure.svg.grid.x.group = structure.svg.grid.group.append('g').classed('PAGgridX', true);
 					
-					for (i = 0; i < elementsCount; i++) {
+					for (var i = 0; i < elementsCount; i++) {
 						
 						var x = (i * spacing)	+ j;
 						
@@ -217,7 +206,7 @@
 					structure.svg.grid.y.group = structure.svg.grid.group.append('g').classed('PAGgridY', true);		
 					
 					
-					for (i = 0; i < elementsCount; i++) {
+					for (var i = 0; i < elementsCount; i++) {
 						
 						var line =  structure.svg.grid.y.group.append('line')
 																									.attr('x1', j).attr('y1', h - (i*spacing))
@@ -258,14 +247,15 @@
 						format: format
 					});
 					
-					var elementsCount = structure.svg.grid.x.elements.length || 8;
+					var elementsCount = structure.svg.grid.x.elements.length || 8;					
+					structure.svg.element.attr('data-points', elementsCount);
 
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; }
 					var spacing = Math.floor(w / (elementsCount-1) );
 
 					var lineData = [];
-					for (i = 0; i < elementsCount; i++) {
+					for (var i = 0; i < elementsCount; i++) {
 						var x = (i * spacing)	+ j;
 						lineData.push({x:x, y:h});
 					}					
@@ -349,6 +339,12 @@
 					var dfrd = $.Deferred();
 					var index = index || 0;
 					
+					// empty stored data with different scale on index 0
+					if (structure.data.length && index == 0 && structure.data[0].length != data.length) {
+						structure.data = [];
+						self.computedData = [];
+					}
+					
 					// check data's scale
 					if (!data || data.length == 0) { dfrd.reject('no'); }
 					if (index != 0 && structure.data[0] && structure.data[0].length != data.length) { console.log('Compare metric has a different scale'); dfrd.reject('no'); }
@@ -388,9 +384,7 @@
 						var allData = mergeAndClean(self.computedData);
 						structure.svg.grid.y.spacing = Yspacing(allData);
 						
-						self.flattenGraph(data, index, function() {
-							dfrd.resolve('ok');
-						});
+						setTimeout(function() { dfrd.resolve('ok');	}, 10);
 					
 					}
 					
@@ -402,15 +396,36 @@
 					
 					var self = this;
 					
-					self.animateGridX(structure.data[0]);
-					self.animateLabelY(structure.data[0]);
-
-					setTimeout(function() {
-						for (i in structure.data) {
-							self.animateGraph(structure.data[i], i);
+					promises = [];
+					promises.push(self.animateGridX(self.computedData[0]));
+					promises.push(self.animateLabelY(self.computedData[0]));
+					
+					// flatten graph that need to be flatten
+					if (parseInt(structure.svg.element.attr('data-points')) != self.computedData[0].length) {
+						for (var i in structure.svg.graph.elements) {
+							promises.push(self.flattenGraph(i));
 						}
-					}, internalSettings.animateGridTime);					
-															
+					}
+					
+					$.when.apply($, promises).done(function () {
+				    // Need to get the data returned from all ajax calls here
+				    
+						graph.find('div.PAlegend').toggleClass('PAhide', self.computedData.length < 2);
+						structure.svg.element.attr('data-points', self.computedData[0].length);
+						
+						for (var i in structure.svg.graph.elements) {
+							if (self.computedData[i]) {
+								
+								self.animateGraph(self.computedData[i], i);
+							} else {								
+								self.removeGraph(i);
+							}
+						}
+					
+				    
+				    
+					});					
+																									
 				},
 				
 				// remove graph with index 
@@ -419,7 +434,7 @@
 					var self = this;
 					var dfrd = $.Deferred();
 
-					self.flattenGraph([], index, function() {
+					$.when(self.flattenGraph(index)).done(function() {
 						structure.svg.graph.elements[index].group.remove();
 						structure.svg.graph.elements.splice(index,1);
 						graph.find('div.PAlegend > p[data-index='+index+']').remove()
@@ -432,79 +447,6 @@
 					
 				},
 				
-				
-				
-				// animate main graph
-				mainGraph: function(data) {
-					
-					var self = this;
-					var index = 0;
-					
-					if (data == undefined) { var data = structure.data[0]; } else { structure.data[0] = data; }
-					if (data.length == 0) return;
-					
-					// show filters based on elements number
-					structure.filters.classed('PAhide', true);
-					if (structure.data[0].length >= 28) {
-
-						if (structure.data[0].length > 40 && settings.filter.mode == 'daily') { settings.filter.mode = 'weekly'; }
-						structure.filters.select('p[data-mode="daily"]').classed('PAhide', (structure.data[0].length > 60));
-						structure.filters.select('p[data-mode="monthly"]').classed('PAhide', (structure.data[0].length < 120));
-						if ( structure.data[0].length < 120 && settings.filter.mode == 'monthly' ) { settings.filter.mode = 'daily' };
-						
-						structure.filters.selectAll('p').classed('selected', false);
-						structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
-
-						setTimeout(function() { structure.filters.classed('PAhide', false);	}, internalSettings.animateGridTime);
-
-					} else {
-
-						settings.filter.mode = 'daily';
-						structure.filters.selectAll('p').classed('selected', false);
-						structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
-
-					}
-					
-					// animate graph
-					self.computedData[0] = self.applyFilterToData(data, settings.filter.mode);
-					var allData = mergeAndClean(self.computedData);
-					structure.svg.grid.y.spacing = Yspacing(allData);
-					
-					if (self.computedData[0].length != structure.svg.grid.x.elements.length) {
-						if (self.computedData[1]) { self.removeCompareGraph() }
-						structure.svg.grid.y.spacing = Yspacing(self.computedData[0]);
-						self.flattenGraph(self.computedData[0], 0, function() {
-							self.drawGraphAnimation(self.computedData[0], 0);
-						})	
-					} else {
-						self.drawGraphAnimation(self.computedData[0], 0);
-						if (self.computedData[1]) { self.drawGraphAnimation(self.computedData[1], 1); }
-					}
-					
-				},
-				
-				// animate compare graph
-				compareWith: function(data) {
-					
-					var self = this;
-					
-					if (data == undefined) { var data = structure.data[1]; } else { structure.data[1] = data; }
-					if (data.length == 0) return;
-					if (structure.data[1].length != structure.data[0].length) {
-						alert('Compare metric has a different scale'); // TODO transform in console.error
-						return;
-					}
-
-					var index = structure.svg.graph.elements.length == 1 ? self.initGraph() : 1;
-
-					self.computedData[1] = self.applyFilterToData(data, settings.filter.mode);
-					var allData = mergeAndClean(self.computedData);
-					structure.svg.grid.y.spacing = Yspacing(allData);
-					
-					self.drawGraphAnimation(self.computedData[0], 0);
-					self.drawGraphAnimation(self.computedData[1], 1);
-					
-				},
 				
 				applyFilter: function() {
 					
@@ -519,32 +461,17 @@
 					var allData = mergeAndClean(self.computedData);
 					structure.svg.grid.y.spacing = Yspacing(allData);
 
-					if (self.computedData[1]) { self.flattenGraph(self.computedData[1], 1); }
-					self.flattenGraph(self.computedData[0], 0, function() {
-						self.drawGraphAnimation(self.computedData[0], 0);
-						if (self.computedData[1]) { self.drawGraphAnimation(self.computedData[1], 1); }
-					})	
+					self.draw();
 					
 				},
-				
-				// flow of animation
-				drawGraphAnimation: function(data, index) {
-					
-					var self = this;
-					
-					self.animateGridX(data);
-					self.animateLabelY(data);
-					setTimeout(function() {
-						self.animateGraph(data, index);
-					}, internalSettings.animateGridTime);					
-					
-				},
-				
+								
 				// animate line and area
 				animateGraph: function(data, index) {
 					var self = this;
 					
-					if (!structure.svg.graph.elements[index]) return;
+					if (!structure.svg.graph.elements[index]) { 
+						console.log('structure not exist'); return; 
+					}
 					
 					var w = graph.width();
 					var h = graph.height();
@@ -602,11 +529,108 @@
 					
 				},
 				
+				flattenGraph: function(index) {
+					
+					var self = this;
+					console.log('flattenGraph', index);
+					var dfrd = $.Deferred();
+										
+					var w = graph.width();
+					var h = graph.height();
+					var j = 0;
+					
+					var actualPoints = parseInt(structure.svg.element.attr('data-points'));
+					
+					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+
+					var spacingBefore = Math.floor(w / (actualPoints - 1) );
+					
+					// create flat path with the same point number of the grid to flatten smooth
+					var lineData = [];
+					for (var i = 0; i < actualPoints; i++) {						
+						var x = (i * spacingBefore)	+ j;
+						lineData.push({
+							'x': x,
+							'y': h
+						});
+					}
+
+					var lineF = d3.svg.line()
+			                      .x(function(d) { return d.x; })
+			                      .y(function(d) { return d.y; })
+			                      .interpolate(internalSettings.graphLineInterpolation);
+			    var pathCoord = lineF(lineData);
+					pathCoordArea = pathCoord;
+					pathCoordArea += 'L'+ getMaxValues(lineData,'x') + ',' + (h+1);
+					pathCoordArea += 'L'+ j + ',' + (h+1);
+					pathCoordArea += 'L'+ j + ',' + lineData[0]['y'];
+					
+					// create a fake 
+					if (self.computedData[index] && self.computedData[index].length) {
+
+						var spacingNext = Math.floor(w / (self.computedData[index].length - 1) );
+
+						// create flat path with the new grid number of points
+						var lineData = [];
+						for (var i = 0; i < self.computedData[index].length; i++) {						
+							var x = (i * spacingNext)	+ j;
+							lineData.push({
+								'x': x,
+								'y': h
+							});
+						}
+					
+						var lineF = d3.svg.line()
+				                      .x(function(d) { return d.x; })
+				                      .y(function(d) { return d.y; })
+				                      .interpolate(internalSettings.graphLineInterpolation);
+				    var pathCoordNext = lineF(lineData);
+						pathCoordAreaNext = pathCoordNext;
+						pathCoordAreaNext += 'L'+ getMaxValues(lineData,'x') + ',' + (h+1);
+						pathCoordAreaNext += 'L'+ j + ',' + (h+1);
+						pathCoordAreaNext += 'L'+ j + ',' + lineData[0]['y'];
+
+					}
+					
+					
+					
+					structure.svg.graph.elements[index].group.selectAll('circle')
+						.transition()
+						.duration(internalSettings.graphAnimationTime)
+						.attr('cy', h)
+						.style('opacity', 0)
+						.remove();
+					
+			    structure.svg.graph.elements[index].elements.area.transition()
+												    												.duration(internalSettings.graphAnimationTime)
+												    												.attr('d', pathCoordArea)
+												    												.ease(internalSettings.animateEasing)
+												    													.each('end', function() {
+													    													d3.select(this).attr('d', pathCoordAreaNext);
+												    													})
+																			    					
+			    structure.svg.graph.elements[index].elements.line.transition()
+												    												.duration(internalSettings.graphAnimationTime)
+																			    					.attr('d', pathCoord)
+																			    					.ease(internalSettings.animateEasing)
+																			    						.each('end', function() {
+																				    						d3.select(this).attr('d', pathCoordNext);
+																				    						dfrd.resolve();																					    						
+																			    						})
+					
+					return dfrd.promise();														    					
+					
+				},
+				
 				// fix X grid spacing
 				// add or remove lines
 				animateGridX: function(data) {
 					
 					var self = this;
+					console.log('animateGridX');
+					
+					var dfrd = $.Deferred();
 					self.animateLabelX(data);
 					
 					var w = graph.width();
@@ -624,7 +648,7 @@
 					// add new lines outside the artboard
 					if (elementsCount > structure.svg.grid.x.elements.length) {
 						var diff = elementsCount - structure.svg.grid.x.elements.length;
-						for (a = 0; a < diff; a++) {
+						for (var a = 0; a < diff; a++) {
 							var line =  structure.svg.grid.x.group.append('line')
 																										.attr('x1', w+j+50).attr('y1', 0)
 																										.attr('x2', w+j+50).attr('y2', h)
@@ -649,10 +673,11 @@
 					}
 													
 					// remove the lines outside the artboard after the animation
-					if (elementsCount < structure.svg.grid.x.elements.length) {
-						setTimeout(function() {
+					setTimeout(function() {
+
+						if (elementsCount < structure.svg.grid.x.elements.length) {
 							var diff = structure.svg.grid.x.elements.length - elementsCount;	
-							for (a = 0; a < diff; a++) {
+							for (var a = 0; a < diff; a++) {
 								
 								var i = a + elementsCount;
 								structure.svg.grid.x.elements[i].remove();
@@ -660,9 +685,13 @@
 							}
 							
 							structure.svg.grid.x.elements.splice(elementsCount, diff);
-							
-						}, internalSettings.animateGridTime);
-					}
+						}
+						
+						dfrd.resolve();
+						
+					}, internalSettings.animateGridTime);
+					
+					return dfrd.promise();
 										
 				},
 				
@@ -670,7 +699,7 @@
 				// remove the labels outside the artboard
 				animateLabelX: function(data) {
 					var self = this;
-					
+					var dfrd = $.Deferred();
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
@@ -712,14 +741,14 @@
 							
 						}
 						
-						// add classes to labelX group in order to hide some element when they are to thick
+						dfrd.resolve();
 						
 					}, internalSettings.animateGridTime);
 					
 					// remove exceeded
 					if (elementsCount < structure.svg.label.x.elements.length) {
 						var diff = structure.svg.grid.x.elements.length - elementsCount;	
-						for (a = 0; a < diff; a++) {
+						for (var a = 0; a < diff; a++) {
 							
 							var i = a + elementsCount;
 							if (structure.svg.label.x.elements[i]) { structure.svg.label.x.elements[i].remove(); }
@@ -733,7 +762,9 @@
 						// show current labels
 						self.hideThickLabels();
 // 						structure.svg.label.x.group.classed('hide', false);
-					}, internalSettings.animateGridTime*2)
+					}, internalSettings.animateGridTime*2);
+					
+					return dfrd;
 								
 				},
 				
@@ -781,7 +812,7 @@
 				// remove the labels outside the artboard
 				animateLabelY: function(data) {
 					var self = this;
-					
+					console.log('animateLabelY');
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
@@ -799,7 +830,7 @@
 					
 					// fix the number of labels and position
 					setTimeout(function() {
-						for (i = 0; i < elementsCount; i++) {
+						for (var i = 0; i < elementsCount; i++) {
 							
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
@@ -852,122 +883,7 @@
 					}
 					
 				},
-				
-				// flatten graph before
-				flattenGraph: function(data, index, callback) {
-					
-					var self = this;
-					
-					var w = graph.width();
-					var h = graph.height();
-					var j = 0;
-					
-					if (!structure.svg.graph.elements[index]) {
-						if (typeof callback == 'function') { callback.call(); }
-						return;
-					}
-					
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
-
-					var spacingBefore = Math.floor(w / (structure.svg.grid.x.elements.length - 1) );
-					var spacingNext = Math.floor(w / (data.length - 1) );
-
-					// remove circles
-					structure.svg.graph.elements[index].group.selectAll('circle').classed('PAhide', true);
-					setTimeout(function() {
-						structure.svg.graph.elements[index].group.selectAll('circle.PAhide').remove();
-					}, 300);
-
-					
-					// create flat path with the same point number of the grid
-					var lineData = [];
-					for (i = 0; i < structure.svg.grid.x.elements.length; i++) {						
-						var x = (i * spacingBefore)	+ j;
-						lineData.push({
-							'x': x,
-							'y': h
-						});												
-					}
-
-					var lineF = d3.svg.line()
-			                      .x(function(d) { return d.x; })
-			                      .y(function(d) { return d.y; })
-			                      .interpolate(internalSettings.graphLineInterpolation);
-			    var pathCoord = lineF(lineData);
-					pathCoordArea = pathCoord;
-					pathCoordArea += 'L'+ getMaxValues(lineData,'x') + ',' + (h+1);
-					pathCoordArea += 'L'+ j + ',' + (h+1);
-					pathCoordArea += 'L'+ j + ',' + lineData[0]['y'];
-			
-					if (data.length) {
-						// create flat path with the new grid number of points
-						var lineData = [];
-						for (i = 0; i < data.length; i++) {						
-							var x = (i * spacingNext)	+ j;
-							lineData.push({
-								'x': x,
-								'y': h
-							});
-						}
-					}
-					
-					var lineF = d3.svg.line()
-			                      .x(function(d) { return d.x; })
-			                      .y(function(d) { return d.y; })
-			                      .interpolate(internalSettings.graphLineInterpolation);
-			    var pathCoordNext = lineF(lineData);
-					pathCoordAreaNext = pathCoordNext;
-					pathCoordAreaNext += 'L'+ getMaxValues(lineData,'x') + ',' + (h+1);
-					pathCoordAreaNext += 'L'+ j + ',' + (h+1);
-					pathCoordAreaNext += 'L'+ j + ',' + lineData[0]['y'];
-
-
-					// animate the paths
-			    structure.svg.graph.elements[index].elements.area.transition()
-												    												.duration(internalSettings.graphAnimationTime)
-												    												.attr('d', pathCoordArea)
-												    												.ease(internalSettings.animateEasing)
-																			    					.each("end",function() {
-																				    					structure.svg.graph.elements[index].elements.area.attr('d', pathCoordAreaNext);
-																				    				});
-			    structure.svg.graph.elements[index].elements.line.transition()
-												    												.duration(internalSettings.graphAnimationTime)
-																			    					.attr('d', pathCoord)
-																			    					.ease(internalSettings.animateEasing)
-																			    					.each("end",function() {
-																				    					structure.svg.graph.elements[index].elements.line.attr('d', pathCoordNext);
-																				    					if (typeof callback == 'function') { callback.call(); }
-																			    					})
-					
-				},
-								
-				// remove last graph
-				removeCompareGraph: function() {
-										
-					var self = this;
-					self.flattenGraph([], 1, function() {
-						structure.svg.graph.elements[1].group.remove();
-						structure.svg.graph.elements.pop();
-						graph.find('div.PAlegend > p[data-index=1]').remove()
-						structure.data[1] = null;
-						self.computedData[1] = null;
-					});
-					
-				},
-				removeCompare: function() {
-				
-					var self = this;
-
-					if (structure.data[1] == null) return;
-					
-					self.removeCompareGraph();
-					setTimeout(function() {
-						self.mainGraph();
-					}, internalSettings.graphAnimationTime+10);
-					
-				},
-				
+																
 				// change legend labels on the go
 				setLegendLabel: function(label, index) {
 					
@@ -976,7 +892,6 @@
 					structure.legend.select('p[data-index="'+ index +'"] > label').text(label);
 					
 				},
-				
 				
 				// action on circles
 				initCircles: function() {
@@ -1070,7 +985,7 @@
 								tmpObj = {},
 								index = 0;
 								
-						for (i in data) {
+						for (var i in data) {
 
 							// first
 							if (i % 7 == 0) {
@@ -1099,7 +1014,7 @@
 								tmpObj = {},
 								index = 0;
 								
-						for (i in data) {
+						for (var i in data) {
 
 							// first
 							if (i % 30 == 0) {
@@ -1162,7 +1077,7 @@
 					structure.svg.grid.y.group = structure.svg.grid.group.append('g').classed('PAGgridY', true);		
 					
 					
-					for (i = 0; i < elementsCount; i++) {
+					for (var i = 0; i < elementsCount; i++) {
 						
 						var line =  structure.svg.grid.y.group.append('line')
 																									.attr('x1', j).attr('y1', h - (i*spacing))
@@ -1200,7 +1115,7 @@
 					var rectW = Math.floor(spacing*0.7);
 					var offsetX = Math.floor(spacing*0.1);
 
-					for (i = 0; i < 7; i++) {
+					for (var i = 0; i < 7; i++) {
 						
 						var x = (i * spacing) + j + (spacing / 2) - (rectW / 2) + (index * offsetX);
 
@@ -1240,7 +1155,7 @@
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 					var spacing = Math.floor(w/7);
 					
-					for (i = 0; i < 7; i++) {
+					for (var i = 0; i < 7; i++) {
 						
 						var x = (i * spacing) + j + (spacing / 2);
 
@@ -1327,7 +1242,7 @@
 					
 					// fix the number of labels and position
 					setTimeout(function() {
-						for (i = 0; i < elementsCount; i++) {
+						for (var i = 0; i < elementsCount; i++) {
 							
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
@@ -1370,7 +1285,7 @@
 					var spacingX = Math.floor(w / (data.length - 1) );
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
 					
-					for (i in structure.svg.graph.elements[index].elements.area) {
+					for (var i in structure.svg.graph.elements[index].elements.area) {
 						
 						var y = parseInt(h - ((data[i].value - structure.svg.grid.y.spacing[0])  * spacingY ));						
 						
@@ -1400,7 +1315,7 @@
 					structure.svg.graph.elements[0].group.classed('percentage', false);
 					
 					// flatten compare
-					for (i in structure.svg.graph.elements[index].elements.area) {
+					for (var i in structure.svg.graph.elements[index].elements.area) {
 						
 						structure.svg.graph.elements[index].elements.area[i].transition()
 																			    												.duration(internalSettings.graphAnimationTime)
@@ -1503,7 +1418,7 @@
 					var h = graph.height();
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					
-					for (i in structure.data[0]) {
+					for (var i in structure.data[0]) {
 
 						var diff = structure.data[0][i].value - structure.data[1][i].value;
 						var perc = Math.round(diff / structure.data[1][i].value * 100);
@@ -1608,7 +1523,7 @@
 					structure.svg.grid.y.group = structure.svg.grid.group.append('g').classed('PAGgridY', true);		
 					
 					
-					for (i = 0; i < elementsCount; i++) {
+					for (var i = 0; i < elementsCount; i++) {
 						
 						var line =  structure.svg.grid.y.group.append('line')
 																									.attr('x1', j).attr('y1', h - (i*spacing))
@@ -1647,7 +1562,7 @@
 					var rectW = Math.floor(spacing*0.6);
 					var offsetX = Math.floor(spacing*0.2);
 
-					for (i = 0; i < 24; i++) {
+					for (var i = 0; i < 24; i++) {
 						
 						var x = (i * spacing) + j + (spacing / 2) - (rectW / 2) + (index * offsetX);
 
@@ -1688,7 +1603,7 @@
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 					var spacing = Math.floor(w/24);
 					
-					for (i = 0; i < 24; i++) {
+					for (var i = 0; i < 24; i++) {
 						
 						var x = (i * spacing) + j + (spacing / 2);
 						
@@ -1770,7 +1685,7 @@
 					
 					// fix the number of labels and position
 					setTimeout(function() {
-						for (i = 0; i < elementsCount; i++) {
+						for (var i = 0; i < elementsCount; i++) {
 							
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
@@ -1814,7 +1729,7 @@
 					var spacingX = Math.floor(w / (data.length - 1) );
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
 					
-					for (i in structure.svg.graph.elements[index].elements.area) {
+					for (var i in structure.svg.graph.elements[index].elements.area) {
 						
 						var v = data[i] ? data[i].value : 0;
 						var y = parseInt(h - ((v - structure.svg.grid.y.spacing[0])  * spacingY ));						
@@ -1846,7 +1761,7 @@
 					structure.svg.graph.elements[0].group.classed('percentage', false);
 					
 					// flatten compare
-					for (i in structure.svg.graph.elements[index].elements.area) {
+					for (var i in structure.svg.graph.elements[index].elements.area) {
 						
 						structure.svg.graph.elements[index].elements.area[i].transition()
 																			    												.duration(internalSettings.graphAnimationTime)
@@ -2177,7 +2092,7 @@
 			var bottom = Math.floor(min / spacer) * spacer;
 			
 			var labels = [];			
-			for (i = 0; i <= lines; i++) {
+			for (var i = 0; i <= lines; i++) {
 				labels.push(bottom);
 				bottom += spacer;
 			}
@@ -2189,8 +2104,8 @@
 		function mergeAndClean(arr) {
 						
 			var result = [];
-			for (i in arr) {
-				for (x in arr[i]) {
+			for (var i in arr) {
+				for (var x in arr[i]) {
 					result.push(arr[i][x]);
 				}
 			}
@@ -2340,7 +2255,7 @@
 					// params to zoom on the data
 					var coeff = Math.abs(getMaxValues(data) - getMinValues(data)) / 90;
 							
-					for (i in settings.data) {
+					for (var i in settings.data) {
 						
 						var li = ul.append('li');
 						
@@ -2509,14 +2424,14 @@
 					
 					// params to zoom on the data
 					var max = 0, min = 100;
-					for (i in settings.data) {
+					for (var i in settings.data) {
 						var v = settings.data[i].value.m + settings.data[i].value.f;
 						max = v > max ? v : max;
 						min = v < min ? v : min;
 					}					
 					var coeff = Math.abs(max - min) / 50;
 							
-					for (i in settings.data) {
+					for (var i in settings.data) {
 						
 						var li = ul.append('li')
 											.attr('data-male', settings.data[i].value.m)
@@ -2570,12 +2485,10 @@
 				},
 				
 				animate: function(data) {
-					
-					console.log('animate');
-					
+										
 					// params to zoom on the data
 					var max = 0, min = 100;
-					for (i in data) {
+					for (var i in data) {
 						var v = data[i].value.m + data[i].value.f;
 						max = v > max ? v : max;
 						min = v < min ? v : min;
@@ -2592,7 +2505,7 @@
 					
 					var lis = d3.selectAll(graph.get()).selectAll('ul li');
 					
-					for (i in data) {
+					for (var i in data) {
 						
 						var element = d3.select(lis[0][i]);
 						var perc = data[i].value.m + data[i].value.f;
@@ -2719,7 +2632,7 @@
 	
 	function getSumValues(data, k) {
 		if (k == undefined) { k = 'value'; }
-		var r = 0; for (i in data) { r += data[i][k]; }
+		var r = 0; for (var i in data) { r += data[i][k]; }
 		return r;
 	}
 	

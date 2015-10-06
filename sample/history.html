@@ -47,6 +47,20 @@
 		
 		graph.initGraph();
 		
+		$('#load7').on('click', function() {
+
+			$.getJSON('response/history_test_7gg.json')
+				.done(function(result) {
+
+					var data = APIdataToValues(result);
+					$.when(graph.setData(data)).done(function() {
+						graph.draw();						
+					})
+				
+				})
+			
+		})
+		
 		$('#load13').on('click', function() {
 
 			$.getJSON('response/history_test_13gg.json')
@@ -59,7 +73,7 @@
 				
 				})
 			
-		});
+		}).click();
 
 		$('#load13b').on('click', function() {
 
@@ -74,6 +88,26 @@
 				})
 			
 		})
+		
+		$('#compare13').on('click', function() {
+			
+			graph.initGraph();
+			
+			$.getJSON('response/history_test_13gg_b.json')
+				.done(function(result) {
+			
+					var data = APIdataToValues(result);
+					$.when(graph.setData(data, 1))
+						.done(function(response) {
+							graph.draw();
+						})
+						.fail(function() {
+							graph.removeGraph(1)
+						})
+				
+				})
+			
+		})		
 
 		$('#load20').on('click', function() {
 
@@ -93,7 +127,30 @@
 			$.getJSON('response/history_test_50gg.json')
 				.done(function(result) {
 
-					graph.mainGraph(result.data);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();						
+					})
+				
+				})
+			
+		})
+		
+		$('#compare50').on('click', function() {
+
+			graph.initGraph();
+
+			$.getJSON('response/history_test_50gg_b.json')
+				.done(function(result) {
+					
+					console.log(result);
+					
+					$.when(graph.setData(result.data, 1))
+						.done(function(response) {
+							graph.draw();
+						})
+						.fail(function() {
+							graph.removeGraph(1)
+						})
 				
 				})
 			
@@ -104,7 +161,9 @@
 			$.getJSON('response/history_test_200gg.json')
 				.done(function(result) {
 
-					graph.mainGraph(result.data);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();						
+					})
 				
 				})
 			
@@ -112,38 +171,13 @@
 		
 		$('#compare200').on('click', function() {
 
+			graph.initGraph();
+
 			$.getJSON('response/history_test_200gg_b.json')
 				.done(function(result) {
 
-					graph.compareWith(result.data);
-				
-				})
-			
-		})
-
-		
-
-		$('#load7').on('click', function() {
-
-			$.getJSON('response/history_test_7gg.json')
-				.done(function(result) {
-					graph.mainGraph(APIdataToValues(result),0);
-				
-				})
-			
-		})
-		
-		$('#compare13').on('click', function() {
-			
-			graph.initGraph();
-			
-			$.getJSON('response/history_test_13gg_b.json')
-				.done(function(result) {
-			
-					var data = APIdataToValues(result);
-					$.when(graph.setData(data, 1))
+					$.when(graph.setData(result.data, 1))
 						.done(function(response) {
-							console.log(response);					
 							graph.draw();
 						})
 						.fail(function() {
@@ -154,20 +188,11 @@
 			
 		})
 		
-		$('#compare50').on('click', function() {
-
-			$.getJSON('response/history_test_50gg_b.json')
-				.done(function(result) {
-
-					graph.compareWith(result.data);
-				
-				})
-			
-		})
+		
 
 		$('#remove').on('click', function() {
 		
-			graph.removeCompare();
+			graph.removeGraph(1);
 			
 		})
 		
