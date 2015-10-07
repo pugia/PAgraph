@@ -10,13 +10,13 @@
 	<script src="../node_modules/jquery/dist/jquery.min.js"></script>						
 	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
 
+<!--
 	<link href="../dist/css/PAgraph.min.css?3" rel="stylesheet" type="text/css">
 	<script src="../dist/js/PAgraph.min.js?3"></script>
+-->
 	
-<!--
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
 	<script src="../src/js/PAgraph.js"></script>
--->
 			
 </head>
 <body>	
@@ -107,15 +107,12 @@
 				switch ($(this).attr('class')) {
 					
 					case 'm1': 	var url = 'response/history_test_20gg.json';
-											var fn = (index == 0) ? 'mainGraph': 'compareWith';
 											break;
 					case 'm2': 	var url = 'response/history_test_20gg_b.json';
-											var fn = (index == 0) ? 'mainGraph': 'compareWith';
 											break;
 					case 'm3': 	var url = 'response/history_test_20gg_c.json';
-											var fn = (index == 0) ? 'mainGraph': 'compareWith';
 											break;
-					case 'rm':		var fn = 'removeCompare';
+					case 'rm':		var url = null;
 											break;
 					
 				}
@@ -124,20 +121,31 @@
 					
 					$.getJSON(url)
 						.done(function(result) {
-							graph[fn](result);
+							
+							$.when(graph.initGraph(index)).done(function() {
+								$.when(graph.setData(result, index)).done(function() {
+									graph.draw();
+								})
+							})
+
 						})
 						
 				} else {
 
-					graph[fn]();
+					$.when(graph.removeGraph(index)).done(function() {
+						graph.draw();
+					})
 
 				}
 				
 			})
 			
+			graph.initGraph();
 			$.getJSON('response/history_test_20gg.json')
 				.done(function(result) {
-					graph.mainGraph(result);
+					$.when(graph.setData(result)).done(function() {
+						graph.draw()
+					});
 				})
 			
 	})	
