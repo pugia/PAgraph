@@ -10,13 +10,13 @@
 	<script src="../node_modules/jquery/dist/jquery.min.js"></script>						
 	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
 
+<!--
 	<link href="../dist/css/PAgraph.min.css?3" rel="stylesheet" type="text/css">
 	<script src="../dist/js/PAgraph.min.js?3"></script>
+-->
 	
-<!--
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
 	<script src="../src/js/PAgraph.js"></script>
--->
 			
 </head>
 <body>	
@@ -35,6 +35,7 @@
 		<button id="compare_02">Compare 02</button>
 		<button id="compare_03">Compare 03</button><br/>
 		<button id="remove">Remove compare</button><br/><br/>
+		<button id="change_scale">Daytime</button><br/><br/>
 	</div>
 
 	<script>	
@@ -42,24 +43,19 @@
 	$(function() {
 
 		var graph = $('#graph_0').PAgraph({
-			mode: 'weekday',
-			config: {
-				graph: [{
-					color: '#88B8C4',
-					legend: 'Main metric'
-				}, {
-					color: '#808E96',
-					legend: 'Compare metric'
-				}]
-			}
+			mode: 'vertical_bar'
 		});
 		
+		graph.initGraph();		
+
 		$('#test_01').on('click', function() {
 			
 			$.getJSON('response/weekday_test_01.json', function(result) {
 					
-					graph.mainGraph(result.data);
-				
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();
+					});
+									
 				})
 			
 		}).click();
@@ -68,7 +64,9 @@
 			
 			$.getJSON('response/weekday_test_02.json', function(result) {
 					
-					graph.mainGraph(result.data);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();						
+					});
 				
 				})
 			
@@ -78,7 +76,9 @@
 			
 			$.getJSON('response/weekday_test_03.json', function(result) {
 					
-					graph.mainGraph(result.data);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();
+					});
 				
 				})
 			
@@ -87,9 +87,11 @@
 		$('#compare_01').on('click', function() {
 			
 			$.getJSON('response/weekday_test_01.json', function(result) {
-					
-					graph.compareWith(result.data);
-				
+					$.when(graph.initGraph()).done(function(index) {
+						$.when(graph.setData(result.data, index)).done(function() {
+							graph.draw();						
+						});
+					})
 				})
 			
 		});
@@ -97,9 +99,11 @@
 		$('#compare_02').on('click', function() {
 			
 			$.getJSON('response/weekday_test_02.json', function(result) {
-					
-					graph.compareWith(result.data);
-				
+					$.when(graph.initGraph()).done(function(index) {
+						$.when(graph.setData(result.data, index)).done(function() {
+							graph.draw();						
+						});
+					})
 				})
 			
 		});
@@ -108,16 +112,21 @@
 			
 			$.getJSON('response/weekday_test_03.json', function(result) {
 					
-					graph.compareWith(result.data);
+					$.when(graph.initGraph()).done(function(index) {
+						$.when(graph.setData(result.data, index)).done(function() {
+							graph.draw();						
+						});
+					})
 				
 				})
 			
 		});
 		
 		$('#remove').on('click', function() {
-			graph.removeCompare();
+			
+			graph.removeGraph(1);
+			
 		});
-		
 		
 	})	
 
