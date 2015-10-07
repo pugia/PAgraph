@@ -10,13 +10,13 @@
 	<script src="../node_modules/jquery/dist/jquery.min.js"></script>						
 	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
 
+<!--
 	<link href="../dist/css/PAgraph.min.css?3" rel="stylesheet" type="text/css">
 	<script src="../dist/js/PAgraph.min.js?3"></script>
+-->
 	
-<!--
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
 	<script src="../src/js/PAgraph.js"></script>
--->
 			
 </head>
 <body>	
@@ -41,37 +41,35 @@
 
 	<script>	
 	
-	$(function() {
-
 		var graph = $('#graph_0').PAgraph({
-			mode: 'history',
-			config: {
-				graph: [{
-					color: '#88B8C4',
-					legend: 'Main metric',
-					format: {
-						after: 'k'
-					}
-				}, {
-					color: '#808E96',
-					legend: 'Compare metric'
-				}],
-				grid: {
-					y: {
-						format: {
-							decimals: 2
-						}
-					}
-				}
-			}
+			mode: 'history'
 		});
+		
+		graph.initGraph();
+		
+		$('#load7').on('click', function() {
+
+			$.getJSON('response/history_test_7gg.json')
+				.done(function(result) {
+
+					var data = APIdataToValues(result);
+					$.when(graph.setData(data)).done(function() {
+						graph.draw();						
+					})
+				
+				})
+			
+		})
 		
 		$('#load13').on('click', function() {
 
 			$.getJSON('response/history_test_13gg.json')
 				.done(function(result) {
 
-					graph.mainGraph(APIdataToValues(result));
+					var data = APIdataToValues(result);
+					$.when(graph.setData(data)).done(function() {
+						graph.draw();						
+					})
 				
 				})
 			
@@ -82,18 +80,43 @@
 			$.getJSON('response/history_test_13gg_b.json')
 				.done(function(result) {
 			
-					graph.mainGraph(APIdataToValues(result),0);
+					var data = APIdataToValues(result);
+					$.when(graph.setData(data)).done(function() {
+						graph.draw();						
+					})
 				
 				})
 			
 		})
+		
+		$('#compare13').on('click', function() {
+			
+			graph.initGraph();
+			
+			$.getJSON('response/history_test_13gg_b.json')
+				.done(function(result) {
+			
+					var data = APIdataToValues(result);
+					$.when(graph.setData(data, 1))
+						.done(function(response) {
+							graph.draw();
+						})
+						.fail(function() {
+							graph.removeGraph(1)
+						})
+				
+				})
+			
+		})		
 
 		$('#load20').on('click', function() {
 
 			$.getJSON('response/history_test_20gg.json')
 				.done(function(result) {
 
-					graph.mainGraph(result.data,0);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();						
+					})
 				
 				})
 			
@@ -104,7 +127,30 @@
 			$.getJSON('response/history_test_50gg.json')
 				.done(function(result) {
 
-					graph.mainGraph(result.data);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();						
+					})
+				
+				})
+			
+		})
+		
+		$('#compare50').on('click', function() {
+
+			graph.initGraph();
+
+			$.getJSON('response/history_test_50gg_b.json')
+				.done(function(result) {
+					
+					console.log(result);
+					
+					$.when(graph.setData(result.data, 1))
+						.done(function(response) {
+							graph.draw();
+						})
+						.fail(function() {
+							graph.removeGraph(1)
+						})
 				
 				})
 			
@@ -115,7 +161,9 @@
 			$.getJSON('response/history_test_200gg.json')
 				.done(function(result) {
 
-					graph.mainGraph(result.data);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();						
+					})
 				
 				})
 			
@@ -123,52 +171,28 @@
 		
 		$('#compare200').on('click', function() {
 
+			graph.initGraph();
+
 			$.getJSON('response/history_test_200gg_b.json')
 				.done(function(result) {
 
-					graph.compareWith(result.data);
-				
-				})
-			
-		})
-
-		
-
-		$('#load7').on('click', function() {
-
-			$.getJSON('response/history_test_7gg.json')
-				.done(function(result) {
-					graph.mainGraph(APIdataToValues(result),0);
+					$.when(graph.setData(result.data, 1))
+						.done(function(response) {
+							graph.draw();
+						})
+						.fail(function() {
+							graph.removeGraph(1)
+						})
 				
 				})
 			
 		})
 		
-		$('#compare13').on('click', function() {
-
-			$.getJSON('response/history_test_13gg_b.json')
-				.done(function(result) {
-			
-					graph.compareWith(APIdataToValues(result));
-				
-				})
-			
-		})
 		
-		$('#compare50').on('click', function() {
-
-			$.getJSON('response/history_test_50gg_b.json')
-				.done(function(result) {
-
-					graph.compareWith(result.data);
-				
-				})
-			
-		})
 
 		$('#remove').on('click', function() {
 		
-			graph.removeCompare();
+			graph.removeGraph(1);
 			
 		})
 		
@@ -183,9 +207,7 @@
 			
 		})
 		
-		
-	})	
-	
+			
 	// generate array with label and value
 	function APIdataToValues(data) {
 		

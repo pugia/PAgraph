@@ -45,7 +45,7 @@
 	$(function() {
 
 		var graph = $('#graph_0').PAgraph({
-			mode: 'daytime',
+			mode: 'vertical_bar',
 			config: {
 				grid: {
 					x: {
@@ -62,11 +62,15 @@
 			}
 		});
 		
+		graph.initGraph();				
+		
 		$('#test_01').on('click', function() {
 			
 			$.getJSON('response/daytime_test_01.json', function(result) {
 					
-					graph.mainGraph(result.data);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();
+					});
 				
 				})
 			
@@ -76,7 +80,9 @@
 			
 			$.getJSON('response/daytime_test_02.json', function(result) {
 					
-					graph.mainGraph(result.data);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();
+					});
 				
 				})
 			
@@ -86,7 +92,9 @@
 			
 			$.getJSON('response/daytime_test_03.json', function(result) {
 					
-					graph.mainGraph(result.data);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();
+					});
 				
 				})
 			
@@ -96,7 +104,11 @@
 			
 			$.getJSON('response/daytime_test_01.json', function(result) {
 					
-					graph.compareWith(result.data);
+					$.when(graph.initGraph(1)).done(function(index) {
+						$.when(graph.setData(result.data, index)).done(function() {
+							graph.draw();						
+						});
+					})
 				
 				})
 			
@@ -106,7 +118,11 @@
 			
 			$.getJSON('response/daytime_test_02.json', function(result) {
 					
-					graph.compareWith(result.data);
+					$.when(graph.initGraph(1)).done(function(index) {
+						$.when(graph.setData(result.data, index)).done(function() {
+							graph.draw();						
+						});
+					})
 				
 				})
 			
@@ -116,20 +132,26 @@
 			
 			$.getJSON('response/daytime_test_03.json', function(result) {
 					
-					graph.compareWith(result.data);
+					$.when(graph.initGraph(1)).done(function(index) {
+						$.when(graph.setData(result.data, index)).done(function() {
+							graph.draw();						
+						});
+					})
 				
 				})
 			
 		});
 		
 		$('#remove').on('click', function() {
-			graph.removeCompare();
+			$.when(graph.removeGraph(1))
+				.done(function() {
+					graph.draw();
+				})
 		});
 
 		$('#open9-18').on('click', function() {
 			graph.setOpeningTime(9, 18);
 		});
-		setTimeout(function() { $('#open9-18').click(); }, 1500);
 		
 		$('#open6-14').on('click', function() {
 			graph.setOpeningTime(6, 14);
