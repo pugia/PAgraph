@@ -19,7 +19,6 @@
 						show: true,
 						color: '#E2E6E9',
 						label: '#C1C1C1',
-						openTime: false
 					},
 					y: {
 						show: true,
@@ -90,8 +89,7 @@
 			labels: {
 				x: {
 					height: 30,
-					marginTop: 15,
-					openTime: 20
+					marginTop: 15
 				},
 				y: {
 					width: 60,
@@ -223,16 +221,16 @@
 					
 					var self = this;
 					var dfrd = $.Deferred();
-															
-					var w = graph.width();
-					var h = graph.height();
-					var j = 0;
 					
 					if (index_wanted && structure.svg.graph.elements[index_wanted]) {
 						dfrd.resolve(index_wanted);
 						return dfrd.promise();
 					}
-					
+
+					var w = graph.width();
+					var h = graph.height();
+					var j = 0;
+										
 					var graphElements = $.extend(true, {}, graphElementsEmpty);
 					
 					graphElements.group = structure.svg.graph.group.insert('g',':first-child')
