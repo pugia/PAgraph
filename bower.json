@@ -1,0 +1,35 @@
+{
+  "name": "PAgraph",
+  "description": "jQuery Plugin for D3.js graph",
+  "main": [
+    "dist/js/PAgraph.min.js",
+    "dist/css/PAgraph.min.css"
+  ],
+  "dependencies": {
+    "d3": "~3.5.0"
+  },
+  "devDependencies": {
+    "jquery": "~1.7.2"
+  },
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "graph",
+    "counter",
+    "bar"
+  ],
+  "authors": [
+    { "name": "Marco Pugliese", "email": "marco@pugia.com" }
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "config.codekit",
+    "data.php",
+    "sample"
+  ],
+  "private": false
+}
