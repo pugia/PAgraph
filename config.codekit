@@ -33,7 +33,7 @@
 		},
 	"\/dist\/js\/PAgraph.min.js": {
 		"fileType": 64,
-		"ignore": 0,
+		"ignore": 1,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/dist\/js\/PAgraph.min.js",
 		"outputAbbreviatedPath": "\/dist\/js\/min\/PAgraph.min-min.js",
@@ -389,25 +389,14 @@
 		"strictMath": 0,
 		"strictUnits": 0
 		},
-	"\/src\/js\/min\/PAgraph-min.js": {
-		"fileType": 64,
-		"ignore": 1,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/src\/js\/min\/PAgraph-min.js",
-		"outputAbbreviatedPath": "\/src\/js\/min\/min\/PAgraph-min-min.js",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 1,
-		"syntaxCheckerStyle": 1
-		},
 	"\/src\/js\/PAgraph.js": {
 		"fileType": 64,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/src\/js\/PAgraph.js",
-		"outputAbbreviatedPath": "\/src\/js\/min\/PAgraph-min.js",
+		"outputAbbreviatedPath": "\/dist\/js\/PAgraph.min.js",
 		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
+		"outputPathIsSetByUser": 1,
 		"outputStyle": 1,
 		"syntaxCheckerStyle": 1
 		}

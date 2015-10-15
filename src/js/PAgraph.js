@@ -1672,7 +1672,7 @@
 			max += percMax;
 
 			var space = Math.round((max - min) / lines);
-			var divisor = (space.toString().length - 1) * 10;
+			var divisor = (space.toString().length - 1) * 10 || 1;
 			var spacer = (Math.round(2 * space / divisor) / 2) * divisor
 			
 			var bottom = Math.floor(min / spacer) * spacer;
