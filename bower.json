@@ -28,6 +28,7 @@
     "node_modules",
     "bower_components",
     "config.codekit",
+    "package.json",
     "data.php",
     "sample"
   ],
