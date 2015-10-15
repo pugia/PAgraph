@@ -8,7 +8,9 @@
     "url": "https://github.com/pugia/PAgraph.git"
   },
   "dependencies": {
-    "d3": "^3.5.0",
+    "d3": "^3.5.0"
+  },
+  "devDependencies": {
     "jquery": "^1.7.2"
   }
 }
