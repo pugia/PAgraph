@@ -1775,19 +1775,25 @@
 		function animateNumber(selector, time) {
 			
 			selector.each(function () {
-			  var el = $(this).text('0');
-	
-			  // backup
-				var timer = setTimeout(function(){ el.html( formatNumber(el.attr('data-value')*1, el.attr('data-type')) ); }, time+10);
-	
-			  $({ c:0 }).animate({ c: el.attr('data-value') }, {
-			    duration: time,
-			    step: function () {
-				    var v = this.c;
-				    if (v == el.attr('data-value')) { clearInterval(timer); }
-			      el.html(formatNumber(v, el.attr('data-type')));
-			    }
-			  });
+				
+				if (isNaN($(this).attr('data-value'))) { $(this).text($(this).attr('data-value')); }
+				else {
+				
+				  var el = $(this).text('0');
+		
+				  // backup
+					var timer = setTimeout(function(){ el.html( formatNumber(el.attr('data-value')*1, el.attr('data-type')) ); }, time+10);
+		
+				  $({ c:0 }).animate({ c: el.attr('data-value') }, {
+				    duration: time,
+				    step: function () {
+					    var v = this.c;
+					    if (v == el.attr('data-value')) { clearInterval(timer); }
+				      el.html(formatNumber(v, el.attr('data-type')));
+				    }
+				  });
+			  
+			  }
 			  
 			});
 			
