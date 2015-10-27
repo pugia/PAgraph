@@ -1845,7 +1845,7 @@
 					var ul = d3.selectAll(graph.get()).append('ul');
 					
 					// params to zoom on the data
-					var coeff = Math.abs(getMaxValues(data) - getMinValues(data)) / 90;
+					var coeff = Math.abs(getMaxValues(settings.data) - getMinValues(settings.data)) / 90;
 							
 					for (var i in settings.data) {
 						
@@ -1856,8 +1856,9 @@
 							.text(settings.data[i].label);
 						
 						// bar
+						var val = coeff ? settings.data[i].value / coeff : 100;
 						li.append('div').append('span')
-																			.attr('data-perc', (settings.data[i].value / coeff))
+																			.attr('data-perc', val)
 																			.style('background', settings.main.color)
 						
 						// value
