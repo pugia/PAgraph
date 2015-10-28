@@ -1697,7 +1697,7 @@
 			var max = getMaxValues(data);
 			var min = getMinValues(data);
 			
-			if (!min && !max) {	return Array.apply(null, Array(lines+1)).map(function(e,i){ return 10*i});	}
+			if (min == max) {	return Array.apply(null, Array(lines+1)).map(function(e,i){ return min+(10*(i-1)) });	}
 
 			var percMin = (min) ? Math.ceil((max - min) * 0.05) : 0;
 			var percMax = Math.ceil((max - min) * 0.05);

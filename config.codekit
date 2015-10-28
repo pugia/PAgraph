@@ -1571,17 +1571,6 @@
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1
 		},
-	"\/sample\/response\/history_test_20gg_empty.json": {
-		"fileType": 524288,
-		"ignore": 1,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/sample\/response\/history_test_20gg_empty.json",
-		"orderOutput": 0,
-		"outputAbbreviatedPath": "\/sample\/response\/history_test_20gg_empty-min.json",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 1
-		},
 	"\/sample\/response\/history_test_50gg.json": {
 		"fileType": 524288,
 		"ignore": 1,
