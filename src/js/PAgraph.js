@@ -29,6 +29,7 @@
 				}
 			},
 			lineInterpolation: 'cardinal',
+			interpolateOnZero: true,
 			preFetch: null,
 						
 		}, options );
@@ -387,7 +388,6 @@
 						self.computedData[index] = self.applyFilterToData(data, settings.filter.mode);
 						var allData = mergeAndClean(self.computedData);
 						structure.svg.grid.y.spacing = Yspacing(allData);
-						
 						setTimeout(function() { dfrd.resolve('ok');	}, 10);
 					
 					}
@@ -492,25 +492,56 @@
 					}, 300);
 					
 					// animate line
-					var lineData = [];
+					var linesData = []; var linesDataIndex = linesData.length;
+					var lineData = []; var lData = [];
 					for(var i in data) {
 						
 						var x = (i * spacingX)	+ j;
 						var y = parseInt(h - ((data[i].value - structure.svg.grid.y.spacing[0])  * spacingY ));
-																																																						
+
 						lineData.push({
 							'x': x,
 							'y': y
 						});
 						
+						if (!settings.interpolateOnZero) {
+							lData.push({
+								'x': x,
+								'y': y
+							});
+	
+							if (data[i].value == 0) {
+								linesData.push(lData);
+								lData = [];
+								lData.push({
+									'x': x,
+									'y': y
+								})
+							}
+						}
+						
 					}
-					structure.svg.graph.elements[index].elements.points.coords = lineData;
 					
+					if (!linesData.length) { linesData.push(lineData); }					
+					structure.svg.graph.elements[index].elements.points.coords = lineData;
 					var lineF = d3.svg.line()
 			                      .x(function(d) { return d.x; })
 			                      .y(function(d) { return d.y; })
 			                      .interpolate(internalSettings.graphLineInterpolation);
-			    var pathCoord = lineF(lineData);
+
+					if (!settings.interpolateOnZero) {
+				    var pathCoord = '';
+						for (var ld in linesData) {
+					    pathCoord += lineF(linesData[ld]);
+				    }
+				    
+				    var re = /M(.\d*),(.\d*)/; 
+				    var m1 = re.exec(pathCoord)[0];
+				    pathCoord = m1+pathCoord.replace(/M(.\d*),(.\d*)/gmi,'');
+				  } else {
+				    var pathCoord = lineF(lineData);
+			    }
+			    
 					// complete the area
 					pathCoordArea = pathCoord;
 					pathCoordArea += 'L'+ getMaxValues(lineData,'x') + ',' + h;
@@ -534,7 +565,7 @@
 				flattenGraph: function(index) {
 					
 					var self = this;
-					console.log('flattenGraph', index);
+					debug('flattenGraph', index);
 					var dfrd = $.Deferred();
 										
 					var w = graph.width();
@@ -630,7 +661,7 @@
 				animateGridX: function(data) {
 					
 					var self = this;
-					console.log('animateGridX');
+					debug('animateGridX');
 					
 					var dfrd = $.Deferred();
 					self.animateLabelX(data);
@@ -814,7 +845,7 @@
 				// remove the labels outside the artboard
 				animateLabelY: function(data) {
 					var self = this;
-					console.log('animateLabelY');
+					debug('animateLabelY');
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
@@ -1666,7 +1697,9 @@
 			var max = getMaxValues(data);
 			var min = getMinValues(data);
 			
-			var percMin = Math.ceil((max - min) * 0.05);
+			if (!min && !max) {	return Array.apply(null, Array(lines+1)).map(function(e,i){ return 10*i});	}
+
+			var percMin = (min) ? Math.ceil((max - min) * 0.05) : 0;
 			var percMax = Math.ceil((max - min) * 0.05);
 			min -= percMin;
 			max += percMax;

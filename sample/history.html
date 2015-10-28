@@ -8,15 +8,15 @@
 	<link href="style.css" rel="stylesheet" type="text/css">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
+	<script src="../bower_components/d3/d3.min.js" charset="utf-8"></script>
 
+<!--
 	<link href="../dist/css/PAgraph.min.css?5" rel="stylesheet" type="text/css">
 	<script src="../dist/js/PAgraph.min.js?5"></script>
+-->
 	
-<!--
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
 	<script src="../src/js/PAgraph.js"></script>
--->
 			
 </head>
 <body>	
@@ -31,7 +31,7 @@
 		<button id="load7">Load 7</button><br/>
 		<button id="load13">Load 13</button> <button id="compare13">Compare with 13 B</button><br/>
 		<button id="load13b">Load 13 B</button><br/>
-		<button id="load20">Load 20</button><br/>
+		<button id="load20">Load 20</button> <button id="load20_empty">Load 20 empty</button><br/>
 		<button id="load50">Load 50</button><button id="compare50">Compare with 50 B</button><br/>
 		<button id="load200">Load 200</button><button id="compare200">Compare with 200 B</button><br/>
 		<br/>
@@ -73,7 +73,7 @@
 				
 				})
 			
-		}).click();
+		})
 
 		$('#load13b').on('click', function() {
 
@@ -121,6 +121,20 @@
 				})
 			
 		})
+
+		$('#load20_empty').on('click', function() {
+
+			$.getJSON('response/history_test_20gg_empty.json')
+				.done(function(result) {
+
+					$.when(graph.setData(result.data)).done(function() {
+						console.log('draw');
+						graph.draw();						
+					})
+				
+				})
+			
+		}).click();
 
 		$('#load50').on('click', function() {
 
