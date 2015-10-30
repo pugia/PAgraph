@@ -1875,28 +1875,44 @@
 					
 					graph.addClass('PACustomHBars');
 					
-					var ul = d3.selectAll(graph.get()).append('ul');
-					
+					var ul = graph.find('ul').length ? d3.selectAll(graph.get()).select('ul') : d3.selectAll(graph.get()).append('ul');
+
 					// params to zoom on the data
 					var coeff = Math.abs(getMaxValues(settings.data) - getMinValues(settings.data)) / 90;
-							
+					
+					// remove exceding li
+					graph.find('ul li:gt('+ (settings.data.length-1) +')').remove();
+					
+					
+					var lis = ul.selectAll('li');
 					for (var i in settings.data) {
-						
-						var li = ul.append('li');
-						
-						// label
-						li.append('label')
-							.text(settings.data[i].label);
-						
-						// bar
+												
+						var li = lis[0][i] ? d3.select(lis[0][i]) : ul.append('li');
 						var val = coeff ? settings.data[i].value / coeff : 100;
-						li.append('div').append('span')
-																			.attr('data-perc', val)
-																			.style('background', settings.main.color)
 						
-						// value
-						li.append('span').html(Number(settings.data[i].value).format(settings.main.format))
-														 .attr('data-value', settings.data[i].value);;
+						if (lis[0][i]) {
+							
+							li.select('label').text(settings.data[i].label);
+							li.select('div > span').attr('data-perc', val);
+							li.select('span.v').attr('data-value', settings.data[i].value);
+								
+						} else {
+						
+							// label
+							li.append('label')
+								.text(settings.data[i].label);
+							
+							// bar
+							li.append('div').append('span')
+																				.attr('data-perc', val)
+																				.style('background', settings.main.color)
+							
+							// value
+							li.append('span').classed('v', true)
+															 .html(Number(0).format(settings.main.format))
+															 .attr('data-value', settings.data[i].value);
+
+						}
 									
 					}
 					
@@ -1913,7 +1929,7 @@
 						$(this).width(parseInt($(this).attr('data-perc'))+'%')
 					})
 					
-					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100);
+					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
 					
 				}
 				
