@@ -1878,7 +1878,9 @@
 					var ul = graph.find('ul').length ? d3.selectAll(graph.get()).select('ul') : d3.selectAll(graph.get()).append('ul');
 
 					// params to zoom on the data
-					var coeff = Math.abs(getMaxValues(settings.data) - getMinValues(settings.data)) / 90;
+					var coeff = Math.abs(getMaxValues(settings.data) - getMinValues(settings.data)) / 100;
+										
+					var max = getMaxValues(settings.data);
 					
 					// remove exceding li
 					graph.find('ul li:gt('+ (settings.data.length-1) +')').remove();
@@ -1888,7 +1890,7 @@
 					for (var i in settings.data) {
 												
 						var li = lis[0][i] ? d3.select(lis[0][i]) : ul.append('li');
-						var val = coeff ? settings.data[i].value / coeff : 100;
+						var val = coeff ? 100 - ((max - settings.data[i].value) * coeff) : 100;
 						
 						if (lis[0][i]) {
 							
