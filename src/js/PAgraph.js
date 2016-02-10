@@ -1,12 +1,14 @@
 // PAgraph Plugin
 (function ($) {
 
+
+
 	// graphics
-  $.fn.PAgraph = function( options ) {
-		
+	$.fn.PAgraph = function( options ) {
+
 		// default options
-    var settings = $.extend(true, {
-			
+		var settings = $.extend(true, {
+
 			mode: 'history',
 			filter: {  // only for history mode
 				mode: 'daily',
@@ -18,7 +20,7 @@
 					x: {
 						show: true,
 						color: '#E2E6E9',
-						label: '#C1C1C1',
+						label: '#C1C1C1'
 					},
 					y: {
 						show: true,
@@ -30,13 +32,13 @@
 			},
 			lineInterpolation: 'cardinal',
 			interpolateOnZero: true,
-			preFetch: null,
-						
+			preFetch: null
+
 		}, options );
-		
+
 		var graph = this;
 		graph.addClass('PAgraphContainer');
-		
+
 		var structure = {
 			legend: null,
 			tooltip: null,
@@ -72,21 +74,21 @@
 				}
 			}
 		};
-		
+
 		var graphElementsEmpty = {
-																group: null,
-																elements: {
-																	line: null,
-																	area: null,
-																	points: {
-																		coords: [],
-																		elements: []
-																	}
-																}
-															}
-		
+			group: null,
+			elements: {
+				line: null,
+				area: null,
+				points: {
+					coords: [],
+					elements: []
+				}
+			}
+		};
+
 		var internalSettings = {
-			
+
 			labels: {
 				x: {
 					height: 30,
@@ -97,132 +99,131 @@
 					marginLeft: 10
 				}
 			},
-			
+
 			graphAnimationTime: 600,
 			animateGridTime: 500,
 			animateEasing: 'cubic-in-out',
 			graphLineInterpolation: settings.lineInterpolation
-
 		};
-		
+
 		// legend
 		structure.legend = d3.selectAll(graph.get()).append('div')
-																								.classed('PAlegend', true);
-																								
+			.classed('PAlegend', true);
+
 		// tooltip
 		structure.tooltip = d3.selectAll(graph.get()).append('div')
-																								 .classed('PAtooltip', true)
-																								 
+			.classed('PAtooltip', true);
+
 		structure.tooltip.append('span').text('3123');
-		structure.tooltip.append('label').text('metric');	 
-		
+		structure.tooltip.append('label').text('metric');
+
 		// svg
 		structure.svg.element = d3.selectAll(graph.get()).append('svg')
-																										 .classed('PAGraph', true)
-																										 .classed('PAMode'+settings.mode.capitalizeFirstLetter(), true)
-																										 .attr('width', graph.width())
-																										 .attr('height', graph.height());
+			.classed('PAGraph', true)
+			.classed('PAMode'+settings.mode.capitalizeFirstLetter(), true)
+			.attr('width', graph.width())
+			.attr('height', graph.height());
 		structure.svg.grid.group = structure.svg.element.append('g').classed('PAGgrid', true);
 		structure.svg.label.x.group = structure.svg.element.append('g').classed('PAGlabelX', true);
 		structure.svg.label.y.group = structure.svg.element.append('g').classed('PAGlabelY', true);
-		structure.svg.graph.group = structure.svg.element.append('g').classed('PAGgraphs', true);	
-																										
+		structure.svg.graph.group = structure.svg.element.append('g').classed('PAGgraphs', true);
+
 
 		var MODE = {
-			
+
 			history: {
-			
-				filter: 'daily', // daily, weekly, monthly 
+
+				filter: 'daily', // daily, weekly, monthly
 				computedData: [null,null],
-								
+
 				// start with a week structure
 				init: function() {
-					
+
 					debug('MODE: history');
-					
+
 					var self = this;
-					
+
 					self.initLegend();
 					self.initCircles();
 					self.initFilters();
 					self.grid();
-					
+
 				},
-				
+
 				grid: function() {
-					
+
 					var self = this;
-					
+
 					self.initGridX();
 					self.initGridY();
-					
+
 				},
-				
+
 				/* INIT */
 				// create empty grid without label
 				initGridX: function() {
-					
+
 					var self = this;
-					
+
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					var elementsCount = 8;
-					
+
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
-					
+
 					var spacing = Math.floor(w / (elementsCount-1) );
 					structure.svg.grid.x.group = structure.svg.grid.group.append('g').classed('PAGgridX', true);
-					
+
 					for (var i = 0; i < elementsCount; i++) {
-						
+
 						var x = (i * spacing)	+ j;
-						
+
 						var line =  structure.svg.grid.x.group.append('line')
-																									.attr('x1', x).attr('y1', 0)
-																									.attr('x2', x).attr('y2', h)
-																									.attr('stroke', settings.config.grid.x.color)
+							.attr('x1', x).attr('y1', 0)
+							.attr('x2', x).attr('y2', h)
+							.attr('stroke', settings.config.grid.x.color)
 						structure.svg.grid.x.elements.push(line);
-						
-					}					
-					
+
+					}
+
 				},
 				initGridY: function() {
 					var self = this;
-					
+
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
-					
+
 					var elementsCount = 6;
-					
+
 					var spacing = Math.floor(h / elementsCount);
-					structure.svg.grid.y.group = structure.svg.grid.group.append('g').classed('PAGgridY', true);		
-					
-					
+					structure.svg.grid.y.group = structure.svg.grid.group.append('g').classed('PAGgridY', true);
+
+
 					for (var i = 0; i < elementsCount; i++) {
-						
+
 						var line =  structure.svg.grid.y.group.append('line')
-																									.attr('x1', j).attr('y1', h - (i*spacing))
-																									.attr('x2', graph.width()).attr('y2', h - (i*spacing))
-																									.attr('stroke', settings.config.grid.y.color)
+							.attr('x1', j).attr('y1', h - (i*spacing))
+							.attr('x2', graph.width()).attr('y2', h - (i*spacing))
+							.attr('stroke', settings.config.grid.y.color)
 						structure.svg.grid.y.elements.push(line);
-														
+
 					}
-					
+
 				},
-			
+
 				// create flat graph
 				initGraph: function(index_wanted, color, legend, format) {
-					
+
 					var self = this;
 					var dfrd = $.Deferred();
-					
+
 					if (index_wanted && structure.svg.graph.elements[index_wanted]) {
 						dfrd.resolve(index_wanted);
 						return dfrd.promise();
@@ -231,16 +232,16 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-										
+
 					var graphElements = $.extend(true, {}, graphElementsEmpty);
-					
+
 					graphElements.group = structure.svg.graph.group.insert('g',':first-child')
-																							 					 .classed('PAGgraph', true)
+						.classed('PAGgraph', true)
 					structure.svg.graph.elements.push(graphElements);
-										
+
 					var index = structure.svg.graph.elements.length - 1;
 					structure.svg.graph.elements[index].group.attr('data-index', index);
-					
+
 					// create settings structure
 					var color = color || "#"+((1<<24)*Math.random()|0).toString(16);
 					var legend = legend || 'Graph '+index;
@@ -251,8 +252,8 @@
 						legend: legend,
 						format: format
 					});
-					
-					var elementsCount = structure.svg.grid.x.elements.length || 8;					
+
+					var elementsCount = structure.svg.grid.x.elements.length || 8;
 					structure.svg.element.attr('data-points', elementsCount);
 
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
@@ -263,36 +264,36 @@
 					for (var i = 0; i < elementsCount; i++) {
 						var x = (i * spacing)	+ j;
 						lineData.push({x:x, y:h});
-					}					
-					
+					}
+
 					var lineF = d3.svg.line()
-			                      .x(function(d) { return d.x; })
-			                      .y(function(d) { return d.y; })
-			                      .interpolate(internalSettings.graphLineInterpolation);
-			    var pathCoord = lineF(lineData);
-			    var lineG = structure.svg.graph.elements[index].group.append('path')
-											    											 .classed('PAGgraphLine', true)
-											    											 .attr('d', pathCoord)
-											    											 .attr('stroke', settings.config.graph[index].color)
-											    											 .attr('stroke-width', 1)
-											    											 .attr('fill', 'none')
+						.x(function(d) { return d.x; })
+						.y(function(d) { return d.y; })
+						.interpolate(internalSettings.graphLineInterpolation);
+					var pathCoord = lineF(lineData);
+					var lineG = structure.svg.graph.elements[index].group.append('path')
+						.classed('PAGgraphLine', true)
+						.attr('d', pathCoord)
+						.attr('stroke', settings.config.graph[index].color)
+						.attr('stroke-width', 1)
+						.attr('fill', 'none')
 					structure.svg.graph.elements[index].elements.line = lineG;
 
-			    var areaG = structure.svg.graph.elements[index].group.append('path')
-											    											 .classed('PAGgraphArea', true)
-											    											 .attr('d', pathCoord)
-											    											 .attr('stroke-width', 0)
-											    											 .attr('fill', settings.config.graph[index].color)
+					var areaG = structure.svg.graph.elements[index].group.append('path')
+						.classed('PAGgraphArea', true)
+						.attr('d', pathCoord)
+						.attr('stroke-width', 0)
+						.attr('fill', settings.config.graph[index].color)
 					structure.svg.graph.elements[index].elements.area = areaG;
-					
+
 					// add label to legend
 					var p = structure.legend.append('p')
-																	.attr('data-index', index)
+						.attr('data-index', index)
 					p.append('span')
-					 .style('background', settings.config.graph[index].color);
+						.style('background', settings.config.graph[index].color);
 					p.append('label')
-					 .text(settings.config.graph[index].legend);
-					
+						.text(settings.config.graph[index].legend);
+
 					setTimeout(function() { dfrd.resolve(index); }, elementsCount*25)
 					return dfrd.promise();
 
@@ -300,31 +301,31 @@
 
 				// action on legend
 				initLegend: function() {
-					
+
 					var self = this;
-					
-					graph.find('div.PAlegend')	
+
+					graph.find('div.PAlegend')
 						.addClass('PAhide')
 						.on('click', 'p[data-index]', function() {
 							var index = parseInt($(this).attr('data-index'));
 							self.moveOnFront(index);
 						})
-					
-					
+
+
 				},
-								
+
 				// create filters menu
 				initFilters: function() {
 
 					var self = this;
-					
+
 					structure.filters = d3.selectAll(graph.get()).insert('div',":first-child")
-																											 .classed('PAfilters', true);
-																											 
+						.classed('PAfilters', true);
+
 					structure.filters.append('p').attr('data-mode', 'daily').text(settings.filter.labels[0]);
 					structure.filters.append('p').attr('data-mode', 'weekly').text(settings.filter.labels[1]);
 					structure.filters.append('p').attr('data-mode', 'monthly').text(settings.filter.labels[2]);
-					
+
 					graph.find('div.PAfilters')
 						.addClass('PAhide')
 						.on('click', 'p[data-mode]', function() {
@@ -332,107 +333,107 @@
 							// control values
 							settings.filter.mode = $(this).attr('data-mode');
 							self.applyFilter();
-														
+
 						})
-					
+
 				},
-				
+
 				/* ANIMATE */
 				setData: function(data, index) {
-					
+
 					var self = this;
 					var dfrd = $.Deferred();
 					var index = index || 0;
-					
+
 					// empty stored data with different scale on index 0
 					if (structure.data.length && index == 0 && structure.data[0].length != data.length) {
 						structure.data = [];
 						self.computedData = [];
 					}
-					
+
 					// check data's scale
 					if (!data || data.length == 0) { dfrd.reject('no'); }
 					if (index != 0 && structure.data[0] && structure.data[0].length != data.length) { console.log('Compare metric has a different scale'); dfrd.reject('no'); }
 					else {
-					
+
 						// store data
 						structure.data[index] = data;
-						
+
 						// if it's first graph
 						if (index == 0) {
-							
+
 							// show filters based on elements number
 							structure.filters.classed('PAhide', true);
 							if (structure.data[0].length >= 28) {
-		
+
 								if (structure.data[0].length > 40 && settings.filter.mode == 'daily') { settings.filter.mode = 'weekly'; }
 								structure.filters.select('p[data-mode="daily"]').classed('PAhide', (structure.data[0].length > 60));
 								structure.filters.select('p[data-mode="monthly"]').classed('PAhide', (structure.data[0].length < 120));
 								if ( structure.data[0].length < 120 && settings.filter.mode == 'monthly' ) { settings.filter.mode = 'daily' };
-								
+
 								structure.filters.selectAll('p').classed('selected', false);
 								structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
-		
+
 								setTimeout(function() { structure.filters.classed('PAhide', false);	}, internalSettings.animateGridTime);
-		
+
 							} else {
-		
+
 								settings.filter.mode = 'daily';
 								structure.filters.selectAll('p').classed('selected', false);
 								structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
-		
+
 							}
-							
+
 						}
-	
+
 						self.computedData[index] = self.applyFilterToData(data, settings.filter.mode);
 						var allData = mergeAndClean(self.computedData);
 						structure.svg.grid.y.spacing = Yspacing(allData);
 						setTimeout(function() { dfrd.resolve('ok');	}, 10);
-					
+
 					}
-					
+
 					return dfrd.promise();
-					
+
 				},
-				
+
 				draw: function() {
-					
+
 					var self = this;
-					
+
 					promises = [];
 					promises.push(self.animateGridX(self.computedData[0]));
 					promises.push(self.animateLabelY(self.computedData[0]));
-					
+
 					// flatten graph that need to be flatten
 					if (parseInt(structure.svg.element.attr('data-points')) != self.computedData[0].length) {
 						for (var i in structure.svg.graph.elements) {
 							promises.push(self.flattenGraph(i));
 						}
 					}
-					
+
 					$.when.apply($, promises).done(function () {
-				    // Need to get the data returned from all ajax calls here
-				    
+						// Need to get the data returned from all ajax calls here
+
 						graph.find('div.PAlegend').toggleClass('PAhide', self.computedData.length < 2);
 						structure.svg.element.attr('data-points', self.computedData[0].length);
-						
+
 						for (var i in structure.svg.graph.elements) {
 							if (self.computedData[i]) {
-								
+
 								self.animateGraph(self.computedData[i], i);
-							} else {								
+							} else {
 								self.removeGraph(i);
 							}
 						}
-				    
-					});					
-																									
+
+					});
+
 				},
-				
-				// remove graph with index 
+
+				// remove graph with index
 				removeGraph: function(index) {
-					
+
 					var self = this;
 					var dfrd = $.Deferred();
 
@@ -444,58 +445,58 @@
 						self.computedData[index] = null;
 						dfrd.resolve();
 					});
-					
+
 					return dfrd.promise();
-					
+
 				},
-				
-				
+
+
 				applyFilter: function() {
-					
+
 					var self = this;
-					
+
 					structure.filters.selectAll('p').classed('selected', false);
 					structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
-					
+
 					self.computedData[0] = self.applyFilterToData(structure.data[0], settings.filter.mode);
 					self.computedData[1] = self.applyFilterToData(structure.data[1], settings.filter.mode);
-										
+
 					var allData = mergeAndClean(self.computedData);
 					structure.svg.grid.y.spacing = Yspacing(allData);
 
 					self.draw();
-					
+
 				},
-								
+
 				// animate line and area
 				animateGraph: function(data, index) {
 					var self = this;
-					
-					if (!structure.svg.graph.elements[index]) { 
-						console.log('structure not exist'); return; 
+
+					if (!structure.svg.graph.elements[index]) {
+						console.log('structure not exist'); return;
 					}
-					
+
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
 					var spacingX = Math.floor(w / (data.length - 1) );
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
-					
+
 					// remove circles
 					structure.svg.graph.elements[index].group.selectAll('circle').classed('PAhide', 'true');
 					setTimeout(function() {
 						structure.svg.graph.elements[index].group.selectAll('circle.PAhide').remove();
 					}, 300);
-					
+
 					// animate line
 					var linesData = []; var linesDataIndex = linesData.length;
 					var lineData = []; var lData = [];
 					for(var i in data) {
-						
+
 						var x = (i * spacingX)	+ j;
 						var y = parseInt(h - ((data[i].value - structure.svg.grid.y.spacing[0])  * spacingY ));
 
@@ -503,13 +504,13 @@
 							'x': x,
 							'y': y
 						});
-						
+
 						if (!settings.interpolateOnZero) {
 							lData.push({
 								'x': x,
 								'y': y
 							});
-	
+
 							if (data[i].value == 0) {
 								linesData.push(lData);
 								lData = [];
@@ -519,69 +520,69 @@
 								})
 							}
 						}
-						
+
 					}
-					
-					if (!linesData.length) { linesData.push(lineData); }					
+
+					if (!linesData.length) { linesData.push(lineData); }
 					structure.svg.graph.elements[index].elements.points.coords = lineData;
 					var lineF = d3.svg.line()
-			                      .x(function(d) { return d.x; })
-			                      .y(function(d) { return d.y; })
-			                      .interpolate(internalSettings.graphLineInterpolation);
+						.x(function(d) { return d.x; })
+						.y(function(d) { return d.y; })
+						.interpolate(internalSettings.graphLineInterpolation);
 
 					if (!settings.interpolateOnZero) {
-				    var pathCoord = '';
+						var pathCoord = '';
 						for (var ld in linesData) {
-					    pathCoord += lineF(linesData[ld]);
-				    }
-				    
-				    var re = /M(.\d*),(.\d*)/; 
-				    var m1 = re.exec(pathCoord)[0];
-				    pathCoord = m1+pathCoord.replace(/M(.\d*),(.\d*)/gmi,'');
-				  } else {
-				    var pathCoord = lineF(lineData);
-			    }
-			    
+							pathCoord += lineF(linesData[ld]);
+						}
+
+						var re = /M(.\d*),(.\d*)/;
+						var m1 = re.exec(pathCoord)[0];
+						pathCoord = m1+pathCoord.replace(/M(.\d*),(.\d*)/gmi,'');
+					} else {
+						var pathCoord = lineF(lineData);
+					}
+
 					// complete the area
 					pathCoordArea = pathCoord;
 					pathCoordArea += 'L'+ getMaxValues(lineData,'x') + ',' + h;
 					pathCoordArea += 'L'+ j + ',' + h;
 					pathCoordArea += 'L'+ j + ',' + lineData[0]['y'];
-			
-			    structure.svg.graph.elements[index].elements.area.transition()
-												    												.duration(internalSettings.graphAnimationTime)
-												    												.attr('d', pathCoordArea)
-												    												.ease(internalSettings.animateEasing)
-			    structure.svg.graph.elements[index].elements.line.transition()
-												    												.duration(internalSettings.graphAnimationTime)
-																			    					.attr('d', pathCoord)
-																			    					.ease(internalSettings.animateEasing)
-																			    					.each("end",function() {
-																				    					self.animateCircles(data, index);
-																			    					})
-					
+
+					structure.svg.graph.elements[index].elements.area.transition()
+						.duration(internalSettings.graphAnimationTime)
+						.attr('d', pathCoordArea)
+						.ease(internalSettings.animateEasing)
+					structure.svg.graph.elements[index].elements.line.transition()
+						.duration(internalSettings.graphAnimationTime)
+						.attr('d', pathCoord)
+						.ease(internalSettings.animateEasing)
+						.each("end",function() {
+							self.animateCircles(data, index);
+						})
+
 				},
-				
+
 				flattenGraph: function(index) {
-					
+
 					var self = this;
 					debug('flattenGraph', index);
 					var dfrd = $.Deferred();
-										
+
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					var actualPoints = parseInt(structure.svg.element.attr('data-points'));
-					
+
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
 					var spacingBefore = Math.floor(w / (actualPoints - 1) );
-					
+
 					// create flat path with the same point number of the grid to flatten smooth
 					var lineData = [];
-					for (var i = 0; i < actualPoints; i++) {						
+					for (var i = 0; i < actualPoints; i++) {
 						var x = (i * spacingBefore)	+ j;
 						lineData.push({
 							'x': x,
@@ -590,144 +591,144 @@
 					}
 
 					var lineF = d3.svg.line()
-			                      .x(function(d) { return d.x; })
-			                      .y(function(d) { return d.y; })
-			                      .interpolate(internalSettings.graphLineInterpolation);
-			    var pathCoord = lineF(lineData);
+						.x(function(d) { return d.x; })
+						.y(function(d) { return d.y; })
+						.interpolate(internalSettings.graphLineInterpolation);
+					var pathCoord = lineF(lineData);
 					pathCoordArea = pathCoord;
 					pathCoordArea += 'L'+ getMaxValues(lineData,'x') + ',' + (h+1);
 					pathCoordArea += 'L'+ j + ',' + (h+1);
 					pathCoordArea += 'L'+ j + ',' + lineData[0]['y'];
-					
-					// create a fake 
+
+					// create a fake
 					if (self.computedData[index] && self.computedData[index].length) {
 
 						var spacingNext = Math.floor(w / (self.computedData[index].length - 1) );
 
 						// create flat path with the new grid number of points
 						var lineData = [];
-						for (var i = 0; i < self.computedData[index].length; i++) {						
+						for (var i = 0; i < self.computedData[index].length; i++) {
 							var x = (i * spacingNext)	+ j;
 							lineData.push({
 								'x': x,
 								'y': h
 							});
 						}
-					
+
 						var lineF = d3.svg.line()
-				                      .x(function(d) { return d.x; })
-				                      .y(function(d) { return d.y; })
-				                      .interpolate(internalSettings.graphLineInterpolation);
-				    var pathCoordNext = lineF(lineData);
+							.x(function(d) { return d.x; })
+							.y(function(d) { return d.y; })
+							.interpolate(internalSettings.graphLineInterpolation);
+						var pathCoordNext = lineF(lineData);
 						pathCoordAreaNext = pathCoordNext;
 						pathCoordAreaNext += 'L'+ getMaxValues(lineData,'x') + ',' + (h+1);
 						pathCoordAreaNext += 'L'+ j + ',' + (h+1);
 						pathCoordAreaNext += 'L'+ j + ',' + lineData[0]['y'];
 
 					}
-					
-					
-					
+
+
+
 					structure.svg.graph.elements[index].group.selectAll('circle')
 						.transition()
 						.duration(internalSettings.graphAnimationTime)
 						.attr('cy', h)
 						.style('opacity', 0)
 						.remove();
-					
-			    structure.svg.graph.elements[index].elements.area.transition()
-												    												.duration(internalSettings.graphAnimationTime)
-												    												.attr('d', pathCoordArea)
-												    												.ease(internalSettings.animateEasing)
-												    													.each('end', function() {
-													    													d3.select(this).attr('d', pathCoordAreaNext);
-												    													})
-																			    					
-			    structure.svg.graph.elements[index].elements.line.transition()
-												    												.duration(internalSettings.graphAnimationTime)
-																			    					.attr('d', pathCoord)
-																			    					.ease(internalSettings.animateEasing)
-																			    						.each('end', function() {
-																				    						d3.select(this).attr('d', pathCoordNext);
-																				    						dfrd.resolve();																					    						
-																			    						})
-					
-					return dfrd.promise();														    					
-					
+
+					structure.svg.graph.elements[index].elements.area.transition()
+						.duration(internalSettings.graphAnimationTime)
+						.attr('d', pathCoordArea)
+						.ease(internalSettings.animateEasing)
+						.each('end', function() {
+							d3.select(this).attr('d', pathCoordAreaNext);
+						})
+
+					structure.svg.graph.elements[index].elements.line.transition()
+						.duration(internalSettings.graphAnimationTime)
+						.attr('d', pathCoord)
+						.ease(internalSettings.animateEasing)
+						.each('end', function() {
+							d3.select(this).attr('d', pathCoordNext);
+							dfrd.resolve();
+						})
+
+					return dfrd.promise();
+
 				},
-				
+
 				// fix X grid spacing
 				// add or remove lines
 				animateGridX: function(data) {
-					
+
 					var self = this;
 					debug('animateGridX');
-					
+
 					var dfrd = $.Deferred();
 					self.animateLabelX(data);
-					
+
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					var elementsCount = data.length;
-										
+
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
-					
+
 					var spacing = Math.floor(w / (elementsCount-1) );
-					
+
 					// fix the number of lines and animate
 					// add new lines outside the artboard
 					if (elementsCount > structure.svg.grid.x.elements.length) {
 						var diff = elementsCount - structure.svg.grid.x.elements.length;
 						for (var a = 0; a < diff; a++) {
 							var line =  structure.svg.grid.x.group.append('line')
-																										.attr('x1', w+j+50).attr('y1', 0)
-																										.attr('x2', w+j+50).attr('y2', h)
-																										.attr('stroke', settings.config.grid.x.color)
-																										.attr('data-count', a);
+								.attr('x1', w+j+50).attr('y1', 0)
+								.attr('x2', w+j+50).attr('y2', h)
+								.attr('stroke', settings.config.grid.x.color)
+								.attr('data-count', a);
 							structure.svg.grid.x.elements.push(line);
 						}
 					}
-					
+
 					// animate the lines
 					for (var i in structure.svg.grid.x.elements) {
-						
+
 						var x = (i * spacing)	+ j;
-						
+
 						structure.svg.grid.x.elements[i].transition()
-																						.duration(internalSettings.animateGridTime)
-																						.attr('x1', x)
-																						.attr('x2', x)
-																						.ease(internalSettings.animateEasing)
-																						
-						
+							.duration(internalSettings.animateGridTime)
+							.attr('x1', x)
+							.attr('x2', x)
+							.ease(internalSettings.animateEasing)
+
+
 					}
-													
+
 					// remove the lines outside the artboard after the animation
 					setTimeout(function() {
 
 						if (elementsCount < structure.svg.grid.x.elements.length) {
-							var diff = structure.svg.grid.x.elements.length - elementsCount;	
+							var diff = structure.svg.grid.x.elements.length - elementsCount;
 							for (var a = 0; a < diff; a++) {
-								
+
 								var i = a + elementsCount;
 								structure.svg.grid.x.elements[i].remove();
-									
+
 							}
-							
+
 							structure.svg.grid.x.elements.splice(elementsCount, diff);
 						}
-						
+
 						dfrd.resolve();
-						
+
 					}, internalSettings.animateGridTime);
-					
+
 					return dfrd.promise();
-										
+
 				},
-				
+
 				// fix the number of labels and animate
 				// remove the labels outside the artboard
 				animateLabelX: function(data) {
@@ -736,77 +737,77 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					var elementsCount = data.length;
 
 					if (settings.config.grid.x.label) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label) {  j = internalSettings.labels.y.width; w = w - j; }
-					
+
 					var spacing = Math.floor(w / (data.length-1) );
-					
+
 					// hide current labels
 					structure.svg.label.x.group.classed('PAhide', true)
-																		 .selectAll('text')
-																		 .classed('show', false);
-					
+						.selectAll('text')
+						.classed('show', false);
+
 					// fix the number of labels and position
 					setTimeout(function() {
 						for(var i in data) {
-							
+
 							var x = (i * spacing)	+ j;
-							
+
 							if (structure.svg.label.x.elements[i]) { // move existing and update text
-								
+
 								structure.svg.label.x.elements[i].attr('x', x)
-																								 .text(data[i].label)
-								
+									.text(data[i].label)
+
 							} else { // create new
-							
+
 								var label =  structure.svg.label.x.group.append('text')
-																												.attr('x', x)
-																												.attr('y', h+internalSettings.labels.x.marginTop)
-																												.attr('text-anchor','middle')
-																												.attr('fill', settings.config.grid.x.label)
-																												.text(data[i].label)
+									.attr('x', x)
+									.attr('y', h+internalSettings.labels.x.marginTop)
+									.attr('text-anchor','middle')
+									.attr('fill', settings.config.grid.x.label)
+									.text(data[i].label)
 								structure.svg.label.x.elements.push(label);
-	
+
 							}
-							
+
 						}
-						
+
 						dfrd.resolve();
-						
+
 					}, internalSettings.animateGridTime);
-					
+
 					// remove exceeded
 					if (elementsCount < structure.svg.label.x.elements.length) {
-						var diff = structure.svg.grid.x.elements.length - elementsCount;	
+						var diff = structure.svg.grid.x.elements.length - elementsCount;
 						for (var a = 0; a < diff; a++) {
-							
+
 							var i = a + elementsCount;
 							if (structure.svg.label.x.elements[i]) { structure.svg.label.x.elements[i].remove(); }
-								
+
 						}
-						
+
 						structure.svg.label.x.elements.splice(elementsCount, diff);
 					}
-					
+
 					setTimeout(function() {
 						// show current labels
 						self.hideThickLabels();
 // 						structure.svg.label.x.group.classed('hide', false);
 					}, internalSettings.animateGridTime*2);
-					
+
 					return dfrd;
-								
+
 				},
-				
+
 				// hide some labels when there are too much
 				hideThickLabels: function() {
-					
+
 					var self = this;
 					var labelGroup = graph.find('g.PAGlabelX')
-					
+
 					var nthChildX = 1;
 					var l1_index = 1;
 					var l1_element = labelGroup.find('text:eq('+(l1_index)+')');
@@ -814,31 +815,31 @@
 						width: textWidth(l1_element),
 						x: l1_element.position().left
 					};
-					var l2_index = 2;					
+					var l2_index = 2;
 					var l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
-					
+
 					while (l1_size.x + l1_size.width + 10 > l2_size) {
 						nthChildX++; l2_index++;
 						l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
 					}
-					
+
 					structure.svg.label.x.group.selectAll('text:nth-child('+nthChildX+'n+2)')
-																		 .classed('show', true);
-					
-					
+						.classed('show', true);
+
+
 					function textWidth(element) {
-						
+
 						var fake = $('<span>').hide().appendTo(document.body);
 						fake.text(element.text())
-								.css('font-family', element.css('font-family'))
-								.css('font-weight', element.css('font-weight'))
-								.css('font-size', element.css('font-size'))
-								.css('text-transform', element.css('text-transform'))
+							.css('font-family', element.css('font-family'))
+							.css('font-weight', element.css('font-weight'))
+							.css('font-size', element.css('font-size'))
+							.css('text-transform', element.css('text-transform'))
 						var w = fake.width(); fake.remove();
 						return w;
-						
+
 					}
-										
+
 				},
 
 				// fix the number of labels and animate
@@ -849,123 +850,123 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					var elementsCount = data.length;
 
 					if (settings.config.grid.x.label) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label) {  j = internalSettings.labels.y.width; w = w - j; }
-					
+
 					var elementsCount = 6;
 					var spacing = Math.floor(h / elementsCount);
-					
+
 					// hide current labels
 					structure.svg.label.y.group.classed('PAhide', true);
-					
+
 					// fix the number of labels and position
 					setTimeout(function() {
 						for (var i = 0; i < elementsCount; i++) {
-							
+
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
 								structure.svg.label.y.elements[i].text(structure.svg.grid.y.spacing[i])
 
 							} else {
 								var label =  structure.svg.label.y.group.append('text')
-																	.attr('x', 50)
-																	.attr('y', h - (i*spacing))
-																	.attr('text-anchor','end')
-																	.attr('fill', settings.config.grid.y.label)
-																	.html(structure.svg.grid.y.spacing[i].format(settings.config.grid.y.format))
+									.attr('x', 50)
+									.attr('y', h - (i*spacing))
+									.attr('text-anchor','end')
+									.attr('fill', settings.config.grid.y.label)
+									.html(structure.svg.grid.y.spacing[i].format(settings.config.grid.y.format))
 								structure.svg.label.y.elements.push(label);
 							}
-															
+
 						}
-						
+
 					}, internalSettings.animateGridTime);
-										
+
 					setTimeout(function() {
 						// show current labels
 						structure.svg.label.y.group.classed('PAhide', false);
 					}, internalSettings.animateGridTime*2)
-								
+
 				},
-								
+
 				// animate the circles
 				animateCircles: function(data, index) {
-					
+
 					var self = this;
-										
+
 					for (var i in structure.svg.graph.elements[index].elements.points.coords) {
-						
+
 						var coords = structure.svg.graph.elements[index].elements.points.coords[i];
 						var circle = structure.svg.graph.elements[index].group.append('circle')
-																															.attr('cx', coords.x)
-																															.attr('cy', coords.y)
-																															.attr('r', 0)
-																															.attr('stroke-width', 2)
-																															.attr('stroke', settings.config.graph[index].color)
-																															.attr('fill', '#fff')
-																															.attr('data-value', data[i].value)
-																															.attr('data-xStep', i)
-																																.transition()
-																																.delay(i*20)
-																																.attr('r', 4)
-																																.ease(internalSettings.animateEasing)
+							.attr('cx', coords.x)
+							.attr('cy', coords.y)
+							.attr('r', 0)
+							.attr('stroke-width', 2)
+							.attr('stroke', settings.config.graph[index].color)
+							.attr('fill', '#fff')
+							.attr('data-value', data[i].value)
+							.attr('data-xStep', i)
+							.transition()
+							.delay(i*20)
+							.attr('r', 4)
+							.ease(internalSettings.animateEasing)
 						structure.svg.graph.elements[index].elements.points.elements.push(circle);
-												
+
 					}
-					
+
 				},
-																
+
 				// change legend labels on the go
 				setLegendLabel: function(label, index) {
-					
+
 					var self = this;
 					settings.config.graph[index].legend = label;
 					structure.legend.select('p[data-index="'+ index +'"] > label').text(label);
-					
+
 				},
-				
+
 				// action on circles
 				initCircles: function() {
 					var self = this;
-					
+
 					var displayNoneTimer = null;
 
 					graph
 						.on('mouseover', 'circle', function() {
-							
+
 							structure.tooltip.style('display', 'block');
 							clearTimeout(displayNoneTimer);
 
 							// label and value
 							var index = $(this).parent('g').attr('data-index');
 							var value = $(this).attr('data-value');
-							
+
 							structure.tooltip
 								.style('color', settings.config.graph[index].color)
 								.select('span').html(Number(value).format(settings.config.graph[index].format));
 
 							structure.tooltip
 								.select('label').text(settings.config.graph[index].legend);
-								
+
 							// set tooltip position
 							var size = structure.tooltip.node().getBoundingClientRect();
-							
+
 							var t = $(structure.tooltip[0][0]),
-									w = t.width(),
-									h = t.height()
-							
+								w = t.width(),
+								h = t.height()
+
 							var px = $(this).attr('cx'),
-									py = $(this).attr('cy')
-									
+								py = $(this).attr('cy')
+
 							var top = py - h - 20,
-									left= px - parseInt(w/2)-10
-							
+								left= px - parseInt(w/2)-10
+
 							t.css('top', top)
-							 .css('left',left)
-							 .addClass('show')
-							
+								.css('left',left)
+								.addClass('show')
+
 						})
 						.on('mouseout', 'circle', function() {
 							structure.tooltip.classed('show', false);
@@ -973,27 +974,27 @@
 								structure.tooltip.style('display', 'none');
 							}, 300)
 						})
-					
+
 				},
-				
+
 				// move the selected graph on front
 				moveOnFront: function(index) {
-					
+
 					var self = this;
 					var g = graph.find('g.PAGgraphs');
 					g.find('g.PAGgraph[data-index='+index+']').appendTo(g);
-					
+
 				},
-				
+
 				// filter data
 				applyFilterToData: function(data, filter) {
-					
+
 					var self = this;
 					var filter = filter || 'daily';
 					var newData = data;
-					
+
 					if (data == null) { return null; }
-					
+
 					switch(filter) {
 						case 'weekly': newData = weekly(data); break;
 						case 'monthly': newData = monthly(data); break;
@@ -1001,152 +1002,152 @@
 					}
 
 					return newData;
-					
+
 					// in daily mode there are no filter applied
 					function daily(data) { return data; 	}
-					
+
 					// in weekly mode the data are groupped in 7 days
 					// TODO verify if this shoud group by week (mon/sun)
 					//				verify how to group the labels
 					function weekly(data) {
-						
+
 						var newData = [],
-								tmpObjModel = {
-									"label": "",
-									"value": 0
-								},
-								tmpObj = {},
-								index = 0;
-								
+							tmpObjModel = {
+								"label": "",
+								"value": 0
+							},
+							tmpObj = {},
+							index = 0;
+
 						for (var i in data) {
 
 							// first
 							if (i % 7 == 0) {
-								tmpObj = $.extend(true, {}, tmpObjModel);	
+								tmpObj = $.extend(true, {}, tmpObjModel);
 								tmpObj.label = data[i].label;
 								newData.push(tmpObj);
 								index = newData.length - 1;
 							}
-							
-							newData[index].value += data[i].value;							
-							
+
+							newData[index].value += data[i].value;
+
 						}
-						
+
 						return newData;
 					}
 
 					// in monthly mode the data are groupped in 30 days
 					// TODO verify if this shoud group by month
 					function monthly(data) {
-						
+
 						var newData = [],
-								tmpObjModel = {
-									"label": "",
-									"value": 0
-								},
-								tmpObj = {},
-								index = 0;
-								
+							tmpObjModel = {
+								"label": "",
+								"value": 0
+							},
+							tmpObj = {},
+							index = 0;
+
 						for (var i in data) {
 
 							// first
 							if (i % 30 == 0) {
-								tmpObj = $.extend(true, {}, tmpObjModel);	
+								tmpObj = $.extend(true, {}, tmpObjModel);
 								tmpObj.label = data[i].label;
 								newData.push(tmpObj);
 								index = newData.length - 1;
 							}
-							
-							newData[index].value += data[i].value;							
-							
+
+							newData[index].value += data[i].value;
+
 						}
-						
+
 						return newData;
 					}
-					
+
 				},
-							
+
 			},
-			
+
 			vertical_bar: {
-											
+
 				// start with a week structure
 				init: function() {
-					
+
 					debug('MODE: weekday');
-					
+
 					var self = this;
-					
+
 					self.grid();
-					
+
 				},
-				
+
 				grid: function() {
-					
+
 					var self = this;
-					
+
 					self.initGridY();
 					self.initLegend();
 					self.initRects();
-					
+
 				},
-				
+
 				/* INIT */
 				// create empty grid without label
 				initGridY: function() {
 					var self = this;
-					
+
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
-					
+
 					var elementsCount = 6;
-					
+
 					var spacing = Math.floor(h / elementsCount);
-					structure.svg.grid.y.group = structure.svg.grid.group.append('g').classed('PAGgridY', true);		
-					
-					
+					structure.svg.grid.y.group = structure.svg.grid.group.append('g').classed('PAGgridY', true);
+
+
 					for (var i = 0; i < elementsCount; i++) {
-						
+
 						var line =  structure.svg.grid.y.group.append('line')
-																									.attr('x1', j).attr('y1', h - (i*spacing))
-																									.attr('x2', graph.width()).attr('y2', h - (i*spacing))
-																									.attr('stroke', settings.config.grid.y.color)
+							.attr('x1', j).attr('y1', h - (i*spacing))
+							.attr('x2', graph.width()).attr('y2', h - (i*spacing))
+							.attr('stroke', settings.config.grid.y.color)
 						structure.svg.grid.y.elements.push(line);
-														
+
 					}
-					
+
 				},
-			
+
 				// create flat graph
 				initGraph: function(index_wanted, color, legend, format) {
-					
+
 					var self = this;
 					var dfrd = $.Deferred();
-					
+
 					if (index_wanted && structure.svg.graph.elements[index_wanted]) {
 						dfrd.resolve(index_wanted);
 						return dfrd.promise();
 					}
-					
+
 					var startElements = (structure.data[0]) ? structure.data[0].length : 5;
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					var graphElements = $.extend(true, {}, graphElementsEmpty);
-					
+
 					graphElements.group = structure.svg.graph.group.insert('g',':first-child')
-																							 					 .classed('PAGgraph', true)
+						.classed('PAGgraph', true)
 					graphElements.elements.area = [];
 					structure.svg.graph.elements.push(graphElements);
-										
+
 					var index = structure.svg.graph.elements.length - 1;
 					structure.svg.graph.elements[index].group.attr('data-index', index);
-					
+
 					// create settings structure
 					var color = color || "#"+((1<<24)*Math.random()|0).toString(16);
 					var legend = legend || 'Graph '+index;
@@ -1156,8 +1157,8 @@
 						color: color,
 						legend: legend,
 						format: format
-					});			
-					
+					});
+
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 					var spacing = Math.floor(w/startElements);
@@ -1165,68 +1166,68 @@
 					var offsetX = Math.floor(spacing*0.1);
 
 					for (var i = 0; i < startElements; i++) {
-						
+
 						var x = (i * spacing) + j + (spacing / 2) - (rectW / 2) + (index * offsetX);
 
 						var rect = structure.svg.graph.elements[index].group.append('rect')
-																																.attr('x', x)
-																																.attr('y', h-1)
-																																.attr('width', rectW)
-																																.attr('height', 1)
-																																.attr('rx', 5)
-																																.attr('ry', 5)
-																																.attr('fill', settings.config.graph[index].color)
-																																.style('opacity', 0)
+							.attr('x', x)
+							.attr('y', h-1)
+							.attr('width', rectW)
+							.attr('height', 1)
+							.attr('rx', 5)
+							.attr('ry', 5)
+							.attr('fill', settings.config.graph[index].color)
+							.style('opacity', 0)
 						structure.svg.graph.elements[index].elements.area.push(rect);
-						
-					}					
+
+					}
 
 					// add label to legend
 					var p = structure.legend.append('p')
-																	.attr('data-index', index)
+						.attr('data-index', index)
 					p.append('span')
-					 .style('background', settings.config.graph[index].color);
+						.style('background', settings.config.graph[index].color);
 					p.append('label')
-					 .text(settings.config.graph[index].legend);
-					
+						.text(settings.config.graph[index].legend);
+
 					if (index == 0) { self.initLabelX(); }
-					
+
 					// resolve with index at the end of DOM creation
 					setTimeout(function() {	dfrd.resolve(index); }, startElements * 25);
-					
+
 					return dfrd.promise();
 
 				},
-				
+
 				initLabelX: function() {
-					
+
 					var self = this;
 					var startElements = 5;
-										
+
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 					var spacing = Math.floor(w/startElements);
-					
+
 					for (var i = 0; i < startElements; i++) {
-						
+
 						var x = (i * spacing) + j + (spacing / 2);
 
 						var label =  structure.svg.label.x.group.append('text')
-																										.attr('x', x)
-																										.attr('y', h+internalSettings.labels.x.marginTop)
-																										.attr('text-anchor','middle')
-																										.attr('fill', settings.config.grid.x.label)
-																										.style('opacity', 0)
+							.attr('x', x)
+							.attr('y', h+internalSettings.labels.x.marginTop)
+							.attr('text-anchor','middle')
+							.attr('fill', settings.config.grid.x.label)
+							.style('opacity', 0)
 						structure.svg.label.x.elements.push(label);
-						
-					}					
-					
+
+					}
+
 				},
-				
+
 				// fix the number of labels and animate
 				// remove the labels outside the artboard
 				animateLabelY: function() {
@@ -1235,49 +1236,49 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					var elementsCount = data.length;
 
 					if (settings.config.grid.x.label) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label) {  j = internalSettings.labels.y.width; w = w - j; }
-					
+
 					var elementsCount = 6;
 					var spacing = Math.floor(h / elementsCount);
-					
+
 					// hide current labels
 					structure.svg.label.y.group.classed('PAhide', true);
-					
+
 					// fix the number of labels and position
 					setTimeout(function() {
 						for (var i = 0; i < elementsCount; i++) {
-							
+
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
 								structure.svg.label.y.elements[i].text(structure.svg.grid.y.spacing[i])
 
 							} else {
 								var label =  structure.svg.label.y.group.append('text')
-																	.attr('x', 50)
-																	.attr('y', h - (i*spacing))
-																	.attr('text-anchor','end')
-																	.attr('fill', settings.config.grid.y.label)
-																	.text(structure.svg.grid.y.spacing[i])
+									.attr('x', 50)
+									.attr('y', h - (i*spacing))
+									.attr('text-anchor','end')
+									.attr('fill', settings.config.grid.y.label)
+									.text(structure.svg.grid.y.spacing[i])
 								structure.svg.label.y.elements.push(label);
 							}
-															
+
 						}
-						
+
 					}, internalSettings.animateGridTime);
-										
+
 					setTimeout(function() {
 						// show current labels
 						structure.svg.label.y.group.classed('PAhide', false);
 					}, internalSettings.animateGridTime*2)
-								
+
 				},
-				
+
 				animateGridX: function() {
-					
+
 					var self = this;
 					var dfrd = $.Deferred();
 					var w = graph.width();
@@ -1292,53 +1293,53 @@
 						var spacing = Math.floor(w/structure.data[0].length);
 						var rectW = Math.floor(spacing*0.7);
 						var offsetX = Math.floor(spacing*0.3);
-						
+
 						for (var index in structure.data) {
-																		
+
 							for (var i in structure.data[index]) {
-																		
+
 								var x = (i * spacing) + j + (spacing / 2) - (rectW / 2) + (index * offsetX);
-								
+
 								if (structure.svg.graph.elements[index].elements.area[i]) {
-								
+
 									structure.svg.graph.elements[index].elements.area[i]
 										.transition()
 										.duration(internalSettings.graphAnimationTime)
 										.attr('width', rectW)
 										.attr('x', x)
 										.style('opacity', 1)
-									
+
 								} else {
-									
+
 									var rect = structure.svg.graph.elements[index].group
 										.append('rect')
-											.attr('x', x)
-											.attr('y', h-1)
-											.attr('width', rectW)
-											.attr('height', 1)
-											.attr('rx', 5)
-											.attr('ry', 5)
-											.attr('fill', settings.config.graph[index].color)
-											.style('opacity', 0);
+										.attr('x', x)
+										.attr('y', h-1)
+										.attr('width', rectW)
+										.attr('height', 1)
+										.attr('rx', 5)
+										.attr('ry', 5)
+										.attr('fill', settings.config.graph[index].color)
+										.style('opacity', 0);
 									rect
 										.transition()
 										.delay(internalSettings.graphAnimationTime / 4)
 										.duration(internalSettings.graphAnimationTime)
 										.style('opacity', 1)
 									structure.svg.graph.elements[index].elements.area.push(rect);
-									
+
 								}
-								
+
 								if (index == 0) {
-		
-									var xx = (i * spacing) + j + (spacing / 2);	
+
+									var xx = (i * spacing) + j + (spacing / 2);
 									if (structure.svg.label.x.elements[i]) {
-										
+
 										structure.svg.label.x.elements[i]
 											.transition()
 											.duration(internalSettings.graphAnimationTime / 4)
 											.style('opacity', 0)
-										
+
 										structure.svg.label.x.elements[i]
 											.transition()
 											.delay(internalSettings.graphAnimationTime / 4)
@@ -1346,32 +1347,32 @@
 											.style('opacity', 1)
 											.attr('x', xx)
 											.text(structure.data[0][i].label);
-											
-										
+
+
 									} else {
 										var label =  structure.svg.label.x.group
 											.append('text')
-												.attr('x', xx)
-												.attr('y', h+internalSettings.labels.x.marginTop)
-												.attr('text-anchor','middle')
-												.attr('fill', settings.config.grid.x.label)
-												.text(structure.data[0][i].label)
-												.style('opacity', 0);
+											.attr('x', xx)
+											.attr('y', h+internalSettings.labels.x.marginTop)
+											.attr('text-anchor','middle')
+											.attr('fill', settings.config.grid.x.label)
+											.text(structure.data[0][i].label)
+											.style('opacity', 0);
 
 										label
 											.transition()
 											.delay(internalSettings.graphAnimationTime / 4)
 											.duration(internalSettings.graphAnimationTime)
 											.style('opacity', 1);
-																															
+
 										structure.svg.label.x.elements.push(label);
 									}
-									
+
 								}
-									
+
 							}
 						}
-												
+
 					}
 					// only fix the labels
 					else {
@@ -1379,213 +1380,213 @@
 							structure.svg.label.x.elements[i].text(structure.data[0][i].label);
 						}
 					}
-					
+
 					// resolve the deferred
 					setTimeout(function() { dfrd.resolve();	}, internalSettings.animateGridTime + 100);
-					
+
 					return dfrd.promise();
-					
+
 				},
-								
+
 				/* ANIMATE */
 				setData: function(data, index) {
-					
+
 					var self = this;
 					var dfrd = $.Deferred();
 					var index = index || 0;
-					
+
 					// empty stored data with different scale on index 0
 					if (structure.data.length && index == 0 && structure.data[0].length != data.length) {
 						structure.data = [];
 					}
-					
+
 					// check data's scale
 					if (!data || data.length == 0) { dfrd.reject('no'); }
 					if (index != 0 && structure.data[0] && structure.data[0].length != data.length) { console.log('Compare metric has a different scale'); dfrd.reject('no'); }
 					else {
-					
+
 						// store data
 						structure.data[index] = data;
 						self.computedData = mergeAndClean(structure.data);
 						structure.svg.grid.y.spacing = Yspacing(self.computedData);
-						
+
 						setTimeout(function() { dfrd.resolve('ok');	}, 10);
-					
+
 					}
-					
+
 					return dfrd.promise();
-					
+
 				},
-				
+
 				draw: function() {
-					
+
 					var self = this;
-					
+
 					promises = [];
 					promises.push(self.animateLabelY());
 					promises.push(self.animateGridX());
-					
+
 					$.when.apply($, promises).done(function () {
-				    				    
+
 						graph.find('div.PAlegend').toggleClass('PAhide', structure.data.length < 2);
-						
+
 						for (var i in structure.svg.graph.elements) {
-							if (structure.data[i]) {								
+							if (structure.data[i]) {
 								self.animateGraph(structure.data[i], i);
-							} else {	
+							} else {
 								self.removeGraph(i);
 							}
 						}
-				    
-					});					
-																									
+
+					});
+
 				},
-				
+
 				// animate line and area
 				animateGraph: function(data, index) {
 					var self = this;
-					
+
 					var index = index || 0;
-					
+
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-					
+
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
 					var spacingX = Math.floor(w / (data.length - 1) );
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
-					
+
 					for (var i in structure.svg.graph.elements[index].elements.area) {
-						
-						var y = parseInt(h - ((data[i].value - structure.svg.grid.y.spacing[0])  * spacingY ));						
-						
+
+						var y = parseInt(h - ((data[i].value - structure.svg.grid.y.spacing[0])  * spacingY ));
+
 						structure.svg.graph.elements[index].elements.area[i].transition()
-																			    												.duration(internalSettings.graphAnimationTime)
-																			    												.attr('y', y)
-																			    												.attr('height', h-y)
-																			    												.attr('data-value', data[i].value)
-																			    												.style('opacity', 1)
-																			    												.ease(internalSettings.animateEasing)					
+							.duration(internalSettings.graphAnimationTime)
+							.attr('y', y)
+							.attr('height', h-y)
+							.attr('data-value', data[i].value)
+							.style('opacity', 1)
+							.ease(internalSettings.animateEasing)
 					}
-										
-				},								
-				
+
+				},
+
 				// remove graph at index
 				flattenGraph: function(index) {
-					
+
 					var self = this;
 					var dfrd = $.Deferred();
-				
-					if (structure.data[index] == null) { dfrd.reject(); return dfrd.promise(); }				
-					
+
+					if (structure.data[index] == null) { dfrd.reject(); return dfrd.promise(); }
+
 					var h = graph.height();
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 
 					structure.data[index] = null;
 					structure.svg.graph.elements[0].group.classed('percentage', false);
-					
+
 					// flatten compare
 					for (var i in structure.svg.graph.elements[index].elements.area) {
-						
+
 						structure.svg.graph.elements[index].elements.area[i].transition()
-																			    												.duration(internalSettings.graphAnimationTime)
-																			    												.attr('y', h-1)
-																			    												.attr('height', 1)
-																			    												.ease(internalSettings.animateEasing)
-						
+							.duration(internalSettings.graphAnimationTime)
+							.attr('y', h-1)
+							.attr('height', 1)
+							.ease(internalSettings.animateEasing)
+
 					}
-					
+
 					setTimeout(function() {
 						dfrd.resolve();
 					}, internalSettings.graphAnimationTime+10);
 
 					return dfrd.promise();
-					
+
 				},
-				
+
 				removeGraph: function(index) {
-					
+
 					var self = this;
 					var dfrd = $.Deferred();
 					$.when(self.flattenGraph(index))
-					 .done(function() {
+						.done(function() {
 							structure.svg.graph.elements[index].group.remove();
 							structure.svg.graph.elements.pop();
 							graph.find('div.PAlegend > p[data-index='+index+']').remove()
 							self.computedData = mergeAndClean(structure.data);
-							structure.svg.grid.y.spacing = Yspacing(self.computedData);							
+							structure.svg.grid.y.spacing = Yspacing(self.computedData);
 							dfrd.resolve();
-					 })
-					 
-					 return dfrd.promise();
-					
+						})
+
+					return dfrd.promise();
+
 				},
-				
+
 				// action on legend
 				initLegend: function() {
-					
+
 					var self = this;
-					
-					graph.find('div.PAlegend')	
+
+					graph.find('div.PAlegend')
 						.on('click', 'p[data-index]', function() {
 							var index = parseInt($(this).attr('data-index'));
 							self.moveOnFront(index);
 						})
-					
-					
+
+
 				},
-				
+
 				// change legend labels on the go
 				setLegendLabel: function(label, index) {
-					
+
 					var self = this;
 					settings.config.graph[index].legend = label;
 					structure.legend.select('p[data-index="'+ index +'"] > label').text(label);
-					
-				},				
-				
+
+				},
+
 				// tooltip
 				initRects: function() {
 					var self = this;
-					
+
 					var displayNoneTimer = null;
-					
+
 					graph
 						.on('mouseover', 'g.PAGgraph > rect', function() {
-							
+
 							clearTimeout(displayNoneTimer);
 							structure.tooltip.style('display', 'block');
 
 							// label and value
 							var index = $(this).parent('g').attr('data-index');
-							
+
 							structure.tooltip
 								.style('color', settings.config.graph[index].color)
 								.select('span').text($(this).attr('data-value'));
 
 							structure.tooltip
 								.select('label').text(settings.config.graph[index].legend);
-								
+
 							// set tooltip position
 							var size = structure.tooltip.node().getBoundingClientRect();
-							
+
 							var t = $(structure.tooltip[0][0]),
-									w = t.width(),
-									h = t.height()
-							
+								w = t.width(),
+								h = t.height()
+
 							var px = $(this).attr('x'),
-									py = $(this).attr('y'),
-									pw = $(this).attr('width')
-									
+								py = $(this).attr('y'),
+								pw = $(this).attr('width')
+
 							var top = py - h - 8,
-									left= px - parseInt((w/2) - (pw/2)) - 10
-							
+								left= px - parseInt((w/2) - (pw/2)) - 10
+
 							t.css('top', top)
-							 .css('left',left)
-							 .addClass('show')
-							
+								.css('left',left)
+								.addClass('show')
+
 						})
 						.on('mouseout', 'g.PAGgraph > rect', function() {
 							structure.tooltip.classed('show', false);
@@ -1593,111 +1594,111 @@
 								structure.tooltip.style('display', 'none');
 							}, 300)
 						})
-					
+
 				},
-				
+
 				initCompareValues: function() {
-					
+
 					var self = this;
-					
+
 					if (structure.data[1] == null) return;
-										
+
 					var h = graph.height();
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					
+
 					for (var i in structure.data[0]) {
 
 						var diff = structure.data[0][i].value - structure.data[1][i].value;
 						var perc = Math.round(diff / structure.data[1][i].value * 100);
-						
+
 						perc = (perc > 0) ? '+'+perc+'%' : (perc == 0) ? '' : perc+'%';
-						
+
 						if (structure.svg.graph.elements[0].elements.points.elements[i]) {
 
 							structure.svg.graph.elements[0].elements.points.elements[i].text(perc);
 
 						} else {
-							
+
 							var rect = structure.svg.graph.elements[0].elements.area[i];
 							var x = parseInt(rect.attr('x')) + parseInt(rect.attr('width') / 2);
-							
+
 							var text = structure.svg.graph.elements[0].group.append('text')
-																															.attr('x', x)
-																															.attr('y', h - (internalSettings.labels.x.marginTop/2))
-																															.attr('text-anchor','middle')
-																															.attr('fill', '#fff')
-																															.text(perc)
-	
+								.attr('x', x)
+								.attr('y', h - (internalSettings.labels.x.marginTop/2))
+								.attr('text-anchor','middle')
+								.attr('fill', '#fff')
+								.text(perc)
+
 							structure.svg.graph.elements[0].elements.points.elements.push(text);
 
 						}
 					}
-					
+
 					setTimeout(function() {
 						structure.svg.graph.elements[0].group.classed('percentage', true);
 					}, internalSettings.graphAnimationTime)
 
-					
+
 				},
-				
+
 				// move the selected graph on front
 				moveOnFront: function(index) {
-					
+
 					var self = this;
 					var g = graph.find('g.PAGgraphs');
 					g.find('g.PAGgraph[data-index='+index+']').appendTo(g);
-					
+
 				},
-							
+
 			}
-												
+
 		}
-		
+
 		MODE[settings.mode].init();
-				
+
 		graph.initGraph = function(index_wanted, color, legend, format) {
-			
+
 			return MODE[settings.mode].initGraph(index_wanted, color, legend, format);
-			
+
 		};
 
 		graph.setData = function(data, index) {
-			
+
 			if (typeof settings.preFetch == 'function') { var data = settings.preFetch(data); }
 			return MODE[settings.mode].setData(data, index);
-			
+
 		};
 
 		graph.removeGraph = function(index) {
-			
+
 			return MODE[settings.mode].removeGraph(index);
-			
+
 		};
-		
+
 		graph.draw = function() {
-			
+
 			MODE[settings.mode].draw();
-			
+
 		}
-		
+
 		graph.setLegendLabel = function(label, index) {
-			
+
 			MODE[settings.mode].setLegendLabel(label, index);
-		
-		}		
-						
+
+		}
+
 		function getRandomColor() {
 			return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
 		}
-						
+
 		function Yspacing(data, lines) {
-			
+
 			var lines = lines || 5;
-			
+
 			var max = getMaxValues(data);
 			var min = getMinValues(data);
-			
-			if (min == max) {	return Array.apply(null, Array(lines+1)).map(function(e,i){ return min+(10*(i-1)) });	}
+
+			if (min == max) {return Array.apply(null, Array(lines+1)).map(function(e,i){ return min+(10*(i-1)) });	}
 
 			var percMin = (min) ? Math.ceil((max - min) * 0.05) : 0;
 			var percMax = Math.ceil((max - min) * 0.05);
@@ -1707,52 +1708,58 @@
 			var space = Math.round((max - min) / lines);
 			var divisor = (space.toString().length - 1) * 10 || 1;
 			var spacer = (Math.round(2 * space / divisor) / 2) * divisor
-			
+
 			var bottom = Math.floor(min / spacer) * spacer;
-			
-			var labels = [];			
+
+			var labels = [];
 			for (var i = 0; i <= lines; i++) {
 				labels.push(bottom);
 				bottom += spacer;
 			}
-			
+
 			return labels;
-						
+
 		}
-		
+
 		function mergeAndClean(arr) {
-						
+
 			var result = [];
 			for (var i in arr) {
 				for (var x in arr[i]) {
 					result.push(arr[i][x]);
 				}
 			}
-			
-			
+
+
 			return result;
-			
+
 		}
-				
+
 		function debug() {
 			if (settings.debug) { console.debug(arguments);	}
 		}
-					
+
 		return graph;
 
 	};
-	
-	
+
 	// counter
-  $.fn.PAcounter = function( options ) {
-		
+	$.fn.PAcounter = function( options ) {
+
 		// default options
-    var settings = $.extend(true, {
+		var settings = $.extend(true, {
 			main: {
 				value: 0,
 				format: {
 					decimals: 0
 				}
+			},
+			secondary: {
+				value:null,
+				format: {
+					decimals:0
+				},
+				description:null
 			},
 			diff: {
 				value: null,
@@ -1762,93 +1769,131 @@
 			},
 			icon: null
 		}, options );
-		
+
 		var graph = this;
-				
+
 		graph.addClass('PAcounterContainer PAinactive');
-		
+
 		// clean data
-		graph.find('.PAicon, .PAmain, .PAcompare').remove();
-		
-		if (settings.icon) {
-			var iconCounter = $('<span></span>').addClass('PAicon');		
-			graph.append(iconCounter)
+		graph.find('.PAicon, .PAmain, .PAcompare .PAsecondary').remove();
+
+		if(settings.icon) {
+			var iconCounter = $('<span></span>').addClass('PAicon');
 		}
-		
+
 		var mainCounter = $('<span></span>').attr('data-value', settings.main.value)
-																				.attr('data-type', 'main')
-																				.text(settings.main.value)
-																				.addClass('PAmain PAcount');
-		graph.append(mainCounter)
-		
-		if (settings.diff.value) {
+			.attr('data-type', 'main')
+			.text(settings.main.value)
+			.addClass('PAmain PAcount');
+
+		if (settings.diff.value || settings.diff.value === 0) {
 
 			var compareCounter = $('<span></span>').attr('data-value', settings.diff.value)
-																						 .attr('data-type', 'diff')
-																						 .text(settings.diff.value)
-																						 .addClass('PAcompare PAcount')
-																						 .toggleClass('PAnegative', settings.diff.value < 0)
-																						 .toggleClass('PAnull', settings.diff.value == 0)
-			graph.append(compareCounter)
+				.attr('data-type', 'diff')
+				.text(settings.diff.value)
+				.addClass('PAcompare PAcount')
+				.toggleClass('PAnegative', settings.diff.value < 0)
+				.toggleClass('PAnull', settings.diff.value == 0);
+			graph.after(compareCounter)
 
 		}
-		
-		if (settings.icon) {
+
+		if(settings.secondary.value || settings.secondary.description) {
+			var counterContainer = $('<div></div>')
+				.addClass('PAcount PAcounterContainer PAcontainer');
+
+			var secondaryContainer = $('<div></div>')
+				.addClass('PAcount PAsecondary PAcontainer');
+
+			var secondaryCounter = $('<span></span>').attr('data-value', settings.secondary.value)
+				.attr('data-type', 'secondary')
+				.text(settings.secondary.value)
+				.addClass('PAcount PAsecondary')
+				.toggleClass('PAnegative', settings.secondary.value < 0)
+				.toggleClass('PAnull', settings.secondary.value == 0);
+
+			var secondaryDescription = $('<p></p>')
+				.text(settings.secondary.description)
+				.addClass('PAdescription PAsecondary');
+
+			if(!!iconCounter) graph.append(iconCounter);
+			graph.append(counterContainer);
+			counterContainer.append(mainCounter);
+			counterContainer.append(secondaryContainer);
+			if(settings.secondary.value || settings.secondary.value === 0) secondaryContainer.append(secondaryCounter);
+			if(settings.secondary.description) secondaryContainer.append(secondaryDescription);
+		} else {
+			var mainContainer = $('<div></div>')
+				.addClass('PAcount PAmainContainer PAcontainer');
+
+			graph.append(mainContainer);
+
+			if(!!iconCounter) mainContainer.append(iconCounter);
+
+			mainContainer.append(mainCounter);
+		}
+
+		if(settings.icon) {
 			var img = $('<img src="'+ settings.icon +'" />');
 			img.load(function() {
 				iconCounter.append(img);
-				animateNumber(graph.find('span.PAcount'), 1000);
+				animateNumber(graph.find('span.PAmain'), 1000);
+				animateNumber(graph.find('span.PAsecondary'), 1000);
+				animateNumber(graph.next(), 1000);
 				graph.removeClass('PAinactive');
 			});
 		} else {
-			animateNumber(graph.find('span.PAcount'), 1000);
+			animateNumber(graph.find('span.PAmain'), 1000);
+			animateNumber(graph.find('span.PAsecondary'), 1000);
+			animateNumber(graph.next(), 1000);
 			graph.removeClass('PAinactive');
 		}
-		
+
 		function animateNumber(selector, time) {
-			
+
 			selector.each(function () {
-				
+
 				if (isNaN($(this).attr('data-value'))) { $(this).text($(this).attr('data-value')); }
 				else {
-				
-				  var el = $(this).text('0');
-		
-				  // backup
+
+					var el = $(this).text('0');
+
+					// backup
 					var timer = setTimeout(function(){ el.html( formatNumber(el.attr('data-value')*1, el.attr('data-type')) ); }, time+10);
-		
-				  $({ c:0 }).animate({ c: el.attr('data-value') }, {
-				    duration: time,
-				    step: function () {
-					    var v = this.c;
-					    if (v == el.attr('data-value')) { clearInterval(timer); }
-				      el.html(formatNumber(v, el.attr('data-type')));
-				    }
-				  });
-			  
-			  }
-			  
+
+					$({ c:0 }).animate({ c: el.attr('data-value') }, {
+						duration: time,
+						step: function () {
+							var v = this.c;
+							if (v == el.attr('data-value')) { clearInterval(timer); }
+							el.html(formatNumber(v, el.attr('data-type')));
+						}
+					});
+
+				}
+
 			});
-			
+
 		}
-		
+
 		function formatNumber(number, type) {
-			
-			return number.format((type == undefined || type != 'main') ? settings.diff.format : settings.main.format);
-			
+
+			if(type === undefined) {
+				return number.format(settings.main.format);
+			} else {
+				return number.format(settings[type].format);
+			}
 		}
-		
 		return graph;
-		
 	};
-	
-	
+
+
 	// custom
-  $.fn.PAcustom = function( options ) {
-		
+	$.fn.PAcustom = function( options ) {
+
 		// default options
-    var settings = $.extend(true, {
-	    mode: 'horizontal_bar',
+		var settings = $.extend(true, {
+			mode: 'horizontal_bar',
 			data: [],
 			main: {
 				color: '#88b8c4',
@@ -1859,238 +1904,238 @@
 				format: null
 			}
 		}, options );
-		
+
 		var graph = this;
-				
+
 		graph.addClass('PAcustomContainer');
-		
+
 		var MODE = {
-			
+
 			// classic horizontal bar graph
 			horizontal_bar: {
-				
+
 				init: function() {
-					
+
 					var self = this;
-					
+
 					graph.addClass('PACustomHBars');
-					
+
 					var ul = graph.find('ul').length ? d3.selectAll(graph.get()).select('ul') : d3.selectAll(graph.get()).append('ul');
 
 					// params to zoom on the data
 					var coeff = Math.abs(getMaxValues(settings.data) - getMinValues(settings.data)) / 100;
-										
+
 					var max = getMaxValues(settings.data);
-					
+
 					// remove exceding li
 					graph.find('ul li:gt('+ (settings.data.length-1) +')').remove();
-					
-					
+
+
 					var lis = ul.selectAll('li');
 					for (var i in settings.data) {
-												
+
 						var li = lis[0][i] ? d3.select(lis[0][i]) : ul.append('li');
 						var val = coeff ? 100 - ((max - settings.data[i].value) * coeff) : 100;
-						
+
 						if (lis[0][i]) {
-							
+
 							li.select('label').text(settings.data[i].label);
 							li.select('div > span').attr('data-perc', val);
 							li.select('span.v').attr('data-value', settings.data[i].value);
-								
+
 						} else {
-						
+
 							// label
 							li.append('label')
 								.text(settings.data[i].label);
-							
+
 							// bar
 							li.append('div').append('span')
-																				.attr('data-perc', val)
-																				.style('background', settings.main.color)
-							
+								.attr('data-perc', val)
+								.style('background', settings.main.color)
+
 							// value
 							li.append('span').classed('v', true)
-															 .html(Number(0).format(settings.main.format))
-															 .attr('data-value', settings.data[i].value);
+								.html(Number(0).format(settings.main.format))
+								.attr('data-value', settings.data[i].value);
 
 						}
-									
+
 					}
-					
+
 					setTimeout(function() {
 						self.animate();
 					}, 100);
-					
-					
+
+
 				},
-				
+
 				animate: function() {
-					
+
 					graph.find('span[data-perc]').each(function() {
 						$(this).width(parseInt($(this).attr('data-perc'))+'%')
 					})
-					
+
 					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
-					
+
 				}
-				
+
 			},
-			
+
 			gender_distribution_v1: {
-				
+
 				female_icon: '<svg viewBox="0 0 58 58"><g fill="none"><rect fill="#808F96" x="0" y="0" width="58" height="58" rx="40"></rect><circle stroke="#FFFFFF" stroke-width="2" cx="29" cy="29" r="26.88"></circle><path d="M34.52496,40.79136 C34.49584,40.46992 34.47456,39.9536 34.45776,39.41824 C39.32416,38.91984 42.73792,37.7528 42.73792,36.39312 C42.72448,36.39088 42.7256,36.33712 42.7256,36.31472 C39.08784,33.03648 45.87952,9.73936 33.23584,10.212 C32.44176,9.54 31.05184,8.94304 29.05824,8.94304 C11.93232,10.23888 19.50464,32.23904 15.60256,36.392 C15.60032,36.39312 15.59696,36.39312 15.59472,36.39312 C15.59472,36.39536 15.59584,36.3976 15.59584,36.39984 C15.59584,36.40096 15.59472,36.40208 15.59472,36.40208 C15.59472,36.40208 15.59584,36.40208 15.59696,36.4032 C15.61264,37.73488 18.91104,38.88064 23.63632,39.39136 C23.62288,39.71616 23.59488,40.11824 23.53328,40.79136 C22.09744,44.652 14.62032,44.89392 10.4752,48.7344 C12.74096,50.71232 20.63584,56.02336 29.10528,56.02336 C37.57472,56.02336 44.60832,52.00368 47.4128,48.6224 C43.25872,44.89056 35.94624,44.61392 34.52496,40.79136 L34.52496,40.79136 Z" fill="#FFFFFF"></path></g></svg>',
 				male_icon: '<svg viewBox="0 0 58 58"><g fill="none"><rect fill="#88b8c4" x="0" y="0" width="58" height="58" rx="40"></rect><circle stroke="#FFFFFF" stroke-width="2" cx="29" cy="29" r="26.88"></circle><path d="M34.52496,40.79136 C34.36144,38.98592 34.42416,37.72592 34.42416,36.07616 C35.24176,35.6472 36.70672,32.91216 36.95424,30.6016 C37.59712,30.54896 38.61072,29.92176 38.90752,27.44544 C39.06768,26.116 38.43152,25.36784 38.044,25.13264 C39.09008,21.98656 41.26288,12.25376 34.02544,11.248 C33.28064,9.93984 31.37328,9.27792 28.89472,9.27792 C18.97824,9.46048 17.78208,16.76624 19.956,25.13264 C19.5696,25.36784 18.93344,26.116 19.09248,27.44544 C19.3904,29.92176 20.40288,30.54896 21.04576,30.6016 C21.29216,32.91104 22.81536,35.6472 23.6352,36.07616 C23.6352,37.72592 23.6968,38.98592 23.53328,40.79136 C22.12096,44.58816 14.86784,44.88496 10.68352,48.54624 C15.05824,52.9512 22.14784,56.10176 29.62944,56.10176 C37.11104,56.10176 45.90528,50.19488 47.36912,48.5832 C43.21056,44.88832 35.94064,44.6016 34.52496,40.79136 L34.52496,40.79136 Z" fill="#FFFFFF"></path></g></svg>',
 				donutContainer: null,
-				donutForeground: null,				
-								
+				donutForeground: null,
+
 				init: function() {
-					
+
 					var self = this;
 					graph.addClass('PACustomGender1');
-					
+
 					self.structure();
-					
+
 // 					self.animate();
-					
+
 				},
-				
+
 				structure: function() {
-					
+
 					var self = this;
-					
+
 					self.donutContainer = d3.selectAll(graph.get()).append('div')
-																												 .classed('PAdonut', true);
+						.classed('PAdonut', true);
 					var dataContainer = d3.selectAll(graph.get()).append('div')
-																											 .classed('PAdata', true);
+						.classed('PAdata', true);
 					// male
 					var pMale = dataContainer.append('p')
 					pMale.html(self.male_icon)
-							 .append('span')
-							   .attr('data-value', 0)
-							   .html(Number(0).format(settings.main.format))
+						.append('span')
+						.attr('data-value', 0)
+						.html(Number(0).format(settings.main.format))
 
 					// female
 					var pFemale = dataContainer.append('p')
 					pFemale.html(self.female_icon)
-								 .append('span')
-								   .attr('data-value', 0)
-								   .html(Number(0).format(settings.compare.format))
+						.append('span')
+						.attr('data-value', 0)
+						.html(Number(0).format(settings.compare.format))
 
 					pMale.select('rect').style('fill', settings.main.color);
 					pFemale.select('rect').style('fill', settings.compare.color);
-					
+
 					// donut
 					var τ = 2 * Math.PI;
 					var arc = d3.svg.arc()
-											    .innerRadius(65)
-											    .outerRadius(65)
-											    .startAngle(0);
+						.innerRadius(65)
+						.outerRadius(65)
+						.startAngle(0);
 					var svg = self.donutContainer.append("svg")
-					    .attr("width", 150)
-					    .attr("height", 150)
-								.append("g")
-								.attr("transform", "translate(" + 75 + "," + 75 + ")")
-			    		
+						.attr("width", 150)
+						.attr("height", 150)
+						.append("g")
+						.attr("transform", "translate(" + 75 + "," + 75 + ")")
+
 					var background = svg.append("path")
-												    .datum({endAngle: τ})
-												    .style('stroke', settings.main.color)
-												    .style('stroke-width', 15)
-													    .attr("d", arc)
-													    
+						.datum({endAngle: τ})
+						.style('stroke', settings.main.color)
+						.style('stroke-width', 15)
+						.attr("d", arc)
+
 					// Add the foreground arc in orange, currently showing 12.7%.
 					self.donutForeground = svg.append("path")
-					    .datum({endAngle: 0 })
-					    .style('stroke', settings.compare.color)
-					    .style('stroke-width', 15)
-					    .style('opacity', 0)
-					    .style('stroke-linejoin', 'round')
-					    .attr("d", arc);	
-					
+						.datum({endAngle: 0 })
+						.style('stroke', settings.compare.color)
+						.style('stroke-width', 15)
+						.style('opacity', 0)
+						.style('stroke-linejoin', 'round')
+						.attr("d", arc);
+
 				},
-				
+
 				animate: function(data) {
-					
+
 					var self = this;
-					
+
 					graph.find('div.PAdata p:eq(0) > span').attr('data-value', data[0].value)
 					graph.find('div.PAdata p:eq(1) > span').attr('data-value', data[1].value)
-					
-					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);					
-					
+
+					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
+
 					var τ = 2 * Math.PI;
 					var arc = d3.svg.arc()
-											    .innerRadius(65)
-											    .outerRadius(65)
-											    .startAngle(0);
+						.innerRadius(65)
+						.outerRadius(65)
+						.startAngle(0);
 
 					self.donutForeground.style('opacity', 1)
-										.transition()
-							      .duration(1000)
-							      .call(arcTween, data[1].value / 100 * τ);
-							      
+						.transition()
+						.duration(1000)
+						.call(arcTween, data[1].value / 100 * τ);
+
 					// see http://bl.ocks.org/mbostock/5100636
 					function arcTween(transition, newAngle) {
-					  transition.attrTween("d", function(d) {
-					    var interpolate = d3.interpolate(d.endAngle, newAngle);
-					    return function(t) {
-					      d.endAngle = interpolate(t);
-					      return arc(d);
-					    };
-					  });
+						transition.attrTween("d", function(d) {
+							var interpolate = d3.interpolate(d.endAngle, newAngle);
+							return function(t) {
+								d.endAngle = interpolate(t);
+								return arc(d);
+							};
+						});
 					}
-					
+
 				}
-				
-				
-				
+
+
+
 			},
-			
+
 			age_distribution: {
-				
+
 				male_icon: '<svg viewBox="0 0 17 15"><path d="M14.0801524,14.4567109 C15.7050178,12.9316006 16.7199993,10.764331 16.7199993,8.35999966 C16.7199993,3.74289934 12.9771,0 8.35999966,0 C3.74289934,0 0,3.74289934 0,8.35999966 C0,10.7678635 1.01796621,12.9379685 2.64701267,14.4634289 C2.65246531,14.4552179 2.65791339,14.4471119 2.66335656,14.4391127 C3.96472984,13.3004111 6.22053641,13.2081028 6.65978473,12.0272528 C6.71064139,11.4657395 6.69148306,11.0738645 6.69148306,10.5607696 C6.43650307,10.4273579 5.96276976,9.57637961 5.88613642,8.8581163 C5.6861931,8.84174464 5.37129978,8.64667798 5.27864312,7.87651301 C5.22917979,7.46304136 5.42703311,7.2303547 5.54720811,7.15720471 C4.87109313,4.55515481 5.24311312,2.28297657 8.32725632,2.22619824 C9.09811796,2.22619824 9.6913296,2.43206323 9.92297126,2.83891655 C12.1739012,3.15171987 11.4981345,6.17873641 11.1727912,7.15720471 C11.2933145,7.2303547 11.4911679,7.46304136 11.4413562,7.87651301 C11.3490479,8.64667798 11.0338062,8.84174464 10.8338629,8.8581163 C10.7568812,9.57672794 10.3012612,10.4273579 10.0469779,10.5607696 C10.0469779,11.0738645 10.0274713,11.4657395 10.0783279,12.0272528 C10.5186212,13.2122828 12.7796528,13.3014561 14.0730144,14.4506077 C14.0753917,14.4526194 14.077771,14.4546538 14.0801524,14.4567109 Z"></path></svg>',
-				female_icon: '<svg viewBox="0 0 17 15"><path d="M14.0799816,14.4559844 C15.7049466,12.9309593 16.7199993,10.7637549 16.7199993,8.35948679 C16.7199993,3.74266972 12.9771,0 8.35999966,0 C3.74289934,0 0,3.74266972 0,8.35948679 C0,10.7645778 1.0157477,12.9324428 2.64168654,14.4575501 C3.93892102,13.3005812 6.21815684,13.2138769 6.65978473,12.026515 C6.67894306,11.8171795 6.68765139,11.6921355 6.69183139,11.5911251 C5.22221312,11.4322948 4.19637149,11.0759717 4.19323649,10.6583457 C5.40682978,9.36680495 3.05174821,2.52491332 8.37811299,2.1219164 C8.9981463,2.1219164 9.43042795,2.30756667 9.67739627,2.51655384 C13.6097311,2.36956619 11.4974379,9.61480306 12.6326561,10.658694 C12.6326561,11.0815447 11.5709362,11.4444857 10.0574279,11.5994845 C10.0626529,11.7659777 10.0692713,11.9265495 10.0783279,12.026515 C10.5196091,13.2132765 12.7868802,13.3010401 14.0799816,14.4559844 Z"></path></svg>',				
-				
+				female_icon: '<svg viewBox="0 0 17 15"><path d="M14.0799816,14.4559844 C15.7049466,12.9309593 16.7199993,10.7637549 16.7199993,8.35948679 C16.7199993,3.74266972 12.9771,0 8.35999966,0 C3.74289934,0 0,3.74266972 0,8.35948679 C0,10.7645778 1.0157477,12.9324428 2.64168654,14.4575501 C3.93892102,13.3005812 6.21815684,13.2138769 6.65978473,12.026515 C6.67894306,11.8171795 6.68765139,11.6921355 6.69183139,11.5911251 C5.22221312,11.4322948 4.19637149,11.0759717 4.19323649,10.6583457 C5.40682978,9.36680495 3.05174821,2.52491332 8.37811299,2.1219164 C8.9981463,2.1219164 9.43042795,2.30756667 9.67739627,2.51655384 C13.6097311,2.36956619 11.4974379,9.61480306 12.6326561,10.658694 C12.6326561,11.0815447 11.5709362,11.4444857 10.0574279,11.5994845 C10.0626529,11.7659777 10.0692713,11.9265495 10.0783279,12.026515 C10.5196091,13.2132765 12.7868802,13.3010401 14.0799816,14.4559844 Z"></path></svg>',
+
 				init: function() {
-					
+
 					var self = this;
-					
+
 					graph.addClass('PACustomAgeDist');
-					
+
 					var ul = d3.selectAll(graph.get()).append('ul');
-					
+
 					// detail male/female data
 					var detail = d3.selectAll(graph.get()).append('div').classed('PAdetail hide', true);
 					var detailM = detail.append('p').classed('PAmale', true).html(self.male_icon).style('color', settings.main.color);
 					var datailMT = detailM.append('label')
 					var detailF = detail.append('p').classed('PAfemale', true).html(self.female_icon).style('color', settings.compare.color);
 					var detailFT = detailF.append('label')
-					
+
 					// params to zoom on the data
 					var max = 0, min = 100;
 					for (var i in settings.data) {
 						var v = settings.data[i].value.m + settings.data[i].value.f;
 						max = v > max ? v : max;
 						min = v < min ? v : min;
-					}					
+					}
 					var coeff = Math.abs(max - min) / 50;
-							
+
 					for (var i in settings.data) {
-						
+
 						var li = ul.append('li')
-											.attr('data-male', settings.data[i].value.m)
-											.attr('data-female', settings.data[i].value.f)
+							.attr('data-male', settings.data[i].value.m)
+							.attr('data-female', settings.data[i].value.f)
 						var perc = settings.data[i].value.m + settings.data[i].value.f;
 						if (perc > 0) {
-						
+
 							// label
 							li.append('label')
 								.text(settings.data[i].label)
-							
+
 							// bar
 							var bar  = li.append('div').append('span')
-																				.attr('data-perc', perc / coeff)
-																				.style('background', settings.main.color)
+								.attr('data-perc', perc / coeff)
+								.style('background', settings.main.color)
 
 							// female bar
 							var percf = settings.data[i].value.f / (perc);
@@ -2098,92 +2143,92 @@
 								.classed('PAhide', true)
 								.attr('data-perc', percf * 100)
 								.style('background', settings.compare.color)
-							
+
 							// value
 							li.append('span').html(Number(perc).format(settings.main.format))
-															 .attr('data-value', perc);
-															 															 
+								.attr('data-value', perc);
+
 						}
-						
+
 					}
-																								
+
 					graph.on('click', 'li', function() {
-						
+
 						var fbar = $(this).find('span > span');
 						graph.find('li span > span').not(fbar).addClass('PAhide');
 						fbar.toggleClass('PAhide');
-						
+
 						graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length == 0)
-						
+
 						var m = $(this).attr('data-male') * 1
 						var f = $(this).attr('data-female') * 1
-						var percm = m / (m+f) * 100;	
+						var percm = m / (m+f) * 100;
 
 						datailMT.attr('data-value', percm);
 						detailFT.attr('data-value', 100 - percm);
-						
+
 						animateNumber(graph.find('div.PAdetail label[data-value]'), 1000, settings.main.format, null , true);
-						
-					})					
-					
+
+					})
+
 				},
-				
+
 				animate: function(data) {
-										
+
 					// params to zoom on the data
 					var max = 0, min = 100;
 					for (var i in data) {
 						var v = data[i].value.m + data[i].value.f;
 						max = v > max ? v : max;
 						min = v < min ? v : min;
-					}					
+					}
 					var coeff = Math.abs(max - min) / 50;
-					
+
 					// hide unused rows
 					d3.selectAll(graph.get()).selectAll('li:nth-child(n+'+ parseInt(data.length+1) +')')
 						.transition()
 						.duration(300)
-							.style('opacity', '0')
-							.delay(300)
-							.remove();
-					
+						.style('opacity', '0')
+						.delay(300)
+						.remove();
+
 					var lis = d3.selectAll(graph.get()).selectAll('ul li');
-					
+
 					for (var i in data) {
-						
+
 						var element = d3.select(lis[0][i]);
 						var perc = data[i].value.m + data[i].value.f;
-						
+
 						// create missing rows
 						if (!element[0][0]) {
 
 							var element = d3.selectAll(graph.get()).select('ul').append('li')
 
 							if (perc > 0) {
-							
+
 								// label
 								element.append('label')
-								
+
 								// bar
 								var bar  = element.append('div').append('span').style('background', settings.main.color)
-	
+
 								// female bar
 								var percf = data[i].value.f / (data[i].value.m + data[i].value.f);
 								bar.append('span')
 									.classed('PAhide', true)
 									.style('background', settings.compare.color)
-								
+
 								// value
 								element.append('span').html(Number(perc).format(settings.main.format))
-																 															 
+
 							}
-							
+
 						}
-												
+
 						element
 							.attr('data-male', data[i].value.m)
 							.attr('data-female', data[i].value.f)
-						
+
 						element
 							.select('label').text(data[i].label);
 
@@ -2191,95 +2236,95 @@
 						element
 							.select('div > span').attr('data-perc', perc / coeff)
 							.select('span')
-								.classed('PAhide', true)
-								.attr('data-perc', percf)
-							
+							.classed('PAhide', true)
+							.attr('data-perc', percf)
+
 						element
 							.select('span[data-value]').attr('data-value', perc);
-							
+
 						graph.find('div.PAdetail').addClass('hide');
-							
-						
+
+
 					}
-					
-					
+
+
 					graph.find('span[data-perc]').each(function() {
 						$(this).width(parseInt($(this).attr('data-perc'))+'%')
 					})
 					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, null, true);
-											
+
 				}
-				
+
 			},
-			
-			
+
+
 		}
 
-	
+
 
 		function animateNumber(selector, time, format, wait, startFromActual) {
-			
+
 			if (!startFromActual) {
-			  selector.html(Number(0).format(format));
+				selector.html(Number(0).format(format));
 			}
-			
+
 			setTimeout(function() {
-								
+
 				selector.each(function () {
-					
+
 					var el = $(this);
-					
+
 					var start = 0;
 					if (startFromActual) {
 						start = (parseFloat(el.text())) || 0;
 					}
 
-					
-				  // backup
+
+					// backup
 					var timer = setTimeout(function(){ el.html( Number(el.attr('data-value')*1).format(format) ); }, time+10);
-		
-				  $({ c:start}).animate({ c: el.attr('data-value') }, {
-				    duration: time,
-				    step: function () {
-					    var v = this.c;
-					    if (v == el.attr('data-value')) { clearInterval(timer); }
-				      el.html(v.format(format));
-				    }
-				  });
-				  
+
+					$({ c:start}).animate({ c: el.attr('data-value') }, {
+						duration: time,
+						step: function () {
+							var v = this.c;
+							if (v == el.attr('data-value')) { clearInterval(timer); }
+							el.html(v.format(format));
+						}
+					});
+
 				});
-			
+
 			}, wait || 1);
 
-			
+
 		}
-				
+
 		MODE[settings.mode].init();
-		
+
 		graph.animate = function(data) {
 			MODE[settings.mode].animate(data);
 		}
-		
+
 		return graph;
-		
+
 	};
-	
+
 	function getMaxValues(data, k) {
 		if (k == undefined) { k = 'value'; }
-		return Math.max.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));		
+		return Math.max.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));
 	}
 
 	function getMinValues(data, k) {
 		if (k == undefined) { k = 'value'; }
-		return Math.min.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));		
+		return Math.min.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));
 	}
-	
+
 	function getSumValues(data, k) {
 		if (k == undefined) { k = 'value'; }
 		var r = 0; for (var i in data) { r += data[i][k]; }
 		return r;
 	}
-	
+
 
 }( jQuery ));
 
@@ -2290,7 +2335,7 @@ String.prototype.capitalizeFirstLetter = function() { return this.charAt(0).toUp
 Number.prototype.format = function(settings) {
 	if (!settings) { return this.valueOf(); }
 	var re = '\\d(?=(\\d{3})+' + (settings.decimals > 0 ? '\\D' : '$') + ')',
-      num = this.toFixed(Math.max(0, ~~settings.decimals)),
-			formatted = (settings.decimal ? num.replace('.', settings.decimal) : num).replace(new RegExp(re, 'g'), '$&' + (settings.thousand || ''));
+		num = this.toFixed(Math.max(0, ~~settings.decimals)),
+		formatted = (settings.decimal ? num.replace('.', settings.decimal) : num).replace(new RegExp(re, 'g'), '$&' + (settings.thousand || ''));
 	return (settings.before || '') + formatted + (settings.after || '');
 }
