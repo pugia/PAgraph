@@ -87,6 +87,7 @@ div.PAoverlay{position:absolute;position:fixed!important;top:0;left:0;width:100%
     border-radius: 8px;
     pointer-events: none;
 }
-.legend {
-    font-size:10px;
+
+.PAbubble-node {
+    background-color:rgb(193, 202, 208)
 }

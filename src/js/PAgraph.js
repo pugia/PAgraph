@@ -186,7 +186,7 @@
 						var line =  structure.svg.grid.x.group.append('line')
 							.attr('x1', x).attr('y1', 0)
 							.attr('x2', x).attr('y2', h)
-							.attr('stroke', settings.config.grid.x.color)
+							.attr('stroke', settings.config.grid.x.color);
 						structure.svg.grid.x.elements.push(line);
 
 					}
@@ -213,7 +213,7 @@
 						var line =  structure.svg.grid.y.group.append('line')
 							.attr('x1', j).attr('y1', h - (i*spacing))
 							.attr('x2', graph.width()).attr('y2', h - (i*spacing))
-							.attr('stroke', settings.config.grid.y.color)
+							.attr('stroke', settings.config.grid.y.color);
 						structure.svg.grid.y.elements.push(line);
 
 					}
@@ -1775,8 +1775,6 @@
 			.attr('class', 'tooltip PAdonutchart-tooltip')
 			.style('opacity', 0);
 
-		structure.tooltip.append('span').text('3123');
-		structure.tooltip.append('label').text('metric');
 
 		structure.svg.element = d3.selectAll(graph.get()).append('svg')
 			.classed('PAGraph', true)
@@ -1849,7 +1847,6 @@
 				.attr('transform',function(d, i) {
 					var height = legend_rect_size + legend_spacing;
 					var offset =  height * structure.svg.color.domain().length / 2;
-					var horz = 2 * legend_rect_size;
 					var vert = i * height - offset;
 					return 'translate(' + 150 + ',' + vert + ')';
 				});
@@ -1934,8 +1931,6 @@
 				var top = py - h - 20,
 					left = px - parseInt(w/2)-10;
 
-				console.log(top);
-				console.log(left);
 
 				//structure.tooltip.style('display', 'block');
 				t.attr('style', 'top:' + 200 + 'px; left: ' + 200 + 'px; display:block;')
@@ -1959,7 +1954,20 @@
 
 	// bubble chart
 	$.fn.PAbubblechart = function ( options ) {
+
+		var settings = {
+			margin: {
+				top:0 || options.margin.top,
+				right:0 || options.margin.right,
+				bottom:0 || options.margin.bottom,
+				left:0 || options.margin.left
+			}
+		};
+
+
+
 		var structure = {
+			legend:null,
 			tooltip:null,
 			data:[],
 			filters:null,
@@ -1969,28 +1977,201 @@
 				xRange:null,
 				yRange:null,
 				xAxis:null,
-				yAxis:null
+				yAxis:null,
+				color:null
 			}
 		};
 
 		var graph = this;
+		graph.addClass('PAbubblechartContainer');
+
 
 		var CHART = {
-			init:function() {
-				structure.svg.element = this;
-				structure.svg.xRange = d3.scale.linear([10, graph.width()]).domain([0, graph.height()]);
-				structure.svg.yRange = d3.scale.linear([10, graph.width()]).domain([0, graph.height()]);
-				structure.svg.xAxis = d3.svg.axis().scale(structure.svg.xRange);
-				structure.svg.yAxis = d3.svg.axis().scale(structure.svg.yRange).orient('left');
+			init:function(data) {
+				var w = graph.width() - settings.margin.left - settings.margin.left;
+				var h = graph.height() - settings.margin.top - settings.margin.bottom;
+				var n = 6;
+				var m = 1;
+				var padding = 6;
+				var radius = d3.scale.sqrt().range([0, 12]);
+				structure.svg.color = d3.scale.category20c().domain(d3.range(m));
+				var x = d3.scale.ordinal().domain(d3.range(m)).rangePoints([0, w], 1);
+				var center = {
+					x: w / 3,
+					y: h / 2
+				};
 
-				console.log(structure.svg.xAxis);
-				console.log(structure.svg.yAxis);
-				graph.append('g').call(structure.svg.xAxis());
-				graph.append('g').call(structure.svg.yAxis()).attr('transform', 'translate(10, 0)');
+				console.log(center);
+				var damper = .1;
+
+				var max_amount = d3.max(data, function(d) {
+					return d.value;
+				}),
+					radius_scale = d3.scale.pow()
+						.exponent(0.5)
+						.domain([0, max_amount])
+						.range([1, 27]),
+					nodes = [];
+
+				data.forEach(function(d) {
+					var node;
+					node = {
+						id: d.id,
+						value: d.value,
+						image: d.image,
+						percentage: d.percentage,
+						radius: radius_scale(d.value),
+						charge: radius_scale(d.value),
+						name: d.device,
+						cx: Math.random() * 10,
+						cy: Math.random() * 10,
+						color:structure.svg.color(d.id)
+					};
+					nodes.push(node);
+				});
+
+				var charge = function(d) {
+					return - Math.pow(d.charge, 2.0) / 8;
+				};
+
+				var force = d3.layout.force()
+					.nodes(nodes)
+					.size([w * 0.6, h])
+					.gravity(.1)
+					.charge(charge)
+					.on('tick', tick)
+					.start();
+
+				structure.svg.element = d3.selectAll(graph.get()).append('svg')
+					.attr('width', w)
+					.attr('height', h);
+
+				structure.svg.circle = structure.svg.element.selectAll('circle')
+					.data(nodes).enter().append('circle')
+					.attr('r', function(d) {
+						return d.radius;
+					})
+					.attr('class', function(d) {
+						return 'PAbubble-node device-' + d.id;
+					}).style('fill', function(d) {
+						return d.color;
+					})
+					.call(force.drag);
+
+				function tick(e) {
+					structure.svg.circle.attr('cx', function(d) {
+						return d.x + (center.x - d.x) * (damper + 0.02) * e.alpha;
+					}).attr('cy', function(d) {
+						return d.y + (center.y - d.y) * (damper + 0.02) * e.alpha;
+					})
+				}
+
+				function gravity(alpha) {
+					return function(d) {
+						d.y += (d.cy - d.y) * alpha;
+						d.x += (d.cx - d.x) * alpha;
+					}
+				}
+
+				function collide(alpha) {
+					var quadtree = d3.geom.quadtree(nodes);
+					return function(d) {
+						var r = d.radius + radius.domain()[1] + padding,
+							nx1 = d.x - r,
+							nx2 = d.x + r,
+							ny1 = d.y - r,
+							ny2 = d.y + r;
+						quadtree.visit(function(quad, x1, y1, x2, y2) {
+							if(quad.point && (quad.point !== d)) {
+								var x = d.x - quad.point.x,
+									y = d.y - quad.point.y,
+									l = Math.sqrt(x * x + y * y),
+									r = d.radius + quad.point.radius + (d.color !== quad.point.color) * padding;
+								if(l < r) {
+									l = (l - r) / l * alpha;
+									d.x -= x *= l;
+									d.y -= y *= l;
+									quad.point.x += x;
+									quad.point.y += y;
+								}
+							}
+							return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+						})
+					}
+				}
+
+				function init_legend() {
+					var legend_rect_size = 10;
+					var legend_spacing = 5;
+
+					var legend_container = structure.svg.element
+						.append('g')
+						.attr('class', 'legend')
+						.attr('height', 100)
+						.attr('width', 50)
+						.attr('transform', 'translate(0, 40)');
+
+					var legend = legend_container.selectAll('.legend')
+						.data(options.data)
+						.enter()
+						.append('g')
+						.attr('class', 'legend')
+						.attr('transform', function(d, i) {
+							var height = legend_rect_size + legend_spacing;
+							var offset = height * structure.svg.color.domain().length / 2;
+							var vert = i * height - offset + 10;
+							return 'translate(' + 150 + ',' + vert + ')';
+						});
+
+					legend.append('text')
+						.attr('opacity', 0)
+						.transition()
+						.duration(500)
+						.delay(1000)
+						.attr('opacity', 1)
+						.attr('x', -23)
+						.attr('y', 9)
+						.style('text', 'align-right')
+						.text(function(d) {
+							return d.percentage + '%';
+						});
+
+					legend.append('circle')
+						.attr('opacity', 0)
+						.transition()
+						.duration(500)
+						.delay(1000)
+						.attr('cx', legend_spacing)
+						.attr('cy', 5)
+						.attr('r', 5)
+						.attr('opacity', 1)
+						.style('fill', function(d, i) {
+							return structure.svg.color(i);
+						})
+						.style('stroke', function(d, i) {
+							return structure.svg.color(i);
+						});
+
+					legend.append('text')
+						.attr('opacity', 0)
+						.transition()
+						.duration(500)
+						.delay(1000)
+						.attr('opacity', 1)
+						.attr('x', 15)
+						.attr('y', 9)
+						.text(function(d) {
+							return d.device;
+						});
+
+				}
+
+				init_legend();
+
 			}
 		};
 
-		CHART.init();
+		CHART.init(options.data);
 	};
 
 	// counter
