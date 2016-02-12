@@ -91,3 +91,36 @@ div.PAoverlay{position:absolute;position:fixed!important;top:0;left:0;width:100%
 .PAbubble-node {
     background-color:rgb(193, 202, 208)
 }
+
+.PACustomGender1 div.PAdonut {
+    height:100px;
+    width:100px;
+}
+.PACustomGender1 {
+    margin:0 10px;
+}
+
+/** Gender counters **/
+.PACustomGenderCounter div.PAdata {
+    float: left;
+    margin-left: 10px;
+    width: 172px;
+}
+.PACustomGenderCounter div.PAdata p {
+    margin: 11px 0 12px;
+    height: 30px;
+}
+.PACustomGenderCounter div.PAdata p svg {
+    width: 30px;
+    height: 30px;
+    float: left;
+}
+.PACustomGenderCounter div.PAdata p span {
+    float: left;
+    height: 30px;
+    line-height: 30px;
+    margin-left: 22px;
+    font-size: 17px;
+    font-family: Lato,sans-serif;
+    font-weight: 700;
+}

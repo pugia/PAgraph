@@ -2740,16 +2740,28 @@
 
 					var self = this;
 
-					graph.addClass('PACustomAgeDist');
+					graph.addClass('PACustomAgeDist PACustomGenderDist');
 
 					var ul = d3.selectAll(graph.get()).append('ul');
 
-					// detail male/female data
-					var detail = d3.selectAll(graph.get()).append('div').classed('PAdetail hide', true);
-					var detailM = detail.append('p').classed('PAmale', true).html(self.male_icon).style('color', settings.main.color);
-					var datailMT = detailM.append('label')
-					var detailF = detail.append('p').classed('PAfemale', true).html(self.female_icon).style('color', settings.compare.color);
-					var detailFT = detailF.append('label')
+					var dataContainer = d3.selectAll(graph.get()).append('div')
+						.classed('PAdata', true);
+
+					var pMale = dataContainer.append('p');
+					pMale.html(self.male_icon)
+						.append('span')
+						.attr('data-value', 0)
+						.html(Number(0).format(settings.main.format));
+
+					var pFemale = dataContainer.append('p');
+					pFemale.html(self.female_icon)
+						.append('span')
+						.attr('data-value', 0)
+						.html(Number(0).format(settings.compare.format));
+
+					pMale.select('path').style('fill', settings.main.color);
+					pFemale.select('path').style('fill', settings.compare.color);
+
 
 					// params to zoom on the data
 					var max = 0, min = 100;
@@ -2792,28 +2804,83 @@
 
 					}
 
-					graph.on('click', 'li', function() {
 
-						var fbar = $(this).find('span > span');
-						graph.find('li span > span').not(fbar).addClass('PAhide');
-						fbar.toggleClass('PAhide');
+					graph.find('li').hover(
+						function() {
+							var fbar = $(this).find('span > span');
+							fbar.removeClass('PAhide');
 
-						graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length == 0)
+							graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length == 0)
 
-						var m = $(this).attr('data-male') * 1
-						var f = $(this).attr('data-female') * 1
-						var percm = m / (m+f) * 100;
+							var m = $(this).attr('data-male') * 1;
+							var f = $(this).attr('data-female') * 1;
+							var percm = m / (m+f) * 100;
 
-						datailMT.attr('data-value', percm);
-						detailFT.attr('data-value', 100 - percm);
+							var data = {
+								m:percm,
+								f:100 - percm
+							};
 
-						animateNumber(graph.find('div.PAdetail label[data-value]'), 1000, settings.main.format, null , true);
+							self.animate_gender_dist(data);
 
-					})
+							animateNumber(graph.find('div.PAdetail label[data-value]'), 400, settings.main.format, null , true);
+						},
+						function() {
+							var fbar = $(this).find('span > span');
+							fbar.addClass('PAhide');
 
+							graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length == 0);
+
+							var ul = $(this).closest('ul');
+							var list = ul.find('li').toArray();
+
+							var m_sum = 0;
+							var f_sum = 0;
+
+							for(var x = 0; x < list.length; x++) {
+								f_sum += parseFloat(list[x].dataset.female);
+								m_sum += parseFloat(list[x].dataset.male);
+							}
+
+							var percm = m_sum / (m_sum+f_sum) * 100;
+
+							var data = {
+								m:percm,
+								f:100 - percm
+							};
+
+							self.animate_gender_dist(data);
+
+							animateNumber(graph.find('div.PAdetail label[data-value]'), 400, settings.main.format, null , true);
+						}
+					);
+				},
+
+				animate_gender_dist:function(data) {
+					graph.find('div.PAdata p:eq(0) > span').attr('data-value', data.m);
+					graph.find('div.PAdata p:eq(1) > span').attr('data-value', data.f);
+
+					animateNumber(graph.find('span[data-value]'), 300, settings.main.format, 100, true);
 				},
 
 				animate: function(data) {
+
+					var f_sum = 0;
+					var m_sum = 0;
+					var sum = 0;
+					for(var x = 0; x < data.length; x++) {
+						f_sum += data[x].value.f;
+						m_sum += data[x].value.m;
+						sum += data[x].value.m;
+						sum += data[x].value.f;
+					}
+
+					var f_percentage = (f_sum / sum) * 100;
+
+					graph.find('div.PAdata p:eq(0) > span').attr('data-value', 100 - f_percentage);
+					graph.find('div.PAdata p:eq(1) > span').attr('data-value', f_percentage);
+
+					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
 
 					// params to zoom on the data
 					var max = 0, min = 100;
