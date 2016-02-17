@@ -1,7 +1,3 @@
-/**
- * Created by taylorcase on 2/10/16.
- */
-
 // PAgraph Plugin
 (function ($) {
 
@@ -1772,8 +1768,10 @@
 
 		// tooltip
 		structure.tooltip = d3.selectAll(graph.get()).append('div')
-			.attr('class', 'tooltip PAdonutchart-tooltip')
-			.style('opacity', 0);
+			.classed('PAtooltip', true);
+
+		structure.tooltip.append('span').text('3123');
+		structure.tooltip.append('label').text('metric');
 
 
 		structure.svg.element = d3.selectAll(graph.get()).append('svg')
@@ -1831,12 +1829,19 @@
 			var legend_rect_size = 10;
 			var legend_spacing = 5;
 
+			var client = $(structure.svg.element)[0][0];
+
+			var width = client.clientWidth;
+			var height = client.clientHeight;
+
+			var y_pos = height - (height - 50);
+
 			var legend_container = structure.svg.element
 				.append('g')
 				.attr('class', 'legend')
 				.attr('height', 100)
 				.attr('width', 50)
-				.attr('transform', 'translate(0, 40)');
+				.attr('transform', 'translate(0, ' + y_pos + ')');
 
 
 			var legend = legend_container.selectAll('.legend')
@@ -1876,17 +1881,14 @@
 				});
 
 			legend.on('click', function() {
-				console.log(this);
 				var which = arguments[0];
 			});
 
 			legend.on('mousein', function() {
-				console.log(this);
 				var which = arguments[0];
 			});
 
 			legend.on('mouseout', function() {
-				console.log(this);
 				var which = arguments[0];
 			});
 		}
@@ -1894,6 +1896,9 @@
 		init_legend(options.data);
 
 		function init_graph(data) {
+
+			var displayNoneTimer = null;
+
 			var slice = structure.svg.element.select('.slices').selectAll('path.slice')
 				.data(structure.svg.pie(data), structure.svg.key);
 
@@ -1914,35 +1919,28 @@
 
 			slice.on('mouseover', function() {
 				var mouseover_object = arguments[0];
-				var index = arguments[1];
 
-				structure.tooltip.html(
-					'<div>' + mouseover_object.data.label + ': ' + mouseover_object.data.value + '</div>'
-				);
+				clearTimeout(displayNoneTimer);
 
-				var t = $('.PAdonutchart-tooltip'),
-					w = t.width(),
-					h = t.height();
+				structure.tooltip.style('display', 'block');
 
-				var px = d3.event.pageX,
-					py = d3.event.pageY;
+				structure.tooltip.select('span').text(mouseover_object.data.label);
+				structure.tooltip.select('label').text(mouseover_object.data.value);
 
-				var top = py - h - 20,
-					left = px - parseInt(w/2)-10;
+				var t = $(structure.tooltip[0][0]);
 
-
-				//structure.tooltip.style('display', 'block');
-				t.attr('style', 'top:' + 200 + 'px; left: ' + 200 + 'px; display:block;')
-					//.attr('style', 'left:' + left + 'px;')
+				t.css('left', d3.event.layerX + 10  + 'px')
+					.css('top', d3.event.layerY + 10 + "px")
+					.css('width', "50px")
 					.addClass('show');
+
 			});
 
 			slice.on('mouseout', function() {
 				structure.tooltip.classed('show', false);
-				structure.tooltip.style('display', 'none');
-				//display_none_timer = setTimeout(function() {
-				//	structure.tooltip.style('display', 'none');
-				//}, 300)
+				displayNoneTimer = setTimeout(function() {
+					structure.tooltip.style('display', 'none');
+				}, 300);
 			});
 
 
@@ -2012,6 +2010,7 @@
 					nodes = [];
 
 				data.forEach(function(d) {
+					console.log(d);
 					var node;
 					node = {
 						id: d.id,
@@ -2313,9 +2312,6 @@
 					.toggleClass('PAnull', settings.diff.value == 0);
 				graph.after(compareCounter)
 			}
-
-
-
 		}
 
 		function animateNumber(selector, time) {
