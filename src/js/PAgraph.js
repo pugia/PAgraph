@@ -2016,7 +2016,6 @@
 					node = {
 						id: d.id,
 						value: d.value,
-						image: d.image,
 						percentage: d.percentage,
 						radius: radius_scale(d.value),
 						charge: radius_scale(d.value),
@@ -2194,7 +2193,8 @@
 				value: null,
 				format: {
 					decimals: 0
-				}
+				},
+				description:null
 			},
 			icon: null
 		}, options );
@@ -2215,23 +2215,14 @@
 			.text(settings.main.value)
 			.addClass('PAmain PAcount');
 
-		if (settings.diff.value || settings.diff.value === 0) {
-
-			var compareCounter = $('<span></span>').attr('data-value', settings.diff.value)
-				.attr('data-type', 'diff')
-				.text(settings.diff.value)
-				.addClass('PAcompare PAcount')
-				.toggleClass('PAnegative', settings.diff.value < 0)
-				.toggleClass('PAnull', settings.diff.value == 0);
-			graph.after(compareCounter)
-
-		}
+		var counterContainer;
+		var secondaryContainer;
 
 		if(settings.secondary.value || settings.secondary.description) {
-			var counterContainer = $('<div></div>')
+			counterContainer = $('<div></div>')
 				.addClass('PAcount PAcounterContainer PAcontainer');
 
-			var secondaryContainer = $('<div></div>')
+			secondaryContainer = $('<div></div>')
 				.addClass('PAcount PAsecondary PAcontainer');
 
 			var secondaryCounter = $('<span></span>').attr('data-value', settings.secondary.value)
@@ -2256,10 +2247,21 @@
 				.addClass('PAcount PAmainContainer PAcontainer');
 
 			graph.append(mainContainer);
+			var diffDescription = null;
+
+			if(!!settings.diff.format.after && !settings.diff.value) {
+				diffDescription = $('<div></div>')
+					.text(settings.diff.format.after)
+					.addClass('PAdescription description');
+			}
 
 			if(!!iconCounter) mainContainer.append(iconCounter);
 
 			mainContainer.append(mainCounter);
+
+			if(!!diffDescription) {
+				mainContainer.append(diffDescription);
+			}
 		}
 
 		if(settings.icon) {
@@ -2276,6 +2278,44 @@
 			animateNumber(graph.find('span.PAsecondary'), 1000);
 			animateNumber(graph.next(), 1000);
 			graph.removeClass('PAinactive');
+		}
+
+		if (settings.diff.value || settings.diff.value === 0) {
+
+			var compareCounter;
+
+			if(!!settings.diff.description) {
+				var compare_container = $('<div></div>')
+					.addClass('PAcompareContainer');
+
+				secondaryContainer.append(compare_container);
+
+				compareCounter = $('<span></span>').attr('data-value', settings.diff.value)
+					.attr('data-type', 'diff')
+					.html(settings.diff.value + settings.diff.format.after + ' ')
+					.addClass('PAcompare PAcount')
+					.toggleClass('PAnegative', settings.diff.value < 0)
+					.toggleClass('PAnull', settings.diff.value == 0);
+
+
+				var compare_description = $('<span></span>')
+					.addClass('PAcompare_description')
+					.text(settings.diff.description);
+
+				compare_container.append(compareCounter);
+				compare_container.append(compare_description);
+			} else {
+				compareCounter = $('<span></span>').attr('data-value', settings.diff.value)
+					.attr('data-type', 'diff')
+					.text(settings.diff.value)
+					.addClass('PAcompare PAcount')
+					.toggleClass('PAnegative', settings.diff.value < 0)
+					.toggleClass('PAnull', settings.diff.value == 0);
+				graph.after(compareCounter)
+			}
+
+
+
 		}
 
 		function animateNumber(selector, time) {
