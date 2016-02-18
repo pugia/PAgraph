@@ -347,7 +347,7 @@
 					var index = index || 0;
 
 					// empty stored data with different scale on index 0
-					if (structure.data.length && index == 0 && structure.data[0].length != data.length) {
+					if (structure.data[0] && structure.data.length && index == 0 && structure.data[0].length != data.length) {
 						structure.data = [];
 						self.computedData = [];
 					}
@@ -437,14 +437,19 @@
 
 					var self = this;
 					var dfrd = $.Deferred();
+					
+					var index = index || structure.data.length-1
 
 					$.when(self.flattenGraph(index)).done(function() {
-						structure.svg.graph.elements[index].group.remove();
-						structure.svg.graph.elements.splice(index,1);
-						graph.find('div.PAlegend > p[data-index='+index+']').remove()
-						structure.data[index] = null;
-						self.computedData[index] = null;
-						dfrd.resolve();
+						if (index == 0) { dfrd.reject(); }
+						else {
+							structure.svg.graph.elements[index].group.remove();
+							structure.svg.graph.elements.splice(index,1);
+							graph.find('div.PAlegend > p[data-index='+index+']').remove()
+							delete structure.data[index];
+							self.computedData[index] = null;
+							dfrd.resolve();
+						}
 					});
 
 					return dfrd.promise();
@@ -1790,7 +1795,9 @@
 
 					var self = this;
 					var startElements = 5;
-
+					
+					debug('initLabelX')
+					
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
@@ -1824,6 +1831,7 @@
 					var h = graph.height();
 					var j = 0;
 
+					debug('animateLabelY')
 					var elementsCount = data.length;
 
 					if (settings.config.grid.x.label) { h = h - internalSettings.labels.x.height; }
@@ -1871,7 +1879,9 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-
+					
+					debug('animateGridX');
+					
 					// fix the number of the rows
 					if (structure.svg.graph.elements[0].elements.area.length != structure.data[0].length) {
 
@@ -2011,6 +2021,8 @@
 
 					var self = this;
 
+					debug('draw')
+
 					promises = [];
 					promises.push(self.animateLabelY());
 					promises.push(self.animateGridX());
@@ -2018,7 +2030,6 @@
 					$.when.apply($, promises).done(function () {
 
 						graph.find('div.PAlegend').toggleClass('PAhide', structure.data.length < 2);
-
 						for (var i in structure.svg.graph.elements) {
 							if (structure.data[i]) {
 								self.animateGraph(structure.data[i], i);
@@ -2079,18 +2090,19 @@
 
 					var self = this;
 					var dfrd = $.Deferred();
-
+					
+					debug('flattenGraph', index);
+					
 					if (structure.data[index] == null) { dfrd.reject(); return dfrd.promise(); }
 
 					var h = graph.height();
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 
-					structure.data[index] = null;
 					structure.svg.graph.elements[0].group.classed('percentage', false);
 
 					// flatten compare
 					for (var i in structure.svg.graph.elements[index].elements.area) {
-
+						
 						structure.svg.graph.elements[index].elements.area[i].transition()
 							.duration(internalSettings.graphAnimationTime)
 							.attr('y', h-1)
@@ -2113,15 +2125,20 @@
 					var dfrd = $.Deferred();
 					
 					var index = index || structure.svg.graph.elements.length-1
-					
+										
 					$.when(self.flattenGraph(index))
 						.done(function() {
-							structure.svg.graph.elements[index].group.remove();
-							structure.svg.graph.elements.pop();
-							graph.find('div.PAlegend > p[data-index='+index+']').remove()
-							self.computedData = mergeAndClean(structure.data);
-							structure.svg.grid.y.spacing = Yspacing(self.computedData);
-							dfrd.resolve();
+							
+							if (index == 0) { dfrd.reject();  }
+							else {					
+								delete structure.data[index];
+								structure.svg.graph.elements[index].group.remove();
+								structure.svg.graph.elements.pop();
+								graph.find('div.PAlegend > p[data-index='+index+']').remove()
+								self.computedData = mergeAndClean(structure.data);
+								structure.svg.grid.y.spacing = Yspacing(mergeAndCleanArr(structure.data));
+								dfrd.resolve();
+							}
 						})
 
 					return dfrd.promise();
@@ -2363,7 +2380,6 @@
 				})
 				
 			})
-			
 			return result;
 
 		}

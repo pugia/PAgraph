@@ -42,7 +42,8 @@
 	<script>	
 	
 		var graph = $('#graph_0').PAgraph({
-			mode: 'history'
+			mode: 'history',
+			debug: true
 		});
 		
 		graph.initGraph();
@@ -206,7 +207,7 @@
 
 		$('#remove').on('click', function() {
 		
-			graph.removeGraph(1);
+			graph.removeGraph();
 			
 		})
 		
