@@ -1,8 +1,6 @@
 // PAgraph Plugin
 (function ($) {
 
-
-
 	// graphics
 	$.fn.PAgraph = function( options ) {
 
@@ -28,13 +26,14 @@
 						label: '#C1C1C1',
 						format: null
 					}
-				}
+				},
+				spacing: 10,
+				stacked: false,
+				rectRadius: 5
 			},
 			lineInterpolation: 'cardinal',
 			interpolateOnZero: true,
 			preFetch: null,
-			spacing: 10,
-			stacked: false
 
 		}, options );
 
@@ -1176,6 +1175,8 @@
 							.attr('y', h-1)
 							.attr('width', rectW)
 							.attr('height', 1)
+							.attr('rx', settings.config.rectRadius)
+							.attr('ry', settings.config.rectRadius)
 							.attr('fill', settings.config.graph[index].color)
 							.style('opacity', 0)
 						structure.svg.graph.elements[index].elements.area.push(rect);
@@ -1317,6 +1318,8 @@
 										.attr('y', h-1)
 										.attr('width', rectW)
 										.attr('height', 1)
+										.attr('rx', settings.config.rectRadius)
+										.attr('ry', settings.config.rectRadius)
 										.attr('fill', settings.config.graph[index].color)
 										.style('opacity', 0);
 									rect
@@ -1745,24 +1748,21 @@
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 					var spacing = Math.floor(w/startElements);
-					var offsetX = (settings.stacked) ? 0 : settings.spacing / 2;
-					var rectW = spacing - settings.spacing - ((structure.svg.graph.elements.length-1) * offsetX);
+					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
+					var rectW = spacing - settings.config.spacing - ((structure.svg.graph.elements.length-1) * offsetX);
 
 					for (var i = 0; i < startElements; i++) {
 
 						var x = (i * spacing) + j + (spacing / 2) - (rectW / 2) + (index * offsetX);
 						var y = h-1;
-/*
-						if (settings.stacked && index > 0) {
-							y = y - structure.svg.graph.elements[index-1].elements.area[i].attr('height');
-						}
-*/
 
 						var rect = structure.svg.graph.elements[index].group.append('rect')
 							.attr('x', x)
 							.attr('y', y)
 							.attr('width', rectW)
 							.attr('height', 1)
+							.attr('rx', settings.config.rectRadius)
+							.attr('ry', settings.config.rectRadius)
 							.attr('fill', settings.config.graph[index].color)
 							.style('opacity', 0)
 						structure.svg.graph.elements[index].elements.area.push(rect);
@@ -1878,8 +1878,8 @@
 						if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 						if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 						var spacing = Math.floor(w/structure.data[0].length);
-						var offsetX = settings.spacing / 2;
-						var rectW = spacing - settings.spacing; //Math.floor(spacing*0.7);
+						var offsetX = settings.config.spacing / 2;
+						var rectW = spacing - settings.config.spacing; //Math.floor(spacing*0.7);
 
 						for (var index in structure.data) {
 
@@ -1905,6 +1905,8 @@
 										.attr('y', h-1)
 										.attr('width', rectW)
 										.attr('height', 1)
+										.attr('rx', settings.config.rectRadius)
+										.attr('ry', settings.config.rectRadius)
 										.attr('fill', settings.config.graph[index].color)
 										.style('opacity', 0);
 									rect
@@ -2044,14 +2046,14 @@
 
 					var spacingX = Math.floor(w /data.length);
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
-					var offsetX = (settings.stacked) ? 0 : settings.spacing / 2;
-					var rectW = spacingX - settings.spacing - ((structure.svg.graph.elements.length-1)*offsetX);
+					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
+					var rectW = spacingX - settings.config.spacing - ((structure.svg.graph.elements.length-1)*offsetX);
 					
 					for (var i in structure.svg.graph.elements[index].elements.area) {
 						
 						var he = parseInt( ( data[i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) );
 						var y = h - he;
-						if (settings.stacked && index > 0) {
+						if (settings.config.stacked && index > 0) {
 							var j = index * 1;
 							while(j > 0) {
 								j = j-1;
@@ -2304,7 +2306,7 @@
 			var lines = lines || 5;
 
 			var max = getMaxValues(data);
-			var min = (settings.stacked) ? 0 : getMinValues(data);
+			var min = (settings.config.stacked) ? 0 : getMinValues(data);
 
 			if (min == max) {return Array.apply(null, Array(lines+1)).map(function(e,i){ return min+(10*(i-1)) });	}
 
@@ -2352,7 +2354,7 @@
 				$.each(e, function(j,f) {
 					if (i == 0) { result[j] = f }
 					else { 
-						if (settings.stacked) {
+						if (settings.config.stacked) {
 							result[j].value += f.value	
 						} else {
 							result.push(f);

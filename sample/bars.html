@@ -41,9 +41,11 @@
 
 	var graph = $('#graph_0').PAgraph({
 		mode: 'bars',
-		stacked: true,
-		debug: true,
-		spacing: 1
+		config: {
+			stacked: true,
+			spacing: 1,
+			rectRadius: 3
+		}
 	});		
 	
 	$(function() {
