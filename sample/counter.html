@@ -8,15 +8,10 @@
 	<link href="style.css" rel="stylesheet" type="text/css">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
-
-	<link href="../dist/css/PAgraph.min.css?3" rel="stylesheet" type="text/css">
-	<script src="../dist/js/PAgraph.min.js?3"></script>
+	<script src="../bower_components/d3/d3.min.js" charset="utf-8"></script>
 	
-<!--
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
 	<script src="../src/js/PAgraph.js"></script>
--->
 			
 </head>
 <body>	
@@ -53,12 +48,6 @@
 		<h3>Vestibulum Purus</h3>
 		<div class="graph"></div>
 		<p class="description">Cras mattis consectetur purus sit amet fermentum.</p>
-	</div>
-
-	<div class="widget" id="w6">
-		<h3>NaN sample</h3>
-		<div class="graph"></div>
-		<p class="description">This value is not a number</p>
 	</div>
 	
 	<script>	
@@ -114,12 +103,6 @@
 		$('#w5 > div.graph').PAcounter({
 			main: {
 				value: 12345,
-			}
-		});
-
-		$('#w6 > div.graph').PAcounter({
-			main: {
-				value: "0Y:2M:10d:0h:44m:23s",
 			}
 		});
 		

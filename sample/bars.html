@@ -28,13 +28,13 @@
 	<div id="graph_0" style="height: 500px; width: 1000px"></div>
 	
 	<div style="position: absolute; right: 0; top: 0; padding: 10px;">
-		<button id="test_01">Test 01</button><br/>
-		<button id="test_02">Test 02</button><br/>
+		<button id="test_01">Test 01</button>
+		<button id="test_02">Test 02</button>
 		<button id="test_03">Test 03</button><br/><br/>
 		<button id="compare_01">Compare 01</button>
 		<button id="compare_02">Compare 02</button>
-		<button id="compare_03">Compare 03</button><br/>
-		<button id="remove">Remove compare</button><br/><br/>
+		<button id="compare_03">Compare 03</button><br/><br>
+		<button id="remove">Remove compare</button>
 	</div>
 
 	<script>	
@@ -45,8 +45,7 @@
 			stacked: true,
 			spacing: 10,
 			rectRadius: 3
-		},
-		debug: true
+		}
 	});		
 	
 	$(function() {
@@ -63,7 +62,7 @@
 									
 				})
 			
-		})
+		}).click();
 
 		$('#test_02').on('click', function() {
 			

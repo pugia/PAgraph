@@ -1686,15 +1686,6 @@
 		"strictMath": 0,
 		"strictUnits": 0
 		},
-	"\/sample\/weekday.html": {
-		"fileType": 8192,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/sample\/weekday.html",
-		"outputAbbreviatedPath": "No Output Path",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0
-		},
 	"\/src\/css\/PAgraph.css": {
 		"fileType": 16,
 		"ignore": 1,
