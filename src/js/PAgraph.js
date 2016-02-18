@@ -26,11 +26,14 @@
 						label: '#C1C1C1',
 						format: null
 					}
-				}
+				},
+				spacing: 10,
+				stacked: false,
+				rectRadius: 5
 			},
 			lineInterpolation: 'cardinal',
 			interpolateOnZero: true,
-			preFetch: null
+			preFetch: null,
 
 		}, options );
 
@@ -344,7 +347,7 @@
 					var index = index || 0;
 
 					// empty stored data with different scale on index 0
-					if (structure.data.length && index == 0 && structure.data[0].length != data.length) {
+					if (structure.data[0] && structure.data.length && index == 0 && structure.data[0].length != data.length) {
 						structure.data = [];
 						self.computedData = [];
 					}
@@ -434,14 +437,19 @@
 
 					var self = this;
 					var dfrd = $.Deferred();
+					
+					var index = index || structure.data.length-1
 
 					$.when(self.flattenGraph(index)).done(function() {
-						structure.svg.graph.elements[index].group.remove();
-						structure.svg.graph.elements.splice(index,1);
-						graph.find('div.PAlegend > p[data-index='+index+']').remove()
-						structure.data[index] = null;
-						self.computedData[index] = null;
-						dfrd.resolve();
+						if (index == 0) { dfrd.reject(); }
+						else {
+							structure.svg.graph.elements[index].group.remove();
+							structure.svg.graph.elements.splice(index,1);
+							graph.find('div.PAlegend > p[data-index='+index+']').remove()
+							delete structure.data[index];
+							self.computedData[index] = null;
+							dfrd.resolve();
+						}
 					});
 
 					return dfrd.promise();
@@ -1067,7 +1075,7 @@
 
 			},
 
-			vertical_bar: {
+			bars: {
 
 				// start with a week structure
 				init: function() {
@@ -1122,7 +1130,7 @@
 
 				// create flat graph
 				initGraph: function(index_wanted, color, legend, format) {
-
+										
 					var self = this;
 					var dfrd = $.Deferred();
 
@@ -1157,23 +1165,26 @@
 						format: format
 					});
 
+					debug('initGraph', index_wanted);
+					
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 					var spacing = Math.floor(w/startElements);
-					var rectW = Math.floor(spacing*0.7);
-					var offsetX = Math.floor(spacing*0.1);
+					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
+					var rectW = spacing - settings.config.spacing - ((structure.svg.graph.elements.length-1) * offsetX);
 
 					for (var i = 0; i < startElements; i++) {
 
 						var x = (i * spacing) + j + (spacing / 2) - (rectW / 2) + (index * offsetX);
+						var y = h-1;
 
 						var rect = structure.svg.graph.elements[index].group.append('rect')
 							.attr('x', x)
-							.attr('y', h-1)
+							.attr('y', y)
 							.attr('width', rectW)
 							.attr('height', 1)
-							.attr('rx', 5)
-							.attr('ry', 5)
+							.attr('rx', settings.config.rectRadius)
+							.attr('ry', settings.config.rectRadius)
 							.attr('fill', settings.config.graph[index].color)
 							.style('opacity', 0)
 						structure.svg.graph.elements[index].elements.area.push(rect);
@@ -1201,7 +1212,9 @@
 
 					var self = this;
 					var startElements = 5;
-
+					
+					debug('initLabelX')
+					
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
@@ -1235,6 +1248,7 @@
 					var h = graph.height();
 					var j = 0;
 
+					debug('animateLabelY')
 					var elementsCount = data.length;
 
 					if (settings.config.grid.x.label) { h = h - internalSettings.labels.x.height; }
@@ -1282,15 +1296,17 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-
+					
+					debug('animateGridX');
+					
 					// fix the number of the rows
 					if (structure.svg.graph.elements[0].elements.area.length != structure.data[0].length) {
 
 						if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 						if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 						var spacing = Math.floor(w/structure.data[0].length);
-						var rectW = Math.floor(spacing*0.7);
-						var offsetX = Math.floor(spacing*0.3);
+						var offsetX = settings.config.spacing / 2;
+						var rectW = spacing - settings.config.spacing; //Math.floor(spacing*0.7);
 
 						for (var index in structure.data) {
 
@@ -1307,16 +1323,17 @@
 										.attr('x', x)
 										.style('opacity', 1)
 
-								} else {
-
+								} 
+								else {
+																		
 									var rect = structure.svg.graph.elements[index].group
 										.append('rect')
 										.attr('x', x)
 										.attr('y', h-1)
 										.attr('width', rectW)
 										.attr('height', 1)
-										.attr('rx', 5)
-										.attr('ry', 5)
+										.attr('rx', settings.config.rectRadius)
+										.attr('ry', settings.config.rectRadius)
 										.attr('fill', settings.config.graph[index].color)
 										.style('opacity', 0);
 									rect
@@ -1369,6 +1386,7 @@
 								}
 
 							}
+
 						}
 
 					}
@@ -1406,7 +1424,7 @@
 						// store data
 						structure.data[index] = data;
 						self.computedData = mergeAndClean(structure.data);
-						structure.svg.grid.y.spacing = Yspacing(self.computedData);
+						structure.svg.grid.y.spacing = Yspacing(mergeAndCleanArr(structure.data));
 
 						setTimeout(function() { dfrd.resolve('ok');	}, 10);
 
@@ -1420,6 +1438,8 @@
 
 					var self = this;
 
+					debug('draw')
+
 					promises = [];
 					promises.push(self.animateLabelY());
 					promises.push(self.animateGridX());
@@ -1427,7 +1447,6 @@
 					$.when.apply($, promises).done(function () {
 
 						graph.find('div.PAlegend').toggleClass('PAhide', structure.data.length < 2);
-
 						for (var i in structure.svg.graph.elements) {
 							if (structure.data[i]) {
 								self.animateGraph(structure.data[i], i);
@@ -1443,9 +1462,9 @@
 				// animate line and area
 				animateGraph: function(data, index) {
 					var self = this;
-
 					var index = index || 0;
-
+					debug('animateGraph', index)
+					
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
@@ -1453,17 +1472,29 @@
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
-					var spacingX = Math.floor(w / (data.length - 1) );
+					var spacingX = Math.floor(w /data.length);
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
-
+					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
+					var rectW = spacingX - settings.config.spacing - ((structure.svg.graph.elements.length-1)*offsetX);
+					
 					for (var i in structure.svg.graph.elements[index].elements.area) {
-
-						var y = parseInt(h - ((data[i].value - structure.svg.grid.y.spacing[0])  * spacingY ));
-
+						
+						var he = parseInt( ( data[i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) );
+						var y = h - he;
+						if (settings.config.stacked && index > 0) {
+							var j = index * 1;
+							while(j > 0) {
+								j = j-1;
+								var he0 = parseInt( ( structure.data[j][i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) );
+								y = y - he0;
+							}
+						}
+						
 						structure.svg.graph.elements[index].elements.area[i].transition()
 							.duration(internalSettings.graphAnimationTime)
 							.attr('y', y)
-							.attr('height', h-y)
+							.attr('width', rectW)
+							.attr('height', he)
 							.attr('data-value', data[i].value)
 							.style('opacity', 1)
 							.ease(internalSettings.animateEasing)
@@ -1476,18 +1507,19 @@
 
 					var self = this;
 					var dfrd = $.Deferred();
-
+					
+					debug('flattenGraph', index);
+					
 					if (structure.data[index] == null) { dfrd.reject(); return dfrd.promise(); }
 
 					var h = graph.height();
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 
-					structure.data[index] = null;
 					structure.svg.graph.elements[0].group.classed('percentage', false);
 
 					// flatten compare
 					for (var i in structure.svg.graph.elements[index].elements.area) {
-
+						
 						structure.svg.graph.elements[index].elements.area[i].transition()
 							.duration(internalSettings.graphAnimationTime)
 							.attr('y', h-1)
@@ -1508,14 +1540,22 @@
 
 					var self = this;
 					var dfrd = $.Deferred();
+					
+					var index = index || structure.svg.graph.elements.length-1
+										
 					$.when(self.flattenGraph(index))
 						.done(function() {
-							structure.svg.graph.elements[index].group.remove();
-							structure.svg.graph.elements.pop();
-							graph.find('div.PAlegend > p[data-index='+index+']').remove()
-							self.computedData = mergeAndClean(structure.data);
-							structure.svg.grid.y.spacing = Yspacing(self.computedData);
-							dfrd.resolve();
+							
+							if (index == 0) { dfrd.reject();  }
+							else {					
+								delete structure.data[index];
+								structure.svg.graph.elements[index].group.remove();
+								structure.svg.graph.elements.pop();
+								graph.find('div.PAlegend > p[data-index='+index+']').remove()
+								self.computedData = mergeAndClean(structure.data);
+								structure.svg.grid.y.spacing = Yspacing(mergeAndCleanArr(structure.data));
+								dfrd.resolve();
+							}
 						})
 
 					return dfrd.promise();
@@ -1648,7 +1688,9 @@
 
 				},
 
-			}
+			},
+			
+			vertical_bar: $.extend(true, null, this.bars)
 
 		}
 
@@ -1684,6 +1726,11 @@
 			MODE[settings.mode].setLegendLabel(label, index);
 
 		}
+		
+		if (settings.debug) {
+			graph.structure = structure
+			graph.MODE = MODE
+		}
 
 		function getRandomColor() {
 			return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
@@ -1694,7 +1741,7 @@
 			var lines = lines || 5;
 
 			var max = getMaxValues(data);
-			var min = getMinValues(data);
+			var min = (settings.config.stacked) ? 0 : getMinValues(data);
 
 			if (min == max) {return Array.apply(null, Array(lines+1)).map(function(e,i){ return min+(10*(i-1)) });	}
 
@@ -1728,7 +1775,29 @@
 				}
 			}
 
+			return result;
 
+		}
+		
+		function mergeAndCleanArr(data) {
+			
+			var arr = $.extend(true,null,data);
+			var result = [];
+			
+			$.each(arr, function(i,e) {
+				
+				$.each(e, function(j,f) {
+					if (i == 0) { result[j] = f }
+					else { 
+						if (settings.config.stacked) {
+							result[j].value += f.value	
+						} else {
+							result.push(f);
+						}
+					}
+				})
+				
+			})
 			return result;
 
 		}
@@ -2351,7 +2420,6 @@
 		}
 		return graph;
 	};
-
 
 	// custom
 	$.fn.PAcustom = function( options ) {

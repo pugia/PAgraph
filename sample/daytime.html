@@ -3,27 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
-<title>PAgraph | vertical_bar - daytime</title>
+<title>PAgraph | bars - daytime</title>
 
 	<link href="style.css" rel="stylesheet" type="text/css">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script src="../node_modules/d3/d3.min.js" charset="utf-8"></script>
+	<script src="../bower_components/d3/d3.min.js" charset="utf-8"></script>
 
-	<link href="../dist/css/PAgraph.min.css?5" rel="stylesheet" type="text/css">
-	<script src="../dist/js/PAgraph.min.js?5"></script>
-	
-<!--
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
 	<script src="../src/js/PAgraph.js"></script>
--->
 			
 </head>
 <body>	
 	
 	<a href="index.html">&laquo; Back to examples list</a>
 
-	<h1>Mode: vertical_bar - <em>daytime</em></h1>
+	<h1>Mode: bars - <em>daytime</em></h1>
 	
 	<div id="graph_0" style="height: 500px; width: 1000px"></div>
 	
@@ -33,11 +28,8 @@
 		<button id="test_03">Test 03</button><br/><br/>
 		<button id="compare_01">Compare 01</button>
 		<button id="compare_02">Compare 02</button>
-		<button id="compare_03">Compare 03</button><br/>
-		<button id="remove">Remove compare</button><br/><br/>
-		<button id="open9-18">Open 9-18</button>
-		<button id="open6-14">Open 6-14</button>
-		<button id="remove_open">Remove open</button>
+		<button id="compare_03">Compare 03</button><br/><br/>
+		<button id="remove">Remove last</button><br/><br/>
 	</div>
 
 	<script>	
@@ -45,7 +37,7 @@
 	$(function() {
 
 		var graph = $('#graph_0').PAgraph({
-			mode: 'vertical_bar',
+			mode: 'bars',
 			config: {
 				grid: {
 					x: {
@@ -74,7 +66,7 @@
 				
 				})
 			
-		});
+		}).click();
 
 		$('#test_02').on('click', function() {
 			
@@ -86,7 +78,7 @@
 				
 				})
 			
-		}).click();
+		});
 		
 		$('#test_03').on('click', function() {
 			
@@ -143,23 +135,11 @@
 		});
 		
 		$('#remove').on('click', function() {
-			$.when(graph.removeGraph(1))
+			$.when(graph.removeGraph())
 				.done(function() {
 					graph.draw();
 				})
 		});
-
-		$('#open9-18').on('click', function() {
-			graph.setOpeningTime(9, 18);
-		});
-		
-		$('#open6-14').on('click', function() {
-			graph.setOpeningTime(6, 14);
-		});
-		$('#remove_open').on('click', function() {
-			graph.removeOpeningTime();
-		});
-		
 		
 	})	
 
