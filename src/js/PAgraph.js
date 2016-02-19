@@ -1305,7 +1305,7 @@
 						if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 						if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 						var spacing = Math.floor(w/structure.data[0].length);
-						var offsetX = settings.config.spacing / 2;
+						var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
 						var rectW = spacing - settings.config.spacing; //Math.floor(spacing*0.7);
 
 						for (var index in structure.data) {
