@@ -36,10 +36,23 @@
     $(function() {
 
         var data = [
-            {"label":"User Account","kpi":25},
-            {"label":"Click-through","kpi":25},
-            {"label":"Facebook","kpi":25},
-            {"label":"Twitter","kpi":25}];
+          {
+            	label: "User Account",
+            value: 20
+          },
+          {
+            label: "Click-through",
+            value: 40
+          },
+          {
+            label: "Facebook",
+            value: 25
+          },
+          {
+            label: "Twitter",
+            value: 15
+          }
+        ];
 
         $('#graph_0').PAdonutchart({
             data:data

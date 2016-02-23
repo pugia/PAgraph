@@ -1,1 +1,24 @@
-{"data":[{"label":"sun","value":293},{"label":"mon","value":153},{"label":"tue","value":164},{"label":"wed","value":132},{"label":"thu","value":145},{"label":"fri","value":183},{"label":"sat","value":253}]}
+{
+	"data": [{
+		"label": "sun",
+		"value": 0
+	}, {
+		"label": "mon",
+		"value": 0.41
+	}, {
+		"label": "tue",
+		"value": 0
+	}, {
+		"label": "wed",
+		"value": 0.91
+	}, {
+		"label": "thu",
+		"value": 1.5
+	}, {
+		"label": "fri",
+		"value": 0
+	}, {
+		"label": "sat",
+		"value": 0.14
+	}]
+}

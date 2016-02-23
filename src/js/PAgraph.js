@@ -1756,27 +1756,36 @@
 		function Yspacing(data, lines) {
 
 			var lines = lines || 5;
+			
+			var multiplier = 1;
 
 			var max = getMaxValues(data);
 			var min = (settings.config.stacked) ? 0 : getMinValues(data);
-
+			
+			if (max <= 1.5) {
+				multiplier = 10;
+			}
+			
+			min = min * multiplier;
+			max = max * multiplier;
+			
 			if (min == max) {return Array.apply(null, Array(lines+1)).map(function(e,i){ return min+(10*(i-1)) });	}
 
 			var percMin = (min) ? Math.ceil((max - min) * 0.05) : 0;
 			var percMax = Math.ceil((max - min) * 0.05);
 			min -= percMin;
 			max += percMax;
-
+			
 			var space = Math.round((max - min) / lines);
 			var divisor = (space.toString().length - 1) * 10 || 1;
 			var spacer = (Math.round(2 * space / divisor) / 2) * divisor
 
-			var bottom = Math.floor(min / spacer) * spacer;
+			var bottom = Math.floor(min / spacer) * spacer / multiplier;
 
 			var labels = [];
 			for (var i = 0; i <= lines; i++) {
-				labels.push(bottom);
-				bottom += spacer;
+				labels.push(Number(bottom).format({ decimals: String(multiplier).length-1 }));
+				bottom += spacer / multiplier;
 			}
 
 			return labels;
@@ -2096,7 +2105,6 @@
 					nodes = [];
 
 				data.forEach(function(d) {
-					console.log(d);
 					var node;
 					node = {
 						id: d.id,
