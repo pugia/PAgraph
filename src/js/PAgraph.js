@@ -886,9 +886,7 @@
 								structure.svg.label.y.elements[i].text(structure.svg.grid.y.spacing[i])
 
 							} else {
-								
-								console.log(structure.svg.grid.y.spacing[i]);
-								
+																
 								var label =  structure.svg.label.y.group.append('text')
 									.attr('x', 50)
 									.attr('y', h - (i*spacing))
