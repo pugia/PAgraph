@@ -253,7 +253,7 @@
 						legend: legend,
 						format: format
 					});
-
+					
 					var elementsCount = structure.svg.grid.x.elements.length || 8;
 					structure.svg.element.attr('data-points', elementsCount);
 
@@ -440,7 +440,8 @@
 					
 					var index = index || structure.data.length-1
 
-					$.when(self.flattenGraph(index)).done(function() {
+					$.when(self.flattenGraph(index))
+					.done(function() {
 						if (index == 0) { dfrd.reject(); }
 						else {
 							structure.svg.graph.elements[index].group.remove();
@@ -450,7 +451,10 @@
 							self.computedData[index] = null;
 							dfrd.resolve();
 						}
-					});
+					})
+					.fail(function() {
+						dfrd.resolve();
+					})
 
 					return dfrd.promise();
 
@@ -578,6 +582,11 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
+					
+					if (!structure.svg.graph.elements[index]) {
+						dfrd.reject();
+						return dfrd.promise();
+					}
 
 					var actualPoints = parseInt(structure.svg.element.attr('data-points'));
 
@@ -1708,6 +1717,14 @@
 			return MODE[settings.mode].setData(data, index);
 
 		};
+		
+		graph.getData = function(index) {
+			return structure.data[index];
+		};
+		
+		graph.getFormat = function() {
+			return settings.config.grid.y.format
+		};
 
 		graph.removeGraph = function(index) {
 
@@ -1888,7 +1905,7 @@
 
 		function set_data(data) {
 			return data.map(function(set) {
-				return { label:set.label, value:set.kpi }
+				return { label:set.label, value:set.value }
 			});
 		}
 
