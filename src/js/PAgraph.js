@@ -886,12 +886,15 @@
 								structure.svg.label.y.elements[i].text(structure.svg.grid.y.spacing[i])
 
 							} else {
+								
+								console.log(structure.svg.grid.y.spacing[i]);
+								
 								var label =  structure.svg.label.y.group.append('text')
 									.attr('x', 50)
 									.attr('y', h - (i*spacing))
 									.attr('text-anchor','end')
 									.attr('fill', settings.config.grid.y.label)
-									.html(structure.svg.grid.y.spacing[i].format(settings.config.grid.y.format))
+									.text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
 								structure.svg.label.y.elements.push(label);
 							}
 
@@ -2438,9 +2441,9 @@
 		function formatNumber(number, type) {
 
 			if(type === undefined) {
-				return number.format(settings.main.format);
+				return Number(number).format(settings.main.format);
 			} else {
-				return number.format(settings[type].format);
+				return Number(number).format(settings[type].format);
 			}
 		}
 		return graph;
@@ -3123,7 +3126,7 @@
 						step: function () {
 							var v = this.c;
 							if (v == el.attr('data-value')) { clearInterval(timer); }
-							el.html(v.format(format));
+							el.html(Number(v).format(format));
 						}
 					});
 
