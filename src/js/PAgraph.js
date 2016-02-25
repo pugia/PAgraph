@@ -311,8 +311,6 @@
 							var index = parseInt($(this).attr('data-index'));
 							self.moveOnFront(index);
 						})
-
-
 				},
 
 				// create filters menu
@@ -841,7 +839,6 @@
 					structure.svg.label.x.group.selectAll('text:nth-child('+nthChildX+'n+2)')
 						.classed('show', true);
 
-
 					function textWidth(element) {
 
 						var fake = $('<span>').hide().appendTo(document.body);
@@ -852,7 +849,6 @@
 							.css('text-transform', element.css('text-transform'))
 						var w = fake.width(); fake.remove();
 						return w;
-
 					}
 
 				},
@@ -1840,7 +1836,7 @@
 	// donut chart
 	$.fn.PAdonutchart = function( options ) {
 		var graph = this;
-		graph.addClass('PAgraphContainer');
+		graph.addClass('PAgraphContainer PAdonutchart');
 
 		var structure = {
 			legend:null,
@@ -1860,7 +1856,9 @@
 		};
 
 		// legend
-		structure.legend = d3.selectAll(graph.get()).append('div');
+		structure.legend = d3.selectAll(graph.get()).append('div')
+			.classed('PAlegend', true);
+		console.log(structure.legend);
 
 		// tooltip
 		structure.tooltip = d3.selectAll(graph.get()).append('div')
@@ -1922,71 +1920,35 @@
 		init_graph(set_data(options.data));
 
 		function init_legend() {
-			var legend_rect_size = 10;
-			var legend_spacing = 5;
-
 			var client = $(structure.svg.element)[0][0];
-
-			var width = client.clientWidth;
-			var height = client.clientHeight;
-
-			var y_pos = height - (height - 50);
-
-			var legend_container = structure.svg.element
-				.append('g')
-				.attr('class', 'legend')
-				.attr('height', 100)
-				.attr('width', 50)
-				.attr('transform', 'translate(0, ' + y_pos + ')');
-
-
-			var legend = legend_container.selectAll('.legend')
+			var legend = structure.legend
+				.selectAll('p')
 				.data(structure.svg.color.domain())
 				.enter()
-				.append('g')
-				.attr('class', 'legend')
-				.attr('transform',function(d, i) {
-					var height = legend_rect_size + legend_spacing;
-					var offset =  height * structure.svg.color.domain().length / 2;
-					var vert = i * height - offset;
-					return 'translate(' + 150 + ',' + vert + ')';
+				.append('p')
+				.attr('data-index', function(d, i) {
+					return i;
 				});
 
-			legend.append('circle')
+			legend.append('span')
 				.attr('opacity', 0)
 				.transition()
 				.duration(500)
 				.delay(1000)
-				.attr('cx', legend_spacing)
-				.attr('cy', 5)
-				.attr('r', 5)
 				.attr('opacity', 1)
-				.style('fill', structure.svg.color)
-				.style('stroke', structure.svg.color);
+				.style('background', structure.svg.color);
 
-			legend.append('text')
+			legend.append('label')
 				.attr('opacity', 0)
 				.transition()
 				.duration(500)
 				.delay(1000)
 				.attr('opacity', 1)
-				.attr('x', 15)
-				.attr('y', 9)
 				.text(function(d) {
 					return d;
 				});
 
-			legend.on('click', function() {
-				var which = arguments[0];
-			});
-
-			legend.on('mousein', function() {
-				var which = arguments[0];
-			});
-
-			legend.on('mouseout', function() {
-				var which = arguments[0];
-			});
+			legend.classed('small', legend[0].length > 3);
 		}
 
 		init_legend(options.data);
