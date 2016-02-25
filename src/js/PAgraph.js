@@ -1948,7 +1948,7 @@
 					return d;
 				});
 
-			legend.classed('small', legend[0].length > 3);
+			legend.classed('small', legend[0].length > 5);
 		}
 
 		init_legend(options.data);
