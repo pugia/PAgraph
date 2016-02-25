@@ -2345,7 +2345,7 @@
 
 			if(!!settings.diff.format.after && !settings.diff.value) {
 				diffDescription = $('<div></div>')
-					.text(settings.diff.format.after)
+					.html(settings.diff.format.after)
 					.addClass('PAdescription description');
 			}
 
