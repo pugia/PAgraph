@@ -1983,7 +1983,7 @@
 				structure.tooltip.style('display', 'block');
 
 				structure.tooltip.select('span').text(mouseover_object.data.label);
-				structure.tooltip.select('label').text(mouseover_object.data.value);
+				structure.tooltip.select('label').text(mouseover_object.data.value + ' %');
 
 				var t = $(structure.tooltip[0][0]);
 
@@ -2307,7 +2307,7 @@
 
 			if(!!settings.diff.format.after && !settings.diff.value) {
 				diffDescription = $('<div></div>')
-					.text(settings.diff.format.after)
+					.html(settings.diff.format.after)
 					.addClass('PAdescription description');
 			}
 
@@ -2589,31 +2589,34 @@
 					pMale.select('rect').style('fill', settings.main.color);
 					pFemale.select('rect').style('fill', settings.compare.color);
 
+					var stroke = 10;
+					var h = $(self.donutContainer[0]).height();
+
 					// donut
 					var τ = 2 * Math.PI;
 					var arc = d3.svg.arc()
-						.innerRadius(graph.height() / 2)
-						.outerRadius(graph.height() / 2)
+						.innerRadius(h / 2)
+						.outerRadius(h / 2)
 						.startAngle(0);
 					var svg = self.donutContainer.append("svg")
-						.attr("width", graph.height())
-						.attr("height", graph.height())
+						.attr("width", h+(stroke*2))
+						.attr("height", h+(stroke*2))
 						.append("g")
-						.attr('width', graph.height())
-						.attr('height', graph.height())
-						.attr("transform", "translate(" + 0 + "," + 0 + ")")
+						.attr('width', h)
+						.attr('height', h)
+						.attr("transform", "translate(" + ((h/2)+stroke) + "," + ((h/2)+stroke) + ")")
 
 					var background = svg.append("path")
 						.datum({endAngle: τ})
 						.style('stroke', settings.main.color)
-						.style('stroke-width', 10)
+						.style('stroke-width', stroke)
 						.attr("d", arc)
 
 					// Add the foreground arc in orange, currently showing 12.7%.
 					self.donutForeground = svg.append("path")
 						.datum({endAngle: 0 })
 						.style('stroke', settings.compare.color)
-						.style('stroke-width', 10)
+						.style('stroke-width', stroke)
 						.style('opacity', 0)
 						.style('stroke-linejoin', 'round')
 						.attr("d", arc);
@@ -2629,10 +2632,12 @@
 
 					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
 
+					var h = $(self.donutContainer[0]).height();
+
 					var τ = 2 * Math.PI;
 					var arc = d3.svg.arc()
-						.innerRadius(graph.height() / 2)
-						.outerRadius(graph.height() / 2)
+						.innerRadius(h / 2)
+						.outerRadius(h / 2)
 						.startAngle(0);
 
 					self.donutForeground.style('opacity', 1)
