@@ -2559,7 +2559,9 @@
 
 					self.structure();
 
-// 					self.animate();
+					setTimeout(function() {
+						self.animate(settings.data);
+					}, 100);
 
 				},
 
@@ -2625,7 +2627,7 @@
 				animate: function(data) {
 
 					var self = this;
-
+										
 					graph.find('div.PAdata p:eq(0) > span').attr('data-value', data[0].value)
 					graph.find('div.PAdata p:eq(1) > span').attr('data-value', data[1].value)
 
