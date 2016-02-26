@@ -1485,17 +1485,17 @@
 					
 					for (var i in structure.svg.graph.elements[index].elements.area) {
 						
-						var he = parseInt( ( data[i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) );
+						var he = (data[i].value) ? parseInt( ( data[i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) ) : 1;
 						var y = h - he;
 						if (settings.config.stacked && index > 0) {
 							var j = index * 1;
 							while(j > 0) {
 								j = j-1;
-								var he0 = parseInt( ( structure.data[j][i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) );
+								var he0 = (structure.data[j][i].value) ? parseInt( ( structure.data[j][i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) ) : 1;
 								y = y - he0;
 							}
 						}
-						
+												
 						structure.svg.graph.elements[index].elements.area[i].transition()
 							.duration(internalSettings.graphAnimationTime)
 							.attr('y', y)
