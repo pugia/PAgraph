@@ -1838,6 +1838,10 @@
 		var graph = this;
 		graph.addClass('PAgraphContainer PAdonutchart');
 
+		var settings = $.extend(true, {
+			after: null
+		}, options.settings);
+
 		var structure = {
 			legend:null,
 			tooltip:null,
@@ -1977,13 +1981,15 @@
 
 			slice.on('mouseover', function() {
 				var mouseover_object = arguments[0];
-
 				clearTimeout(displayNoneTimer);
-
 				structure.tooltip.style('display', 'block');
-
 				structure.tooltip.select('span').text(mouseover_object.data.label);
-				structure.tooltip.select('label').text(mouseover_object.data.value + ' %');
+				if(!!settings.after) {
+					structure.tooltip.select('label').text(mouseover_object.data.value + ' ' + settings.after);
+				} else {
+					structure.tooltip.select('label').text(mouseover_object.data.value);
+				}
+
 
 				var t = $(structure.tooltip[0][0]);
 

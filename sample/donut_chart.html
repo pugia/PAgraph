@@ -37,14 +37,19 @@
             label: "Facebook",
             value: 25
           },
-            {
-                label: "Twitter",
-                value: 15
-            }
+        {
+            label: "Twitter",
+            value: 15
+        }
         ];
 
+        var settings =  {
+            after:'%'
+        }
+
         $('#graph_0').PAdonutchart({
-            data:data
+            data:data,
+            settings:settings
         })
     })
 
