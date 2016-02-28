@@ -2407,6 +2407,78 @@
 		}
 		return graph;
 	};
+	
+	// counter
+	$.fn.PAcounterSimple = function( number, options ) {
+
+		var num = (typeof number == 'number') ? number : 0;
+		if (typeof number == 'object') { options = number; }
+
+		// default options
+		var settings = $.extend(true, {
+			number: num,
+			format: {
+				decimals: 0
+			},
+			duration: 1000
+		}, options );
+
+		var graph = this;
+
+		var previous = Number(graph.attr('data-value')) || 0;
+		graph.attr('data-value', settings.number);
+		graph.html(Number(previous).format(settings.format))
+		
+		// backup
+		var timer = setTimeout(function(){ graph.html(Number(settings.number).format(settings.format)); }, settings.duration+10);
+
+		$({ c:previous }).animate({ c: Number(settings.number) }, {
+			duration: settings.duration,
+			step: function () {
+				var v = this.c;
+				if (v == Number(settings.number)) { clearInterval(timer); }
+				graph.html(Number(v).format(settings.format));
+			}
+		});
+		
+
+		function animateNumber(selector, time) {
+
+			selector.each(function () {
+
+				if (isNaN($(this).attr('data-value'))) { $(this).html($(this).attr('data-value')); }
+				else {
+
+					var el = $(this).html(Number(0).format(settings.format));
+
+					// backup
+					var timer = setTimeout(function(){ el.html( formatNumber(el.attr('data-value')*1, el.attr('data-type')) ); }, time+10);
+
+					$({ c:0 }).animate({ c: el.attr('data-value') }, {
+						duration: time,
+						step: function () {
+							var v = this.c;
+							if (v == el.attr('data-value')) { clearInterval(timer); }
+							el.html(Number(v).format(settings.format));
+						}
+					});
+
+				}
+
+			});
+
+		}
+
+		function formatNumber(number, type) {
+
+			if(type === undefined) {
+				return Number(number).format(settings.main.format);
+			} else {
+				return Number(number).format(settings[type].format);
+			}
+		}
+		return graph;
+	};
 
 	// custom
 	$.fn.PAcustom = function( options ) {
