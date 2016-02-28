@@ -2428,6 +2428,12 @@
 		var previous = Number(graph.attr('data-value')) || 0;
 		graph.attr('data-value', settings.number);
 		graph.html(Number(previous).format(settings.format))
+		if (settings.number > 0) {
+			graph.addClass('positive');
+		}
+		if (settings.number < 0) {
+			graph.addClass('negative');
+		}
 		
 		// backup
 		var timer = setTimeout(function(){ graph.html(Number(settings.number).format(settings.format)); }, settings.duration+10);
@@ -2441,42 +2447,6 @@
 			}
 		});
 		
-
-		function animateNumber(selector, time) {
-
-			selector.each(function () {
-
-				if (isNaN($(this).attr('data-value'))) { $(this).html($(this).attr('data-value')); }
-				else {
-
-					var el = $(this).html(Number(0).format(settings.format));
-
-					// backup
-					var timer = setTimeout(function(){ el.html( formatNumber(el.attr('data-value')*1, el.attr('data-type')) ); }, time+10);
-
-					$({ c:0 }).animate({ c: el.attr('data-value') }, {
-						duration: time,
-						step: function () {
-							var v = this.c;
-							if (v == el.attr('data-value')) { clearInterval(timer); }
-							el.html(Number(v).format(settings.format));
-						}
-					});
-
-				}
-
-			});
-
-		}
-
-		function formatNumber(number, type) {
-
-			if(type === undefined) {
-				return Number(number).format(settings.main.format);
-			} else {
-				return Number(number).format(settings[type].format);
-			}
-		}
 		return graph;
 	};
 
