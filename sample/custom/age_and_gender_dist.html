@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>PAgraph | Age and Gender Distribution</title>
+
+    <link rel="stylesheet" href="../style.css" type="text/css">
+    <link rel="stylesheet" href="../../src/css/PAgraph.css" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="../../bower_components/d3/d3.min.js" charset="utf-8"></script>
+    <script src="../../src/js/PAgraph.js"></script>
+</head>
+<body>
+
+<a href="../index.html">&laquo; Back to examples list</a>
+
+<h1>Age and Gender Distribution Graph</h1>
+
+<div id="graph_0" style="height: 100px; width: 500px"></div>
+
+
+<script>
+
+    $(function() {
+
+        var data = [
+            {
+                label: '> 20',
+                value: {
+                    m: 15,
+                    f: 20
+                }
+            },
+            {
+                label: '20-25',
+                value: {
+                    m: 20,
+                    f: 15
+                }
+            },
+            {
+                label: '25-30',
+                value: {
+                    m: 24,
+                    f: 12
+                }
+            },
+            {
+                label: '30-35',
+                value: {
+                    m: 9,
+                    f: 28
+                }
+            },
+            {
+                label: '35 <',
+                value: {
+                    m: 11,
+                    f: 24
+                }
+            }
+        ];
+
+        var age_dist_graph = $('#graph_0');
+
+        var age_dist = age_dist_graph.PAcustom({
+            mode: 'age_and_gender_distribution',
+            data: data,
+            main: {
+                format: {
+                    decimals: 1,
+                    after: '<small>%</small>'
+                }
+            }
+        });
+
+        setTimeout(function () {
+            age_dist.animate(data);
+        }, 1000);
+    }());
+
+</script>
+</body>
+</html>
