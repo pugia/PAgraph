@@ -1952,7 +1952,7 @@
 					return d;
 				});
 
-			legend.classed('small', legend[0].length > 5);
+			legend.classed('small', legend[0].length > 3);
 		}
 
 		init_legend(options.data);
@@ -2493,8 +2493,6 @@
 					setTimeout(function() {
 						self.animate();
 					}, 100);
-
-
 				},
 
 				animate: function() {
@@ -2809,6 +2807,8 @@
 						element
 							.select('label').text(data[i].label);
 
+
+
 						var percf = data[i].value.f / (perc)  * 100;
 						element
 							.select('div > span').attr('data-perc', perc / coeff)
@@ -2841,6 +2841,8 @@
 
 				init: function() {
 
+
+
 					var self = this;
 
 					graph.addClass('PACustomAgeDist PACustomGenderDist');
@@ -2867,7 +2869,7 @@
 
 
 					// params to zoom on the data
-					var max = 0, min = 100;
+					var min = 0, max = 100;
 					for (var i in settings.data) {
 						var v = settings.data[i].value.m + settings.data[i].value.f;
 						max = v > max ? v : max;
@@ -3042,9 +3044,10 @@
 						element
 							.select('label').text(data[i].label);
 
-						var percf = data[i].value.f / (perc)  * 100;
+						var percf = data[i].value.f / (perc) * 100 ;
+
 						element
-							.select('div > span').attr('data-perc', perc / coeff)
+							.select('div > span').attr('data-perc', perc)
 							.select('span')
 							.classed('PAhide', true)
 							.attr('data-perc', percf)
@@ -3053,23 +3056,15 @@
 							.select('span[data-value]').attr('data-value', perc);
 
 						graph.find('div.PAdetail').addClass('hide');
-
-
 					}
-
 
 					graph.find('span[data-perc]').each(function() {
 						$(this).width(parseInt($(this).attr('data-perc'))+'%')
 					});
 					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, null, true);
-
 				}
 			}
-
-
 		};
-
-
 
 		function animateNumber(selector, time, format, wait, startFromActual) {
 

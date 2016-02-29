@@ -26,7 +26,7 @@
 
         var data = [
           {
-            	label: "User Account",
+            label: "User Account",
             value: 20
           },
           {
@@ -43,13 +43,11 @@
         }
         ];
 
-        var settings =  {
-            after:'%'
-        }
-
         $('#graph_0').PAdonutchart({
             data:data,
-            settings:settings
+            settings: {
+                after:'%'
+            }
         })
     })
 

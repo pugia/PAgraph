@@ -575,3 +575,43 @@ div.PAoverlay {
   font-family: Lato, sans-serif;
   font-weight: 700;
 }
+.PACustomAgeDist .PAdata {
+  float: left;
+  margin-left: 10px;
+  width: 172px;
+}
+.PACustomAgeDist .PAdata p {
+  margin: 11px 0 12px;
+  height: 35px;
+}
+.PACustomAgeDist .PAdata p svg {
+  width: 35px;
+  height: 35px;
+  float: left;
+}
+.PACustomAgeDist .PAdata p span {
+  float: left;
+  height: 35px;
+  line-height: 35px;
+  margin-left: 22px;
+  font-size: 20px;
+  font-family: Lato, sans-serif;
+  font-weight: 700;
+}
+.PACustomAgeDist.PACustomGenderDist > ul {
+  width: 70%;
+  display: inline-block;
+}
+.PACustomAgeDist.PACustomGenderDist > .PAdata {
+  width: 25%;
+  display: inline-block;
+}
+.PACustomAgeDist ul li > label {
+  width: 70px;
+}
+.PACustomAgeDist ul li > div {
+  padding: 0 60px 0 70px;
+}
+.PAdonutchart.PAgraphContainer div.PAlegend {
+  background: rgba(255, 255, 255, 0);
+}
