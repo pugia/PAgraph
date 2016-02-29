@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<title>PAgraph | counterSimple</title>
+
+	<link href="style.css" rel="stylesheet" type="text/css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="../bower_components/d3/d3.min.js" charset="utf-8"></script>
+	
+	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
+	<script src="../src/js/PAgraph.js"></script>
+			
+</head>
+<body>	
+	
+	<a href="index.html">&laquo; Back to examples list</a>
+	
+	<h1>Mode: counterSimple</h1>
+	
+	<div class="widget" id="w1">
+		<h3>Purus Egestas</h3>
+		<p>Simple number: <strong class="counterSimple"></strong></p>
+	</div>
+
+	<div class="widget" id="w2">
+		<h3>Purus Egestas</h3>
+		<p>Simple number: <strong class="counterSimple"></strong></p>
+	</div>
+	
+	<script>	
+	
+	$(function() {
+		
+		$('#w1 strong.counterSimple').PAcounterSimple({
+			number: 4123,
+			format: {
+				decimals: 2,
+				after: " polli"
+			}
+		});
+
+		$('#w2 strong.counterSimple').PAcounterSimple(1234.23);
+/*
+
+		$('#w2 > div.graph').PAcounter({
+			icon: 'http://www.teslamotors.com/sites/all/themes/custom/tesla_theme/assets/img/icons/mstile-144x144.png',
+			main: {
+				value: 346,
+				format: {
+					before: '$ ',
+					after: 'k'
+				}
+			},
+			diff: {
+				value: -26,
+				format: {
+					after: '%'
+				}
+			}
+		});
+
+		$('#w3 > div.graph').PAcounter({
+			icon: 'response/counter_icon_1.svg',
+			main: {
+				value: 12023
+			}
+		});
+
+		$('#w4 > div.graph').PAcounter({
+			main: {
+				value: -4736.23,
+				format: {
+					decimals: 2
+				}
+			}
+		});
+
+		$('#w5 > div.graph').PAcounter({
+			main: {
+				value: 12345,
+			}
+		});
+*/
+		
+	})	 	
+
+	</script>
+	
+</body>
+
+</html>
