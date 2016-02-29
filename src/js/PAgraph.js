@@ -1140,7 +1140,7 @@
 					var self = this;
 					var dfrd = $.Deferred();
 
-					if (index_wanted && structure.svg.graph.elements[index_wanted]) {
+					if (typeof index_wanted != undefined && structure.svg.graph.elements[index_wanted]) {
 						dfrd.resolve(index_wanted);
 						return dfrd.promise();
 					}
@@ -1238,7 +1238,6 @@
 							.attr('y', h+internalSettings.labels.x.marginTop)
 							.attr('text-anchor','middle')
 							.attr('fill', settings.config.grid.x.label)
-							.style('opacity', 0)
 						structure.svg.label.x.elements.push(label);
 
 					}
@@ -1304,16 +1303,35 @@
 					var j = 0;
 					
 					debug('animateGridX');
-					
+					structure.svg.label.x.group.classed('PAhide', true)
+
 					// fix the number of the rows
 					if (structure.svg.graph.elements[0].elements.area.length != structure.data[0].length) {
+												
+						// remove exceding
+						for (var i = structure.data[0].length; i < structure.svg.graph.elements[0].elements.area.length; i++) {
+							
+							structure.svg.label.x.elements[i].transition()
+								.duration(internalSettings.graphAnimationTime)
+								.style('opacity', 0)
+								.ease(internalSettings.animateEasing)
+								.each("end", function() {
+									this.remove();
+								});
+								
+							setTimeout(function() {
+								structure.svg.label.x.elements = structure.svg.label.x.elements.slice(0,structure.data[0].length);
+							}, internalSettings.graphAnimationTime)
+							
+						}
+						
 
 						if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 						if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 						var spacing = Math.floor(w/structure.data[0].length);
 						var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
 						var rectW = spacing - settings.config.spacing; //Math.floor(spacing*0.7);
-
+												
 						for (var index in structure.data) {
 
 							for (var i in structure.data[index]) {
@@ -1327,7 +1345,6 @@
 										.duration(internalSettings.graphAnimationTime)
 										.attr('width', rectW)
 										.attr('x', x)
-										.style('opacity', 1)
 
 								} 
 								else {
@@ -1341,12 +1358,11 @@
 										.attr('rx', settings.config.rectRadius)
 										.attr('ry', settings.config.rectRadius)
 										.attr('fill', settings.config.graph[index].color)
-										.style('opacity', 0);
+										.attr('opacity', 0)
 									rect
 										.transition()
 										.delay(internalSettings.graphAnimationTime / 4)
 										.duration(internalSettings.graphAnimationTime)
-										.style('opacity', 1)
 									structure.svg.graph.elements[index].elements.area.push(rect);
 
 								}
@@ -1359,13 +1375,11 @@
 										structure.svg.label.x.elements[i]
 											.transition()
 											.duration(internalSettings.graphAnimationTime / 4)
-											.style('opacity', 0)
 
 										structure.svg.label.x.elements[i]
 											.transition()
 											.delay(internalSettings.graphAnimationTime / 4)
 											.duration(internalSettings.graphAnimationTime)
-											.style('opacity', 1)
 											.attr('x', xx)
 											.text(structure.data[0][i].label);
 
@@ -1378,13 +1392,11 @@
 											.attr('text-anchor','middle')
 											.attr('fill', settings.config.grid.x.label)
 											.text(structure.data[0][i].label)
-											.style('opacity', 0);
 
 										label
 											.transition()
 											.delay(internalSettings.graphAnimationTime / 4)
 											.duration(internalSettings.graphAnimationTime)
-											.style('opacity', 1);
 
 										structure.svg.label.x.elements.push(label);
 									}
@@ -1404,11 +1416,63 @@
 					}
 
 					// resolve the deferred
-					setTimeout(function() { dfrd.resolve();	}, internalSettings.animateGridTime + 100);
+					setTimeout(function() { 
+						self.hideThickLabels();
+						dfrd.resolve();						
+					}, internalSettings.animateGridTime + 100);
 
 					return dfrd.promise();
 
 				},
+				
+				// hide some labels when there are too much
+				hideThickLabels: function() {
+					
+					debug('hideThickLabels');
+					
+					var self = this;
+					var labelGroup = graph.find('g.PAGlabelX')					
+					var nthChildX = 1;
+					var l1_index = 1;
+					var l1_element = labelGroup.find('text:eq('+(l1_index)+')');
+					var l1_size = {
+						width: textWidth(l1_element),
+						x: l1_element.position().left
+					};
+					var l2_index = 2;
+					var l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
+
+					while (l1_size.x + l1_size.width + 10 > l2_size) {
+						nthChildX++; l2_index++;
+						l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
+					}
+
+					if (nthChildX > 1) {
+						structure.svg.label.x.group
+							.classed('PAhide', true)
+								.selectAll('text:nth-child('+nthChildX+'n+2)')
+								.classed('show', true);
+					} else {
+						structure.svg.label.x.group
+							.classed('PAhide', false)
+								.selectAll('text')
+								.classed('show', false);
+					}
+					
+
+					function textWidth(element) {
+
+						var fake = $('<span>').hide().appendTo(document.body);
+						fake.text(element.text())
+							.css('font-family', element.css('font-family'))
+							.css('font-weight', element.css('font-weight'))
+							.css('font-size', element.css('font-size'))
+							.css('text-transform', element.css('text-transform'))
+						var w = fake.width(); fake.remove();
+						return w;
+					}
+
+				},				
 
 				/* ANIMATE */
 				setData: function(data, index) {
@@ -1416,11 +1480,50 @@
 					var self = this;
 					var dfrd = $.Deferred();
 					var index = index || 0;
+					
+					var w = graph.width();
+					var h = graph.height();
+					var j = 0;
+
+					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }					
+
+					debug('setData', index)
 
 					// empty stored data with different scale on index 0
 					if (structure.data.length && index == 0 && structure.data[0].length != data.length) {
+						console.log('different scale on index0')
+						if (structure.data.length > 1) {
+							for (var rr = 1; rr < structure.data.length; rr++) {
+								self.removeGraph(rr);
+							}
+						}
 						structure.data = [];
 					}
+					
+					// fix elements number
+					if (structure.svg.graph.elements[index].elements.area.length > data.length) {
+						for (i = data.length; i < structure.svg.graph.elements[index].elements.area.length; i++) {
+							
+							// remove rect
+							structure.svg.graph.elements[index].elements.area[i].transition()
+								.duration(internalSettings.graphAnimationTime)
+								.attr('y', h)
+								.attr('height', 0)
+								.style('opacity', 0)
+								.ease(internalSettings.animateEasing)
+								.each("end", function() {
+									this.remove();
+								});
+								
+						}
+						
+						setTimeout(function() {
+							structure.svg.graph.elements[index].elements.area = structure.svg.graph.elements[index].elements.area.slice(0,data.length);
+						}, internalSettings.graphAnimationTime)
+						
+					}
+					
 
 					// check data's scale
 					if (!data || data.length == 0) { dfrd.reject('no'); }
@@ -1482,28 +1585,33 @@
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
 					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
 					var rectW = spacingX - settings.config.spacing - ((structure.svg.graph.elements.length-1)*offsetX);
-					
+										
 					for (var i in structure.svg.graph.elements[index].elements.area) {
 						
-						var he = (data[i].value) ? parseInt( ( data[i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) ) : 1;
-						var y = h - he;
-						if (settings.config.stacked && index > 0) {
-							var j = index * 1;
-							while(j > 0) {
-								j = j-1;
-								var he0 = (structure.data[j][i].value) ? parseInt( ( structure.data[j][i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) ) : 1;
-								y = y - he0;
+						if (typeof data[i] != 'undefined') {
+							
+							var he = (data[i].value) ? parseInt( ( data[i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) ) : 1;
+							var y = h - he;
+							if (settings.config.stacked && index > 0) {
+								var j = index * 1;
+								while(j > 0) {
+									j = j-1;
+									var he0 = (structure.data[j][i].value) ? parseInt( ( structure.data[j][i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) ) : 1;
+									y = y - he0;
+								}
 							}
-						}
-												
-						structure.svg.graph.elements[index].elements.area[i].transition()
-							.duration(internalSettings.graphAnimationTime)
-							.attr('y', y)
-							.attr('width', rectW)
-							.attr('height', he)
-							.attr('data-value', data[i].value)
-							.style('opacity', 1)
-							.ease(internalSettings.animateEasing)
+													
+							structure.svg.graph.elements[index].elements.area[i].transition()
+								.duration(internalSettings.graphAnimationTime)
+								.attr('y', y)
+								.attr('width', rectW)
+								.attr('height', he)
+								.attr('data-value', data[i].value)
+								.style('opacity', 1)
+								.ease(internalSettings.animateEasing)
+						
+						}	
+							
 					}
 
 				},

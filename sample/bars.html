@@ -50,14 +50,14 @@
 	
 	$(function() {
 
-		graph.initGraph(0, '#ff2200');		
-
 		$('#test_01').on('click', function() {
 			
-			$.getJSON('response/weekday_test_01.json', function(result) {
+			$.getJSON('response/history_test_50gg.json', function(result) {
 					
-					$.when(graph.setData(result.data)).done(function() {
-						graph.draw();
+					$.when(graph.initGraph(0, '#ff2200')).done(function(index) { 
+						$.when(graph.setData(result.data)).done(function() {
+							graph.draw();
+						});
 					});
 									
 				})
@@ -68,8 +68,10 @@
 			
 			$.getJSON('response/weekday_test_02.json', function(result) {
 					
-					$.when(graph.setData(result.data)).done(function() {
-						graph.draw();						
+					$.when(graph.initGraph(0, '#ff2200')).done(function(index) { 
+						$.when(graph.setData(result.data)).done(function() {
+							graph.draw();
+						});
 					});
 				
 				})
