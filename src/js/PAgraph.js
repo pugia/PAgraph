@@ -2118,6 +2118,12 @@
 			slice.exit()
 				.remove();
 		}
+
+		graph.animate = function (data) {
+
+		};
+
+		return graph;
 	};
 
 	// bubble chart

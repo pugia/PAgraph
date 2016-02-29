@@ -614,4 +614,5 @@ div.PAoverlay {
 }
 .PAdonutchart.PAgraphContainer div.PAlegend {
   background: rgba(255, 255, 255, 0);
+  right: 5px;
 }
