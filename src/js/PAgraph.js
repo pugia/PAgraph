@@ -2008,7 +2008,7 @@
 		structure.svg.key = function(d) { return d.data.label; };
 
 		function set_domain_and_range(data) {
-			var colors = ["#5486B2", "#769EC0", "#B5CBDE", "#94C0CA"];
+			var colors = ["#6D96A1", "#596970", "#A9AEC5", "#553E5A", "#859680", "#8C4354", "#87B8C4", "#808F96"];
 			var domain = [];
 
 			for(var x = 0; x < data.length; x++) {
@@ -2068,7 +2068,7 @@
 
 			var displayNoneTimer = null;
 
-			var slice = structure.svg.element.select('.slices').selectAll('path.slice')
+			var slice = structure.svg.element.select('.slices').selectAll('path')
 				.data(structure.svg.pie(data), structure.svg.key);
 
 			slice.enter()
@@ -2079,7 +2079,6 @@
 			slice.transition().duration(1000)
 				.attrTween('d', function(d) {
 					var i = d3.interpolate(d.startAngle + 0.1, d.endAngle);
-
 					return function(t) {
 						d.endAngle = i(t);
 						return structure.svg.arc(d);
@@ -2114,13 +2113,51 @@
 				}, 300);
 			});
 
-
 			slice.exit()
 				.remove();
 		}
 
 		graph.animate = function (data) {
+			structure.svg.element.select('slices').remove();
 
+			init_graph(data);
+			init_legend();
+
+			//var slice = structure.svg.element.datum(data).selectAll('path.slice');
+            //
+			//slice = slice
+			//	.data(structure.svg.pie(data));
+            //
+            //
+            //
+			//slice
+			//	.enter()
+            //
+			//slice
+			//	.insert('path')
+            //
+			//slice
+			//	.attr('class', 'slice')
+            //
+			//slice
+			//	.style('fill', function(d) { return structure.svg.color(d.data.label); })
+			//	.each(function(d) {
+			//		this._current = d;
+			//	});
+            //
+			//slice.transition().duration(500)
+			//	.attrTween('d', function(d) {
+			//		console.log(this._current)
+			//		console.log(d);
+			//		var i = d3.interpolate(this._current.endAngle,  this._current.startAngle);
+            //
+			//		return function(t) {
+			//			d.endAngle = i(t);
+			//			return structure.svg.arc(d);
+			//		}
+			//	})
+            //
+			//slice.exit().remove();
 		};
 
 		return graph;

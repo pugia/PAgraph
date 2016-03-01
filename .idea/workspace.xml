@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5136ccb6-4a91-4760-82b6-9ba93c64d13f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sample/daytime.html" afterPath="$PROJECT_DIR$/sample/daytime.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sample/donut_chart.html" afterPath="$PROJECT_DIR$/sample/donut_chart.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/PAgraph.css" afterPath="$PROJECT_DIR$/src/css/PAgraph.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/css/PAgraph.less" afterPath="$PROJECT_DIR$/src/css/PAgraph.less" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/js/PAgraph.js" afterPath="$PROJECT_DIR$/src/js/PAgraph.js" />
     </list>
     <ignored path="PAgraph.iws" />
@@ -42,7 +38,7 @@
             <entry file="file://$PROJECT_DIR$/src/js/PAgraph.js">
               <provider selected="true" editor-type-id="text-editor">
                 <state vertical-scroll-proportion="0.0">
-                  <caret line="2106" column="0" selection-start-line="2106" selection-start-column="0" selection-end-line="2106" selection-end-column="0" />
+                  <caret line="2105" column="0" selection-start-line="2105" selection-start-column="0" selection-end-line="2105" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -51,8 +47,8 @@
           <file leaf-file-name="donut_chart.html" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/sample/donut_chart.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.5007133">
-                  <caret line="77" column="11" selection-start-line="77" selection-start-column="11" selection-end-line="77" selection-end-column="11" />
+                <state vertical-scroll-proportion="0.78602">
+                  <caret line="64" column="25" selection-start-line="64" selection-start-column="25" selection-end-line="64" selection-end-column="25" />
                   <folding />
                 </state>
               </provider>
@@ -110,8 +106,8 @@
           <file leaf-file-name="PAgraph.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/js/PAgraph.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.6648936">
-                  <caret line="2123" column="10" selection-start-line="2123" selection-start-column="10" selection-end-line="2123" selection-end-column="10" />
+                <state vertical-scroll-proportion="0.3324468">
+                  <caret line="2010" column="111" selection-start-line="2010" selection-start-column="111" selection-end-line="2010" selection-end-column="111" />
                   <folding />
                 </state>
               </provider>
@@ -120,7 +116,7 @@
           <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/sample/index.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0">
+                <state vertical-scroll-proportion="-14.16">
                   <caret line="25" column="20" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
                   <folding />
                 </state>
@@ -168,6 +164,7 @@
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
     <option name="x" value="1280" />
+    <option name="y" value="-280" />
     <option name="width" value="1920" />
     <option name="height" value="1080" />
   </component>
@@ -314,7 +311,7 @@
     <property name="FullScreen" value="true" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
-    <property name="settings.editor.selected.configurable" value="settings.nodejs" />
+    <property name="settings.editor.selected.configurable" value="preferences.editor" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="javascript.nodejs.core.library.configured.version" value="4.2.5" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
@@ -393,7 +390,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1280" y="0" width="1920" height="1080" extended-state="0" />
+    <frame x="1280" y="-280" width="1920" height="1080" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.092651755" sideWeight="0.49566296" order="0" side_tool="false" content_ui="combo" />
@@ -660,14 +657,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sample/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="25" column="20" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/css/PAgraph.css">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -723,6 +712,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/sample/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-14.16">
+          <caret line="25" column="20" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/sample/daytime.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-15.0">
@@ -733,16 +730,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sample/donut_chart.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5007133">
-          <caret line="77" column="11" selection-start-line="77" selection-start-column="11" selection-end-line="77" selection-end-column="11" />
+        <state vertical-scroll-proportion="0.78602">
+          <caret line="64" column="25" selection-start-line="64" selection-start-column="25" selection-end-line="64" selection-end-column="25" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/js/PAgraph.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6648936">
-          <caret line="2123" column="10" selection-start-line="2123" selection-start-column="10" selection-end-line="2123" selection-end-column="10" />
+        <state vertical-scroll-proportion="0.3324468">
+          <caret line="2010" column="111" selection-start-line="2010" selection-start-column="111" selection-end-line="2010" selection-end-column="111" />
           <folding />
         </state>
       </provider>
