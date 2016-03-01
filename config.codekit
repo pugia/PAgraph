@@ -1348,7 +1348,7 @@
 		},
 	"\/dist\/css\/PAgraph.min.css": {
 		"fileType": 16,
-		"ignore": 1,
+		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/dist\/css\/PAgraph.min.css",
 		"outputAbbreviatedPath": "No Output Path",
@@ -1421,6 +1421,15 @@
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/sample\/counterSimple.html",
+		"outputAbbreviatedPath": "No Output Path",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0
+		},
+	"\/sample\/custom\/age_and_gender_dist.html": {
+		"fileType": 8192,
+		"ignore": 0,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/sample\/custom\/age_and_gender_dist.html",
 		"outputAbbreviatedPath": "No Output Path",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0
@@ -1715,7 +1724,7 @@
 		},
 	"\/src\/css\/PAgraph.css": {
 		"fileType": 16,
-		"ignore": 0,
+		"ignore": 1,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/src\/css\/PAgraph.css",
 		"outputAbbreviatedPath": "No Output Path",
@@ -1731,10 +1740,10 @@
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/src\/css\/PAgraph.less",
-		"outputAbbreviatedPath": "\/dist\/css\/PAgraph.min.css",
+		"outputAbbreviatedPath": "\/src\/css\/PAgraph.css",
 		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 1,
-		"outputStyle": 1,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 0,
 		"relativeURLS": 0,
 		"shouldRunAutoprefixer": 0,
 		"shouldRunBless": 0,
