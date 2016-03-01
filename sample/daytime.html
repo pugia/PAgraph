@@ -54,30 +54,30 @@
 			}
 		});
 		
-		graph.initGraph();				
-		
+		graph.initGraph();
+
 		$('#test_01').on('click', function() {
-			
+
 			$.getJSON('response/daytime_test_01.json', function(result) {
-					
+
 					$.when(graph.setData(result.data)).done(function() {
 						graph.draw();
 					});
-				
+
 				})
-			
+
 		}).click();
 
 		$('#test_02').on('click', function() {
-			
+
 			$.getJSON('response/daytime_test_02.json', function(result) {
-					
+
 					$.when(graph.setData(result.data)).done(function() {
 						graph.draw();
 					});
-				
+
 				})
-			
+
 		});
 		
 		$('#test_03').on('click', function() {

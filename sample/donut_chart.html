@@ -20,36 +20,71 @@
 <div id="graph_0" style="height: 500px; width: 1000px"></div>
 
 
+<button id="test_01">Test 01</button>
+<button id="test_02">Test 02</button>
+
+
 <script>
 
     $(function() {
 
-        var data = [
-          {
-            label: "User Account",
-            value: 20
-          },
-          {
-            label: "Click-through",
-            value: 40
-          },
-          {
-            label: "Facebook",
-            value: 25
-          },
-        {
-            label: "Twitter",
-            value: 15
-        }
+        var data1 = [
+            {
+                label: "User Account",
+                value: 20
+            },
+            {
+                label: "Click-through",
+                value: 40
+            },
+            {
+                label: "Facebook",
+                value: 25
+            },
+            {
+                label: "Twitter",
+                value: 15
+            }
         ];
 
-        $('#graph_0').PAdonutchart({
-            data:data,
-            settings: {
-                after:'%'
+        var data2 = [
+            {
+                label: "User Account",
+                value: 11
+            },
+            {
+                label: "Click-through",
+                value: 29
+            },
+            {
+                label: "Facebook",
+                value: 30
+            },
+            {
+                label: "Twitter",
+                value: 50
+            },
+            {
+                label: "fdsa",
+                value: 40
             }
-        })
-    })
+        ];
+
+        var graph = $('#graph_0').PAdonutchart({
+            data: data1,
+            settings: {
+                after: '%'
+            }
+        });
+
+        $('#test_01').on('click', function () {
+            graph.animate(data1);
+        });
+
+        $('#test_02').on('click', function () {
+            graph.animate(data2);
+        });
+    });
 
 </script>
 </body>
