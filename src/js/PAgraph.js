@@ -2855,9 +2855,6 @@
 					}
 
 				}
-
-
-
 			},
 
 			age_distribution: {
@@ -3035,9 +3032,9 @@
 
 				init: function() {
 
-
-
 					var self = this;
+					self.gender_present = (settings.data.m_percentage != 0 || settings.data.f_percentage != 0)
+					self.age_present = !!settings.data.age_dist;
 
 					graph.addClass('PACustomAgeDist PACustomGenderDist');
 
@@ -3046,62 +3043,106 @@
 					var dataContainer = d3.selectAll(graph.get()).append('div')
 						.classed('PAdata', true);
 
-					var pMale = dataContainer.append('p');
-					pMale.html(self.male_icon)
-						.append('span')
-						.attr('data-value', 0)
-						.html(Number(0).format(settings.main.format));
+					if(self.gender_present) {
+						var pMale = dataContainer.append('p');
+						pMale.html(self.male_icon)
+							.append('span')
+							.attr('data-value', 0)
+							.html(Number(0).format(settings.main.format));
 
-					var pFemale = dataContainer.append('p');
-					pFemale.html(self.female_icon)
-						.append('span')
-						.attr('data-value', 0)
-						.html(Number(0).format(settings.compare.format));
+						var pFemale = dataContainer.append('p');
+						pFemale.html(self.female_icon)
+							.append('span')
+							.attr('data-value', 0)
+							.html(Number(0).format(settings.compare.format));
 
-					pMale.select('path').style('fill', settings.main.color);
-					pFemale.select('path').style('fill', settings.compare.color);
+						pMale.select('path').style('fill', settings.main.color);
+						pFemale.select('path').style('fill', settings.compare.color);
+
+						graph.find('div.PAdata p:eq(0) > span').attr('data-value', settings.data.m_percentage);
+						graph.find('div.PAdata p:eq(1) > span').attr('data-value', settings.data.f_percentage);
+
+						console.log(settings.data.m_percentage);
+						console.log(settings.data.f_percentage);
+
+						animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
+					} else {
+						dataContainer.html('<label>No gender data available</label>');
+					}
 
 
 					// params to zoom on the data
 					var min = 0, max = 100;
-					for (var i in settings.data) {
-						var v = settings.data[i].value.m + settings.data[i].value.f;
+					for (var i in settings.data.age_dist) {
+						if(!!settings.data.age_dist[i].value.m || !!settings.data.age_dist[i].value.m) self.age_present = true;
+						var v = settings.data.age_dist[i].value.m + settings.data.age_dist[i].value.f;
 						max = v > max ? v : max;
 						min = v < min ? v : min;
 					}
 					var coeff = Math.abs(max - min) / 50;
 
-					for (var i in settings.data) {
+					if(self.age_present) {
+						var age_dist_data = settings.data.age_dist;
+						if(self.gender_present) {
+							for (var i in age_dist_data) {
 
-						var li = ul.append('li')
-							.attr('data-male', settings.data[i].value.m)
-							.attr('data-female', settings.data[i].value.f)
-						var perc = settings.data[i].value.m + settings.data[i].value.f;
-						if (perc > 0) {
+								var li = ul.append('li')
+									.attr('data-male', age_dist_data[i].value)
+									.attr('data-female', age_dist_data[i].value.f)
+								var perc = age_dist_data[i].value.m + age_dist_data[i].value.f;
+								if (perc > 0) {
 
-							// label
-							li.append('label')
-								.text(settings.data[i].label)
+									// label
+									li.append('label')
+										.text(age_dist_data[i].label)
 
-							// bar
-							var bar  = li.append('div').append('span')
-								.attr('data-perc', perc / coeff)
-								.style('background', settings.main.color)
+									// bar
+									var bar  = li.append('div').append('span')
+										.attr('data-perc', perc / coeff)
+										.style('background', settings.main.color)
 
-							// female bar
-							var percf = settings.data[i].value.f / (perc);
-							bar.append('span')
-								.classed('PAhide', true)
-								.attr('data-perc', percf * 100)
-								.style('background', settings.compare.color)
+									// female bar
+									var percf = age_dist_data[i].value.f / (perc);
+									bar.append('span')
+										.classed('PAhide', true)
+										.attr('data-perc', percf * 100)
+										.style('background', settings.compare.color)
 
-							// value
-							li.append('span').html(Number(perc).format(settings.main.format))
-								.attr('data-value', perc);
+									// value
+									li.append('span').html(Number(perc).format(settings.main.format))
+										.attr('data-value', perc);
 
+								}
+							}
+						} else {
+							var age_dist_data = settings.data.age_dist;
+							for (var i in age_dist_data) {
+								var li = ul.append('li')
+									.attr('data-male', age_dist_data[i].value)
+								var perc = age_dist_data[i].value.m + age_dist_data[i].value;
+								if (perc > 0) {
+
+									// label
+									li.append('label')
+										.text(age_dist_data[i].label)
+
+									// bar
+									var bar  = li.append('div').append('span')
+										.attr('data-perc', perc / coeff)
+										.style('background', settings.main.color)
+
+									// value
+									li.append('span').html(Number(perc).format(settings.main.format))
+										.attr('data-value', perc);
+
+								}
+							}
 						}
-
+					} else {
+						var ul = d3.selectAll(graph.get()).select('ul');
+						var li = ul.html('<label>No age info present</label>')
 					}
+
 
 
 					graph.find('li').hover(
@@ -3147,115 +3188,115 @@
 								m:percm,
 								f:100 - percm
 							};
-
-							self.animate_gender_dist(data);
-
-							animateNumber(graph.find('div.PAdetail label[data-value]'), 400, settings.main.format, null , true);
 						}
 					);
 				},
 
 				animate_gender_dist:function(data) {
-					graph.find('div.PAdata p:eq(0) > span').attr('data-value', data.m);
-					graph.find('div.PAdata p:eq(1) > span').attr('data-value', data.f);
+					graph.find('div.PAdata p:eq(0) > span').attr('data-value', data.m_percentage);
+					graph.find('div.PAdata p:eq(1) > span').attr('data-value', data.f_percentage);
 
 					animateNumber(graph.find('span[data-value]'), 300, settings.main.format, 100, true);
 				},
 
 				animate: function(data) {
 
-					var f_sum = 0;
-					var m_sum = 0;
-					var sum = 0;
-					for(var x = 0; x < data.length; x++) {
-						f_sum += data[x].value.f;
-						m_sum += data[x].value.m;
-						sum += data[x].value.m;
-						sum += data[x].value.f;
-					}
+					var self = this;
+					if ((self.age_present !== (data.m_percentage != 0 || data.f_percentage != 0) ||
+						!self.gender_present !== !!data.age_dist)
+					&& (!self.gender_present || !self.age_present)) {
+						self.age_present = (data.m_percentage != 0 || data.f_percentage != 0)
+						self.gender_present = !!data.age_dist;
+						settings.data = data;
+						graph.find('div').remove();
+						MODE.age_and_gender_distribution.init();
+						return graph;
+					} else {
+						graph.find('div.PAdata p:eq(0) > span').attr('data-value', settings.data.m_percentage)
+						graph.find('div.PAdata p:eq(1) > span').attr('data-value', settings.data.f_percentage)
 
-					var f_percentage = (f_sum / sum) * 100;
+						var max = 0, min = 100;
+						for (var i in settings.data.age_dist) {
+							var v = settings.data.age_dist[i].value.m + settings.data.age_dist[i].value.f;
+							max = v > max ? v : max;
+							min = v < min ? v : min;
+						}
+						var coeff = Math.abs(max - min) / 50;
 
-					graph.find('div.PAdata p:eq(0) > span').attr('data-value', 100 - f_percentage);
-					graph.find('div.PAdata p:eq(1) > span').attr('data-value', f_percentage);
+						// hide unused rows
+						d3.selectAll(graph.get()).selectAll('li:nth-child(n+'+ parseInt(settings.data.age_dist.length+1) +')')
+							.transition()
+							.duration(300)
+							.style('opacity', '0')
+							.delay(300)
+							.remove();
 
-					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
+						var lis = d3.selectAll(graph.get()).selectAll('ul li');
 
-					// params to zoom on the data
-					var max = 0, min = 100;
-					for (var i in data) {
-						var v = data[i].value.m + data[i].value.f;
-						max = v > max ? v : max;
-						min = v < min ? v : min;
-					}
-					var coeff = Math.abs(max - min) / 50;
+						for (var i in settings.data.age_dist) {
 
-					// hide unused rows
-					d3.selectAll(graph.get()).selectAll('li:nth-child(n+'+ parseInt(data.length+1) +')')
-						.transition()
-						.duration(300)
-						.style('opacity', '0')
-						.delay(300)
-						.remove();
+							var element = d3.select(lis[0][i]);
+							var perc = settings.data.age_dist[i].value.m + settings.data.age_dist[i].value.f;
 
-					var lis = d3.selectAll(graph.get()).selectAll('ul li');
+							// create missing rows
+							if (!element[0][0]) {
 
-					for (var i in data) {
+								var element = d3.selectAll(graph.get()).select('ul').append('li')
 
-						var element = d3.select(lis[0][i]);
-						var perc = data[i].value.m + data[i].value.f;
+								if (perc > 0) {
 
-						// create missing rows
-						if (!element[0][0]) {
+									// label
+									element.append('label')
 
-							var element = d3.selectAll(graph.get()).select('ul').append('li')
+									// bar
+									var bar  = element.append('div').append('span').style('background', settings.main.color)
 
-							if (perc > 0) {
+									// female bar
+									var percf = settings.data.age_dist[i].value.f / (settings.data.age_dist[i].value.m + settings.data.age_dist[i].value.f);
+									bar.append('span')
+										.classed('PAhide', true)
+										.style('background', settings.compare.color)
 
-								// label
-								element.append('label')
+									// value
+									element.append('span').html(Number(perc).format(settings.main.format))
 
-								// bar
-								var bar  = element.append('div').append('span').style('background', settings.main.color)
-
-								// female bar
-								var percf = data[i].value.f / (data[i].value.m + data[i].value.f);
-								bar.append('span')
-									.classed('PAhide', true)
-									.style('background', settings.compare.color)
-
-								// value
-								element.append('span').html(Number(perc).format(settings.main.format))
+								}
 
 							}
 
+							element
+								.attr('data-male', settings.data.age_dist[i].value.m)
+								.attr('data-female', settings.data.age_dist[i].value.f)
+
+							element
+								.select('label').text(settings.data.age_dist[i].label);
+
+
+
+							var percf = settings.data.age_dist[i].value.f / (perc)  * 100;
+							element
+								.select('div > span').attr('data-perc', perc / coeff)
+								.select('span')
+								.classed('PAhide', true)
+								.attr('data-perc', percf)
+
+							element
+								.select('span[data-value]').attr('data-value', perc);
+
+							graph.find('div.PAdetail').addClass('hide');
+
+
 						}
 
-						element
-							.attr('data-male', data[i].value.m)
-							.attr('data-female', data[i].value.f)
 
-						element
-							.select('label').text(data[i].label);
+						graph.find('span[data-perc]').each(function() {
+							$(this).width(parseInt($(this).attr('data-perc'))+'%')
+						});
+						animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, null, true);
 
-						var percf = data[i].value.f / (perc) * 100 ;
-
-						element
-							.select('div > span').attr('data-perc', perc)
-							.select('span')
-							.classed('PAhide', true)
-							.attr('data-perc', percf)
-
-						element
-							.select('span[data-value]').attr('data-value', perc);
-
-						graph.find('div.PAdetail').addClass('hide');
+						animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
 					}
 
-					graph.find('span[data-perc]').each(function() {
-						$(this).width(parseInt($(this).attr('data-perc'))+'%')
-					});
-					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, null, true);
 				}
 			}
 		};
@@ -3289,11 +3330,9 @@
 							el.html(Number(v).format(format));
 						}
 					});
-
 				});
 
 			}, wait || 1);
-
 
 		}
 
