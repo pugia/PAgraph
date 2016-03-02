@@ -17,68 +17,162 @@
 
 <h1>Age and Gender Distribution Graph</h1>
 
-<div id="graph_0" style="height: 100px; width: 500px"></div>
+<div id="graph_1" style="height: 100px; width: 500px;">
+	<div id="counters" style="float: left; width: 30%;">
+		<p class="m">M <span class="number"></span></p>
+		<p class="f">F <span class="number"></span></p>
+	</div>
+	<div class="graph_bars" style="float: left; width: 70%;"></div>
+</div>
 
+
+<hr style="clear: both"/>
+
+<button id="data1">Data1</button>
+<button id="data2">Data2</button>
 
 <script>
-
-    $(function() {
-
-        var data = [
-            {
-                label: '> 20',
-                value: {
-                    m: 15,
-                    f: 20
-                }
-            },
-            {
-                label: '20-25',
-                value: {
-                    m: 20,
-                    f: 15
-                }
-            },
-            {
-                label: '25-30',
-                value: {
-                    m: 24,
-                    f: 12
-                }
-            },
-            {
-                label: '30-35',
-                value: {
-                    m: 9,
-                    f: 28
-                }
-            },
-            {
-                label: '35 <',
-                value: {
-                    m: 11,
-                    f: 24
-                }
+		
+$(function() {
+  
+  		var colors = ['#88b8c4', '#808f96', '#88b8c4']
+		
+		var data = {
+			overall: {
+				m: 53.72,
+				f: 46.28
+			},
+			segments: [
+        {
+            label: '> 20',
+            value: {
+                m: 15,
+                f: 20
             }
-        ];
-
-        var age_dist_graph = $('#graph_0');
-
-        var age_dist = age_dist_graph.PAcustom({
-            mode: 'age_and_gender_distribution',
-            data: data,
-            main: {
-                format: {
-                    decimals: 1,
-                    after: '<small>%</small>'
-                }
+        },
+        {
+            label: '20-25',
+            value: {
+                m: 20,
+                f: 15
             }
-        });
+        },
+        {
+            label: '25-30',
+            value: {
+                m: 24,
+                f: 12
+            }
+        },
+        {
+            label: '30-35',
+            value: {
+                m: 9,
+                f: 28
+            }
+        },
+        {
+            label: '35 <',
+            value: {
+                m: 11,
+                f: 24
+            }
+        }
+      ]
+		}
+		var data2 = {
+			overall: {
+				m: 53.72,
+				f: 46.28
+			},
+			segments: [
+        {
+            label: '20-25',
+            value: {
+                m: 40,
+                f: 30
+            }
+        },
+        {
+            label: '25-30',
+            value: {
+                m: 24,
+                f: 12
+            }
+        },
+        {
+            label: '30-35',
+            value: {
+                m: 9,
+                f: 28
+            }
+        },
+        {
+            label: '35 <',
+            value: {
+                m: 11,
+                f: 24
+            }
+        }
+      ]
+		}
 
-        setTimeout(function () {
-            age_dist.animate(data);
-        }, 1000);
-    }());
+    var age_dist_graph = $('#graph_1');
+    
+		var graph = $('#graph_1 > div.graph_bars').PAcustom({
+			data: data.segments,
+			main: {
+				color: colors,
+				format: {
+					decimals: 1,
+					after: '<small>%</small>'
+				}
+			}
+		});
+
+		$('#data1')
+			.on('click', function() {
+				var graph = $('#graph_1 > div.graph_bars').PAcustom({
+					data: data.segments,
+					color: colors,
+					main: {
+						format: {
+							decimals: 1,
+							after: '<small>%</small>'
+						}
+					}
+				});
+			})
+		
+		$('#data2')
+			.on('click', function() {
+				var graph = $('#graph_1 > div.graph_bars').PAcustom({
+					data: data2.segments,
+					color: colors,
+					main: {
+						format: {
+							decimals: 1,
+							after: '<small>%</small>'
+						}
+					}
+				});
+			})
+			
+		$('#graph_1 > div.graph_bars li > div > span[data-perc]')
+			.hover(function() {
+				var m = parseFloat($(this).attr('data-m'));
+				var f = parseFloat($(this).attr('data-f'));
+				var tot = m+f;
+				var mp = parseFloat(m/tot*100)
+				var fp = parseFloat(f/tot*100)
+				$('#counters p.m span.number').PAcounterSimple( mp )
+				$('#counters p.f span.number').PAcounterSimple( fp )
+			}, function() {
+				$('#counters p.m span.number').PAcounterSimple( data.overall.m )
+				$('#counters p.f span.number').PAcounterSimple( data.overall.f )
+			})
+    
+}());
 
 </script>
 </body>

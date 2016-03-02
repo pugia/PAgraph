@@ -1539,6 +1539,17 @@
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1
 		},
+	"\/sample\/response\/demographic_test_01.json": {
+		"fileType": 524288,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/sample\/response\/demographic_test_01.json",
+		"orderOutput": 0,
+		"outputAbbreviatedPath": "\/sample\/response\/demographic_test_01-min.json",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1
+		},
 	"\/sample\/response\/history_test_13gg.json": {
 		"fileType": 524288,
 		"ignore": 1,

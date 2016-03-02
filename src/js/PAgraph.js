@@ -2638,29 +2638,39 @@
 					var self = this;
 
 					graph.addClass('PACustomHBars');
+					
+					var colors = (settings.main.color instanceof Array) ? settings.main.color : [settings.main.color];
 
 					var ul = graph.find('ul').length ? d3.selectAll(graph.get()).select('ul') : d3.selectAll(graph.get()).append('ul');
 
 					// params to zoom on the data
-					var coeff = Math.abs(getMaxValues(settings.data) - getMinValues(settings.data)) / 100;
-
 					var max = getMaxValues(settings.data);
-
+					var coeff = Math.abs(max - getMinValues(settings.data));
+					
 					// remove exceding li
 					graph.find('ul li:gt('+ (settings.data.length-1) +')').remove();
-
+					
+					// zoomParams
+					var zoomStart = max / coeff;
 
 					var lis = ul.selectAll('li');
 					for (var i in settings.data) {
-
+						
+						var v = settings.data[i].value;
+						if (v instanceof Object) {
+							var t = 0;
+							$.each(v,function(i,e) { t += e });
+							v = t;
+						}
+						
 						var li = lis[0][i] ? d3.select(lis[0][i]) : ul.append('li');
-						var val = coeff ? 100 - ((max - settings.data[i].value) * coeff) : 100;
+						var val = coeff ? 10 + zoomStart + (v - (max - coeff)) * (( 90 - zoomStart - 10 )/coeff) : 100;
 
 						if (lis[0][i]) {
 
 							li.select('label').text(settings.data[i].label);
 							li.select('div > span').attr('data-perc', val);
-							li.select('span.v').attr('data-value', settings.data[i].value);
+							li.select('span.v').attr('data-value', v);
 
 						} else {
 
@@ -2671,13 +2681,37 @@
 							// bar
 							li.append('div').append('span')
 								.attr('data-perc', val)
-								.style('background', settings.main.color)
+								.style('background', colors[0])
 
 							// value
 							li.append('span').classed('v', true)
 								.html(Number(0).format(settings.main.format))
-								.attr('data-value', settings.data[i].value);
+								.attr('data-value', v);
 
+						}
+						
+						if (settings.data[i].value instanceof Object) {
+							var span = li.select('span[data-perc]');
+							span.select('span.container').remove();
+							var container = span.append('span').classed('container',true);
+							var remain = 100;
+							var innerSpan = null;
+							var x = 1;
+							$.each(settings.data[i].value, function(key,value) {
+								var perc = parseInt(value / v * 100);
+								var color = (typeof colors[x] == 'undefined') ? getRandomColor() : colors[x];
+								remain = remain - perc;
+								span.attr('data-'+key, value)
+								innerSpan = 	container.append('span')
+										.attr('data-perc', perc)
+										.attr('data-key', key)
+										.style('background', color)
+								x++;
+							})
+							// fix rounding in percentage
+							if (remain > 0) {
+								innerSpan.attr('data-perc', parseInt(innerSpan.attr('data-perc'))+remain);
+							}
 						}
 
 					}
@@ -3035,8 +3069,6 @@
 
 				init: function() {
 
-
-
 					var self = this;
 
 					graph.addClass('PACustomAgeDist PACustomGenderDist');
@@ -3309,12 +3341,24 @@
 
 	function getMaxValues(data, k) {
 		if (k == undefined) { k = 'value'; }
-		return Math.max.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));
+		return Math.max.apply( null, Object.keys( data ).map(function (key) { 
+			var t = data[key][k];
+			if (t instanceof Object) {
+				var p = 0; $.each(t,function(i,e) { p += e }); t = p;
+			} 
+			return t;	
+		}));
 	}
 
 	function getMinValues(data, k) {
 		if (k == undefined) { k = 'value'; }
-		return Math.min.apply( null, Object.keys( data ).map(function (key) { return data[key][k];	}));
+		return Math.min.apply( null, Object.keys( data ).map(function (key) {
+			var t = data[key][k];
+			if (t instanceof Object) {
+				var p = 0; $.each(t,function(i,e) { p += e }); t = p;
+			} 
+			return t;	
+		}));
 	}
 
 	function getSumValues(data, k) {
@@ -3322,7 +3366,10 @@
 		var r = 0; for (var i in data) { r += data[i][k]; }
 		return r;
 	}
-
+	
+	function getRandomColor() {
+		return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+	}	
 
 }( jQuery ));
 

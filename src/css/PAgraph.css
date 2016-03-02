@@ -388,6 +388,26 @@ div.PAoverlay {
   -moz-transition: width 1s;
   -ms-transition: width 1s;
   -o-transition: width 1s;
+  overflow: hidden;
+  position: relative;
+}
+.PACustomHBars ul li > div > span > span.container {
+  display: block;
+  height: 8px;
+  width: 100%;
+  position: absolute;
+  left: -100%;
+  -webkit-transition: left 1s;
+  -moz-transition: left 1s;
+  -ms-transition: left 1s;
+  -o-transition: left 1s;
+}
+.PACustomHBars ul li > div > span > span.container > span {
+  float: left;
+  height: 8px;
+}
+.PACustomHBars ul li > div > span:hover > span.container {
+  left: 0;
 }
 .PACustomHBars ul li > span {
   box-sizing: border-box;
