@@ -2003,7 +2003,7 @@
 			.outerRadius(structure.svg.radius * 0.9)
 			.innerRadius(structure.svg.radius * 0.9);
 
-		structure.svg.g.attr("transform", "translate(" + (graph.width() / 4) + "," + (graph.height() - 60) / 2 + ")");
+		structure.svg.g.attr("transform", "translate(" + (graph.width() / 4) + "," + (graph.height() - 70) / 2 + ")");
 
 		structure.svg.key = function(d) { return d.data.label; };
 
