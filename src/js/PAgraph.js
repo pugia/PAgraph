@@ -1492,12 +1492,6 @@
 
 					// empty stored data with different scale on index 0
 					if (structure.data.length && index == 0 && structure.data[0].length != data.length) {
-						console.log('different scale on index0')
-						if (structure.data.length > 1) {
-							for (var rr = 1; rr < structure.data.length; rr++) {
-								self.removeGraph(rr);
-							}
-						}
 						structure.data = [];
 					}
 					
