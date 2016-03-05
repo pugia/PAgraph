@@ -3373,8 +3373,41 @@ String.prototype.capitalizeFirstLetter = function() { return this.charAt(0).toUp
 // start from http://stackoverflow.com/questions/149055/how-can-i-format-numbers-as-money-in-javascript
 Number.prototype.format = function(settings) {
 	if (!settings) { return this.valueOf(); }
+	
+	var number = parseFloat(this.valueOf());
+	var after = (settings.after || '');
+	
+	function nFormatter(num) {
+	  var si = [
+	    { value: 1E18, symbol: "E" },
+	    { value: 1E15, symbol: "P" },
+	    { value: 1E12, symbol: "T" },
+	    { value: 1E9,  symbol: "G" },
+	    { value: 1E6,  symbol: "M" },
+	    { value: 1E3,  symbol: "k" }
+	  ], i;
+	  for (i = 0; i < si.length; i++) {
+	    if (num >= si[i].value) {
+	      return {
+		      number: parseFloat((num / si[i].value).toFixed(10).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1")),
+		      symbol: si[i].symbol
+		    }
+	    }
+	  }
+	  return {
+		  number: parseFloat(num),
+		  symbol: ''
+		}
+	}	
+	
+	if (settings.trimK) {
+		var nf = nFormatter(this);
+		number = nf.number;
+		after = nf.symbol + after
+	}
+		
 	var re = '\\d(?=(\\d{3})+' + (settings.decimals > 0 ? '\\D' : '$') + ')',
-		num = this.toFixed(Math.max(0, ~~settings.decimals)),
-		formatted = (settings.decimal ? num.replace('.', settings.decimal) : num).replace(new RegExp(re, 'g'), '$&' + (settings.thousand || ''));
-	return (settings.before || '') + formatted + (settings.after || '');
+		number = number.toFixed(Math.max(0, ~~settings.decimals)),
+		formatted = (settings.decimal ? number.replace('.', settings.decimal) : number).replace(new RegExp(re, 'g'), '$&' + (settings.thousand || ''));
+	return (settings.before || '') + formatted + after;
 }
