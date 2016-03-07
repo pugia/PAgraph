@@ -18,7 +18,8 @@
 					x: {
 						show: true,
 						color: '#E2E6E9',
-						label: '#C1C1C1'
+						label: '#C1C1C1',
+						format: function(v) { return v; }
 					},
 					y: {
 						show: true,
@@ -772,7 +773,7 @@
 							if (structure.svg.label.x.elements[i]) { // move existing and update text
 
 								structure.svg.label.x.elements[i].attr('x', x)
-									.text(data[i].label)
+									.text(settings.config.grid.x.format(data[i].label))
 
 							} else { // create new
 
@@ -781,7 +782,7 @@
 									.attr('y', h+internalSettings.labels.x.marginTop)
 									.attr('text-anchor','middle')
 									.attr('fill', settings.config.grid.x.label)
-									.text(data[i].label)
+									.text(settings.config.grid.x.format(data[i].label))
 								structure.svg.label.x.elements.push(label);
 
 							}
@@ -1381,7 +1382,7 @@
 											.delay(internalSettings.graphAnimationTime / 4)
 											.duration(internalSettings.graphAnimationTime)
 											.attr('x', xx)
-											.text(structure.data[0][i].label);
+											.text(settings.config.grid.x.format(structure.data[0][i].label));
 
 
 									} else {
@@ -1391,7 +1392,7 @@
 											.attr('y', h+internalSettings.labels.x.marginTop)
 											.attr('text-anchor','middle')
 											.attr('fill', settings.config.grid.x.label)
-											.text(structure.data[0][i].label)
+											.text(settings.config.grid.x.format(structure.data[0][i].label))
 
 										label
 											.transition()
@@ -1461,7 +1462,6 @@
 					
 
 					function textWidth(element) {
-
 						var fake = $('<span>').hide().appendTo(document.body);
 						fake.text(element.text())
 							.css('font-family', element.css('font-family'))

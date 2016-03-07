@@ -7,7 +7,7 @@
 
 	<link href="style.css" rel="stylesheet" type="text/css">
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="../bower_components/jquery/jquery.min.js" charset="utf-8"></script>
 	<script src="../bower_components/d3/d3.min.js" charset="utf-8"></script>
 
 <!--
@@ -44,7 +44,15 @@
 		config: {
 			stacked: true,
 			spacing: 10,
-			rectRadius: 3
+			rectRadius: 3,
+			grid: {
+				x: {
+					format: function(v) {
+						var r = v.substr(0,2) + ' ' + v.substr(2,3);
+						return r;
+					}
+				}
+			}
 		}
 	});		
 	
