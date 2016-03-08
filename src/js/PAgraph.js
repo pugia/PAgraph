@@ -2782,9 +2782,13 @@
 				init: function() {
 
 					var self = this;
-					graph.addClass('PACustomGender1');
-
-					self.structure();
+					
+					if (!graph.hasClass('PACustomGender1')) {
+						self.structure();
+					} else {
+						self.donutContainer = d3.selectAll(graph.get()).select('.PAdonut');
+						self.donutForeground = d3.selectAll(graph.get()).select('.PAdonutForeground');
+					}
 
 					setTimeout(function() {
 						self.animate(settings.data);
@@ -2795,6 +2799,7 @@
 				structure: function() {
 
 					var self = this;
+					graph.addClass('PACustomGender1');
 
 					self.donutContainer = d3.selectAll(graph.get()).append('div')
 						.classed('PAdonut', true);
@@ -2842,6 +2847,7 @@
 
 					// Add the foreground arc in orange, currently showing 12.7%.
 					self.donutForeground = svg.append("path")
+						.classed('PAdonutForeground', true)
 						.datum({endAngle: 0 })
 						.style('stroke', settings.compare.color)
 						.style('stroke-width', stroke)

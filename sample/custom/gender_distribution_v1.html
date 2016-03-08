@@ -59,29 +59,43 @@
 	$(function() {
 		
 		var graph = $('#graph_1');
-		
-		graph.PAcustom( {
-			mode: 'gender_distribution_v1',
-			data: null,
-			main: {
-				format: {
-					decimals: 1,
-					after: '<small>%</small>'
-				}
-			},
-			compare: {
-				format: {
-					decimals: 1,
-					after: '<small>%</small>'
-				}
-			}
-		})
-		
+				
 		$('button#d0').on('click', function() {
-			graph.animate(data0);
+			
+			graph.PAcustom( {
+				mode: 'gender_distribution_v1',
+				data: data0,
+				main: {
+					format: {
+						decimals: 1,
+						after: '<small>%</small>'
+					}
+				},
+				compare: {
+					format: {
+						decimals: 1,
+						after: '<small>%</small>'
+					}
+				}
+			})
 		})
 		$('button#d1').on('click', function() {
-			graph.animate(data1);
+			graph.PAcustom( {
+				mode: 'gender_distribution_v1',
+				data: data1,
+				main: {
+					format: {
+						decimals: 1,
+						after: '<small>%</small>'
+					}
+				},
+				compare: {
+					format: {
+						decimals: 1,
+						after: '<small>%</small>'
+					}
+				}
+			})
 		})
 				
 	})
