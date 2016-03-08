@@ -2577,7 +2577,9 @@
 		var graph = this;
 
 		var previous = Number(graph.attr('data-value')) || 0;
-		graph.attr('data-value', settings.number);
+		graph
+			.attr('data-value', settings.number)
+			.removeClass('positive negative');
 		graph.html(Number(previous).format(settings.format))
 		if (settings.number > 0) {
 			graph.addClass('positive');
