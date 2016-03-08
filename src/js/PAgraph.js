@@ -1272,7 +1272,7 @@
 
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
-								structure.svg.label.y.elements[i].text(structure.svg.grid.y.spacing[i])
+								structure.svg.label.y.elements[i].text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
 
 							} else {
 								var label =  structure.svg.label.y.group.append('text')
@@ -1280,7 +1280,7 @@
 									.attr('y', h - (i*spacing))
 									.attr('text-anchor','end')
 									.attr('fill', settings.config.grid.y.label)
-									.text(structure.svg.grid.y.spacing[i])
+									.text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
 								structure.svg.label.y.elements.push(label);
 							}
 
@@ -1710,7 +1710,7 @@
 
 							structure.tooltip
 								.style('color', settings.config.graph[index].color)
-								.select('span').text($(this).attr('data-value'));
+								.select('span').text(Number($(this).attr('data-value')).format(settings.config.grid.y.format));
 
 							structure.tooltip
 								.select('label').text(settings.config.graph[index].legend);
