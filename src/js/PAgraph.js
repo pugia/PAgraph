@@ -2581,6 +2581,19 @@
 			.attr('data-value', settings.number)
 			.removeClass('positive negative');
 		graph.html(Number(previous).format(settings.format))
+		
+/*
+		var formatOnlyNumber = $.extend(true, settings.format, {
+			after: '',
+			before: '',
+			trimK: false
+		});
+		
+		console.log(formatOnlyNumber);
+		var n = Number(settings.number).format(formatOnlyNumber) * 1;
+		n = parseFloat(n*1);
+*/
+		
 		if (settings.number > 0) {
 			graph.addClass('positive');
 		}
@@ -3417,5 +3430,5 @@ Number.prototype.format = function(settings) {
 	var re = '\\d(?=(\\d{3})+' + (settings.decimals > 0 ? '\\D' : '$') + ')',
 		number = number.toFixed(Math.max(0, ~~settings.decimals)),
 		formatted = (settings.decimal ? number.replace('.', settings.decimal) : number).replace(new RegExp(re, 'g'), '$&' + (settings.thousand || ''));
-	return (settings.before || '') + formatted + after;
+	return (settings.before || '') + (formatted*1).toFixed(settings.decimals) + after;
 }
