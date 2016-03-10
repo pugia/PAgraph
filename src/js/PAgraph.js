@@ -1272,7 +1272,7 @@
 
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
-								structure.svg.label.y.elements[i].text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
+								structure.svg.label.y.elements[i].text(structure.svg.grid.y.spacing[i])
 
 							} else {
 								var label =  structure.svg.label.y.group.append('text')
@@ -1280,7 +1280,7 @@
 									.attr('y', h - (i*spacing))
 									.attr('text-anchor','end')
 									.attr('fill', settings.config.grid.y.label)
-									.text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
+									.text(structure.svg.grid.y.spacing[i])
 								structure.svg.label.y.elements.push(label);
 							}
 
@@ -1710,8 +1710,8 @@
 
 							structure.tooltip
 								.style('color', settings.config.graph[index].color)
-								.select('span').text(Number($(this).attr('data-value')).format(settings.config.grid.y.format));
-
+								.select('span').text(Number($(this).attr('data-value')).format(settings.config.graph[index].format));
+								
 							structure.tooltip
 								.select('label').text(settings.config.graph[index].legend);
 
@@ -2581,19 +2581,6 @@
 			.attr('data-value', settings.number)
 			.removeClass('positive negative');
 		graph.html(Number(previous).format(settings.format))
-		
-/*
-		var formatOnlyNumber = $.extend(true, settings.format, {
-			after: '',
-			before: '',
-			trimK: false
-		});
-		
-		console.log(formatOnlyNumber);
-		var n = Number(settings.number).format(formatOnlyNumber) * 1;
-		n = parseFloat(n*1);
-*/
-		
 		if (settings.number > 0) {
 			graph.addClass('positive');
 		}
@@ -3430,5 +3417,5 @@ Number.prototype.format = function(settings) {
 	var re = '\\d(?=(\\d{3})+' + (settings.decimals > 0 ? '\\D' : '$') + ')',
 		number = number.toFixed(Math.max(0, ~~settings.decimals)),
 		formatted = (settings.decimal ? number.replace('.', settings.decimal) : number).replace(new RegExp(re, 'g'), '$&' + (settings.thousand || ''));
-	return (settings.before || '') + (formatted*1).toFixed(settings.decimals) + after;
+	return (settings.before || '') + formatted + after;
 }
