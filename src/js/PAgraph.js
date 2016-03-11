@@ -1938,7 +1938,7 @@
 					}
 				})
 				
-			})
+			});
 			return result;
 
 		}
@@ -2032,7 +2032,29 @@
 
 		set_domain_and_range(options.data);
 
+		function trim_data(data) {
+			if(data.length >= 8) {
+				var sorted_array = data.sort(function(a, b) {
+					return a.value - b.value;
+				});
+				var descending = sorted_array.reverse();
+				var other = descending.splice(7, data.length);
+				console.log(other);
+				var sum = 0;
+				other.map(function(key) {
+					sum += key.value;
+				});
+				descending[descending.length] = {
+					label:"Other",
+					value:sum
+				};
+				data = descending;
+			}
+			return data;
+		}
+
 		function set_data(data) {
+			data = trim_data(data);
 			return data.map(function(set) {
 				return { label:set.label, value:set.value }
 			});
@@ -2130,44 +2152,11 @@
 		graph.animate = function (data) {
 			structure.svg.element.select('slices').remove();
 
+			data = trim_data(data);
+
 			init_graph(data);
 			init_legend();
 
-			//var slice = structure.svg.element.datum(data).selectAll('path.slice');
-            //
-			//slice = slice
-			//	.data(structure.svg.pie(data));
-            //
-            //
-            //
-			//slice
-			//	.enter()
-            //
-			//slice
-			//	.insert('path')
-            //
-			//slice
-			//	.attr('class', 'slice')
-            //
-			//slice
-			//	.style('fill', function(d) { return structure.svg.color(d.data.label); })
-			//	.each(function(d) {
-			//		this._current = d;
-			//	});
-            //
-			//slice.transition().duration(500)
-			//	.attrTween('d', function(d) {
-			//		console.log(this._current)
-			//		console.log(d);
-			//		var i = d3.interpolate(this._current.endAngle,  this._current.startAngle);
-            //
-			//		return function(t) {
-			//			d.endAngle = i(t);
-			//			return structure.svg.arc(d);
-			//		}
-			//	})
-            //
-			//slice.exit().remove();
 		};
 
 		return graph;
