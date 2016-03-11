@@ -919,7 +919,14 @@
 					var self = this;
 					
 					for (var i in structure.svg.graph.elements[index].elements.points.coords) {
-						if (self.filledEdges && i > 0 && i < structure.svg.graph.elements[index].elements.points.coords.length-1) {
+						
+						var append = true;
+						
+						if (self.filledEdges && (i == 0 || i == structure.svg.graph.elements[index].elements.points.coords.length-1)) {
+							append = false;
+						}
+						
+						if (append) {
 							var coords = structure.svg.graph.elements[index].elements.points.coords[i];
 							var circle = structure.svg.graph.elements[index].group.append('circle')
 								.attr('cx', coords.x)
