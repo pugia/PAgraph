@@ -1957,7 +1957,11 @@
 		graph.addClass('PAgraphContainer PAdonutchart');
 
 		var settings = $.extend(true, {
-			after: null
+			after: null,
+			entry_limit: {
+				label:"Other",
+				number:null
+			}
 		}, options.settings);
 
 		var structure = {
@@ -2017,6 +2021,38 @@
 
 		structure.svg.key = function(d) { return d.data.label; };
 
+		function trim_data(data, limit, label) {
+			if(data.length > limit) {
+				var sorted_array = data.sort(function(a, b) {
+					return a.value - b.value;
+				});
+				var descending = sorted_array.reverse();
+				var other = descending.splice(limit - 1, data.length);
+				var sum = 0;
+				other.map(function(key) {
+					sum += key.value;
+				});
+				descending[descending.length] = {
+					label:label,
+					value:sum
+				};
+				data = descending;
+			}
+			return data;
+		}
+
+		function set_data(data) {
+			if(!!settings.entry_limit.number) {
+				data = trim_data(data, settings.entry_limit.number, settings.entry_limit.label);
+			}
+			return data.map(function(set) {
+				return { label:set.label, value:set.value }
+			});
+		}
+
+		options.data = set_data(options.data);
+
+
 		function set_domain_and_range(data) {
 			var colors = ["#6D96A1", "#596970", "#A9AEC5", "#553E5A", "#859680", "#8C4354", "#87B8C4", "#808F96"];
 			var domain = [];
@@ -2029,38 +2065,6 @@
 				.domain(domain)
 				.range(colors);
 		}
-
-		set_domain_and_range(options.data);
-
-		function trim_data(data) {
-			if(data.length >= 8) {
-				var sorted_array = data.sort(function(a, b) {
-					return a.value - b.value;
-				});
-				var descending = sorted_array.reverse();
-				var other = descending.splice(7, data.length);
-				console.log(other);
-				var sum = 0;
-				other.map(function(key) {
-					sum += key.value;
-				});
-				descending[descending.length] = {
-					label:"Other",
-					value:sum
-				};
-				data = descending;
-			}
-			return data;
-		}
-
-		function set_data(data) {
-			data = trim_data(data);
-			return data.map(function(set) {
-				return { label:set.label, value:set.value }
-			});
-		}
-
-		init_graph(set_data(options.data));
 
 		function init_legend() {
 			var client = $(structure.svg.element)[0][0];
@@ -2094,7 +2098,9 @@
 			legend.classed('small', legend[0].length > 3);
 		}
 
-		init_legend(options.data);
+		set_domain_and_range(options.data);
+		init_graph(options.data);
+		init_legend();
 
 		function init_graph(data) {
 
@@ -2152,10 +2158,11 @@
 		graph.animate = function (data) {
 			structure.svg.element.select('slices').remove();
 
-			data = trim_data(data);
+			options.data = set_data(data);
 
-			init_graph(data);
-			init_legend();
+			set_domain_and_range(options.data);
+			init_graph(options.data);
+			init_legend(options.data);
 
 		};
 

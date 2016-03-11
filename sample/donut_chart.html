@@ -93,7 +93,11 @@
         var graph = $('#graph_0').PAdonutchart({
             data: data1,
             settings: {
-                after: '%'
+                after: '',
+                entry_limit: {
+                    label:'Other',
+                    number:8
+                }
             }
         });
 
