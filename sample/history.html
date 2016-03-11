@@ -23,6 +23,8 @@
 	<div id="graph_0" style="height: 500px; width: 1000px"></div>
 	
 	<div style="position: absolute; right: 0; top: 0; padding: 10px;">
+		<button id="load1">Load 1</button><br/>
+		<button id="load2">Load 2</button><br/>
 		<button id="load7">Load 7</button><br/>
 		<button id="load13">Load 13</button> <button id="compare13">Compare with 13 B</button><br/>
 		<button id="load13b">Load 13 B</button><br/>
@@ -43,7 +45,6 @@
 				grid: {
 					x: {
 						format: function(v) {
-							console.log(v);
 							var r = v.substr(0,2) + ' ' + v.substr(2,3);
 							return r;
 						}
@@ -129,6 +130,35 @@
 			
 		})
 
+		$('#load2').on('click', function() {
+
+			$.getJSON('response/history_test_2gg.json')
+				.done(function(result) {
+
+					$.when(graph.setData(result.data)).done(function() {
+						console.log('draw');
+						graph.draw();						
+					})
+				
+				})
+			
+		})
+
+		$('#load1').on('click', function() {
+
+			$.getJSON('response/history_test_1gg.json')
+				.done(function(result) {
+
+					$.when(graph.setData(result.data)).done(function() {
+						console.log('draw');
+						graph.draw();						
+					})
+				
+				})
+			
+		})
+
+
 		$('#load20_empty').on('click', function() {
 
 			$.getJSON('response/history_test_20gg_empty.json')
@@ -141,7 +171,7 @@
 				
 				})
 			
-		}).click();
+		})
 
 		$('#load50').on('click', function() {
 
@@ -188,7 +218,7 @@
 				
 				})
 			
-		})
+		}).click();
 		
 		$('#compare200').on('click', function() {
 
@@ -245,6 +275,46 @@
 		}
 		
 		return newData;
+		
+	}
+
+	function hideTickLabels() {
+		
+		var labelGroup = graph.find('g.PAGlabelX');
+		var w = parseFloat(textWidth(labelGroup.find('text:eq(1)')));
+		var start = parseFloat(labelGroup.find('text:eq(0)').attr('x'));
+		var x = 1;
+		console.log(w, start);
+		
+		labelGroup.find('text:gt(0)').each(function(i,e) {
+			
+			var p = parseFloat($(e).attr('x')) - (w/2);
+			if (p > start+w) {
+				return false;
+			}
+			x++;
+			console.log(p,e);
+
+		})
+		
+		labelGroup.find('text:nth-child('+x+'n)').addClass('PAhide');
+		
+		console.log(labelGroup.find('text:nth-child('+x+'n)'));
+	
+		
+		function textWidth(element) {
+
+			var fake = $('<span>').hide().appendTo(document.body);
+			fake.text(element.text())
+				.css('font-family', element.css('font-family'))
+				.css('font-weight', element.css('font-weight'))
+				.css('font-size', element.css('font-size'))
+				.css('text-transform', element.css('text-transform'))
+			var w = fake.width(); fake.remove();
+			return w;
+
+		}
+		
 		
 	}
 

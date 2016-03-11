@@ -279,10 +279,8 @@ div.PAoverlay {
 .PAgraphContainer svg.PAGraph g.PAGgraphs g.PAGgraph circle.PAhide {
   opacity: 0;
 }
-.PAgraphContainer svg.PAGraph.PAModeHistory g.PAGlabelX text:first-child,
-.PAgraphContainer svg.PAGraph.PAModeHistory g.PAGlabelX text:last-child,
 .PAgraphContainer svg.PAGraph.PAModeHistory g.PAGlabelX text.PAhide {
-  opacity: 0 !important;
+  opacity: 0;
 }
 .PAgraphContainer svg.PAGraph.PAModeDaytime g.PAGgrid g.PAGgridY line:nth-child(1) {
   opacity: 1 !important;

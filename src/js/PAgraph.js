@@ -101,7 +101,7 @@
 					marginLeft: 10
 				}
 			},
-
+			
 			graphAnimationTime: 600,
 			animateGridTime: 500,
 			animateEasing: 'cubic-in-out',
@@ -137,6 +137,7 @@
 
 				filter: 'daily', // daily, weekly, monthly
 				computedData: [null,null],
+				filledEdges: false,
 
 				// start with a week structure
 				init: function() {
@@ -355,7 +356,21 @@
 					if (!data || data.length == 0) { dfrd.reject('no'); }
 					if (index != 0 && structure.data[0] && structure.data[0].length != data.length) { console.log('Compare metric has a different scale'); dfrd.reject('no'); }
 					else {
-
+						
+						// filling edges
+						self.filledEdges = false;
+						if (data.length == 1) {
+							data.splice(0,null,{
+								label: '',
+								value: 0
+							})
+							data.splice(2,null,{
+								label: '',
+								value: 0
+							})
+							self.filledEdges = true;
+						}
+						
 						// store data
 						structure.data[index] = data;
 
@@ -492,7 +507,7 @@
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
-					var spacingX = Math.floor(w / (data.length - 1) );
+					var spacingX = (data.length == 1) ? w / 2 : Math.floor(w / (data.length - 1) );
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
 
 					// remove circles
@@ -504,6 +519,7 @@
 					// animate line
 					var linesData = []; var linesDataIndex = linesData.length;
 					var lineData = []; var lData = [];
+					
 					for(var i in data) {
 
 						var x = (i * spacingX)	+ j;
@@ -762,7 +778,7 @@
 					// hide current labels
 					structure.svg.label.x.group.classed('PAhide', true)
 						.selectAll('text')
-						.classed('show', false);
+						.classed('PAhide', false);
 
 					// fix the number of labels and position
 					setTimeout(function() {
@@ -774,6 +790,7 @@
 
 								structure.svg.label.x.elements[i].attr('x', x)
 									.text(settings.config.grid.x.format(data[i].label))
+									.attr('text-anchor', 'middle')
 
 							} else { // create new
 
@@ -788,8 +805,9 @@
 							}
 
 						}
-
-						dfrd.resolve();
+						
+						structure.svg.label.x.elements[0].attr('text-anchor', 'start');
+						structure.svg.label.x.elements[i].attr('text-anchor', 'end');
 
 					}, internalSettings.animateGridTime);
 
@@ -808,8 +826,9 @@
 
 					setTimeout(function() {
 						// show current labels
+						structure.svg.label.x.group.classed('PAhide', false);
 						self.hideThickLabels();
-// 						structure.svg.label.x.group.classed('hide', false);
+						dfrd.resolve();
 					}, internalSettings.animateGridTime*2);
 
 					return dfrd;
@@ -818,40 +837,30 @@
 
 				// hide some labels when there are too much
 				hideThickLabels: function() {
-
+					
 					var self = this;
-					var labelGroup = graph.find('g.PAGlabelX')
+					var w = structure.svg.label.x.group.select('text:nth-child(2)')[0][0].getBBox().width;
+					var start = parseFloat(structure.svg.label.x.group.select('text:nth-child(1)').attr('x'));
+					var x = 1;
+					
+					structure.svg.label.x.group
+						.selectAll('text:nth-child(n+2)')
+						.each(function() {
 
-					var nthChildX = 1;
-					var l1_index = 1;
-					var l1_element = labelGroup.find('text:eq('+(l1_index)+')');
-					var l1_size = {
-						width: textWidth(l1_element),
-						x: l1_element.position().left
-					};
-					var l2_index = 2;
-					var l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
+							var p = parseFloat(d3.select(this).attr('x')) - (w/2);
+							if (p > start+w) { 	return false;	}
+							x++;
 
-					while (l1_size.x + l1_size.width + 10 > l2_size) {
-						nthChildX++; l2_index++;
-						l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
+						})
+						
+					console.log(x);
+					
+					if (x > 1) {
+						structure.svg.label.x.group
+							.selectAll('text:not(:nth-child('+ x +'n+1))')	
+							.classed('PAhide', true);
 					}
-
-					structure.svg.label.x.group.selectAll('text:nth-child('+nthChildX+'n+2)')
-						.classed('show', true);
-
-					function textWidth(element) {
-
-						var fake = $('<span>').hide().appendTo(document.body);
-						fake.text(element.text())
-							.css('font-family', element.css('font-family'))
-							.css('font-weight', element.css('font-weight'))
-							.css('font-size', element.css('font-size'))
-							.css('text-transform', element.css('text-transform'))
-						var w = fake.width(); fake.remove();
-						return w;
-					}
-
+				
 				},
 
 				// fix the number of labels and animate
@@ -908,25 +917,25 @@
 				animateCircles: function(data, index) {
 
 					var self = this;
-
+					
 					for (var i in structure.svg.graph.elements[index].elements.points.coords) {
-
-						var coords = structure.svg.graph.elements[index].elements.points.coords[i];
-						var circle = structure.svg.graph.elements[index].group.append('circle')
-							.attr('cx', coords.x)
-							.attr('cy', coords.y)
-							.attr('r', 0)
-							.attr('stroke-width', 2)
-							.attr('stroke', settings.config.graph[index].color)
-							.attr('fill', '#fff')
-							.attr('data-value', data[i].value)
-							.attr('data-xStep', i)
-							.transition()
-							.delay(i*20)
-							.attr('r', 4)
-							.ease(internalSettings.animateEasing)
-						structure.svg.graph.elements[index].elements.points.elements.push(circle);
-
+						if (self.filledEdges && i > 0 && i < structure.svg.graph.elements[index].elements.points.coords.length-1) {
+							var coords = structure.svg.graph.elements[index].elements.points.coords[i];
+							var circle = structure.svg.graph.elements[index].group.append('circle')
+								.attr('cx', coords.x)
+								.attr('cy', coords.y)
+								.attr('r', 0)
+								.attr('stroke-width', 2)
+								.attr('stroke', settings.config.graph[index].color)
+								.attr('fill', '#fff')
+								.attr('data-value', data[i].value)
+								.attr('data-xStep', i)
+								.transition()
+								.delay(i*20)
+								.attr('r', 4)
+								.ease(internalSettings.animateEasing)
+							structure.svg.graph.elements[index].elements.points.elements.push(circle);
+						}
 					}
 
 				},
