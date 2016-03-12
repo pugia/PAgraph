@@ -2026,6 +2026,9 @@
 				var sorted_array = data.sort(function(a, b) {
 					return a.value - b.value;
 				});
+				sorted_array.map(function(item) {
+
+				})
 				var descending = sorted_array.reverse();
 				var other = descending.splice(limit - 1, data.length);
 				var sum = 0;
