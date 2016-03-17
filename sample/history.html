@@ -30,6 +30,7 @@
 		<button id="load13b">Load 13 B</button><br/>
 		<button id="load20">Load 20</button> <button id="load20_empty">Load 20 empty</button><br/>
 		<button id="load50">Load 50</button><button id="compare50">Compare with 50 B</button><br/>
+		<button id="load68">Load 68</button><br/>
 		<button id="load200">Load 200</button><button id="compare200">Compare with 200 B</button><br/>
 		<br/>
 		<button id="remove">Remove graph</button><br/><br/>
@@ -207,6 +208,19 @@
 			
 		})
 
+		$('#load68').on('click', function() {
+		console.log('asdf');
+			$.getJSON('response/history_test_68gg.json')
+				.done(function(result) {
+
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();						
+					})
+				
+				})
+			
+		}).click();
+
 		$('#load200').on('click', function() {
 
 			$.getJSON('response/history_test_200gg.json')
@@ -218,7 +232,7 @@
 				
 				})
 			
-		}).click();
+		})
 		
 		$('#compare200').on('click', function() {
 

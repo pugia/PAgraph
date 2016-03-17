@@ -388,8 +388,11 @@
 
 								structure.filters.selectAll('p').classed('selected', false);
 								structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
-
-								setTimeout(function() { structure.filters.classed('PAhide', false);	}, internalSettings.animateGridTime);
+								
+								
+								if (structure.data[0].length < 60 || structure.data[0].length >= 120) {
+									setTimeout(function() { structure.filters.classed('PAhide', false);	}, internalSettings.animateGridTime);
+								}
 
 							} else {
 
@@ -852,9 +855,7 @@
 							x++;
 
 						})
-						
-					console.log(x);
-					
+											
 					if (x > 1) {
 						structure.svg.label.x.group
 							.selectAll('text:not(:nth-child('+ x +'n+1))')	

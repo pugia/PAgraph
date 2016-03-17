@@ -1682,6 +1682,17 @@
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1
 		},
+	"\/sample\/response\/history_test_68gg.json": {
+		"fileType": 524288,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/sample\/response\/history_test_68gg.json",
+		"orderOutput": 0,
+		"outputAbbreviatedPath": "\/sample\/response\/history_test_68gg-min.json",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1
+		},
 	"\/sample\/response\/history_test_7gg.json": {
 		"fileType": 524288,
 		"ignore": 1,
