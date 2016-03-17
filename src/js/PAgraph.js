@@ -2135,12 +2135,11 @@
 					structure.tooltip.select('label').text(mouseover_object.data.value);
 				}
 
-
 				var t = $(structure.tooltip[0][0]);
 
-				t.css('left', d3.event.layerX + 10  + 'px')
+				t.addClass('show')
+					.css('left', d3.event.layerX + 10  + 'px')
 					.css('top', d3.event.layerY + 10 + "px")
-					.addClass('show');
 
 			});
 
