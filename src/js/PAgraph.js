@@ -2140,7 +2140,6 @@
 
 				t.css('left', d3.event.layerX + 10  + 'px')
 					.css('top', d3.event.layerY + 10 + "px")
-					.css('width', "50px")
 					.addClass('show');
 
 			});
