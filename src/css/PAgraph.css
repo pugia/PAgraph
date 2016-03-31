@@ -269,14 +269,14 @@ div.PAoverlay {
 .PAgraphContainer svg.PAGraph g.PAGgraphs g.PAGgraph path.PAGgraphArea {
   opacity: 0.4;
 }
-.PAgraphContainer svg.PAGraph g.PAGgraphs g.PAGgraph circle {
+.PAgraphContainer svg.PAGraph g.PAGcircles circle {
   -webkit-transition: opacity 300ms;
   -moz-transition: opacity 300ms;
   -ms-transition: opacity 300ms;
   -o-transition: opacity 300ms;
   cursor: pointer;
 }
-.PAgraphContainer svg.PAGraph g.PAGgraphs g.PAGgraph circle.PAhide {
+.PAgraphContainer svg.PAGraph g.PAGcircles circle.PAhide {
   opacity: 0;
 }
 .PAgraphContainer svg.PAGraph.PAModeHistory g.PAGlabelX text.PAhide {

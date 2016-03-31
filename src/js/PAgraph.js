@@ -72,7 +72,8 @@
 				},
 				graph: {
 					group: null,
-					elements: []
+					elements: [],
+					circles: null
 				}
 			}
 		};
@@ -129,6 +130,7 @@
 		structure.svg.label.x.group = structure.svg.element.append('g').classed('PAGlabelX', true);
 		structure.svg.label.y.group = structure.svg.element.append('g').classed('PAGlabelY', true);
 		structure.svg.graph.group = structure.svg.element.append('g').classed('PAGgraphs', true);
+		structure.svg.graph.circles = structure.svg.element.append('g').classed('PAGcircles', true);
 
 
 		var MODE = {
@@ -514,9 +516,9 @@
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
 
 					// remove circles
-					structure.svg.graph.elements[index].group.selectAll('circle').classed('PAhide', 'true');
+					structure.svg.graph.circles.selectAll('circle').classed('PAhide', 'true');
 					setTimeout(function() {
-						structure.svg.graph.elements[index].group.selectAll('circle.PAhide').remove();
+						structure.svg.graph.circles.selectAll('circle.PAhide').remove();
 					}, 300);
 
 					// animate line
@@ -662,7 +664,7 @@
 
 
 
-					structure.svg.graph.elements[index].group.selectAll('circle')
+					structure.svg.graph.circles.selectAll('circle')
 						.transition()
 						.duration(internalSettings.graphAnimationTime)
 						.attr('cy', h)
@@ -929,7 +931,7 @@
 						
 						if (append) {
 							var coords = structure.svg.graph.elements[index].elements.points.coords[i];
-							var circle = structure.svg.graph.elements[index].group.append('circle')
+							var circle = structure.svg.graph.circles.append('circle')
 								.attr('cx', coords.x)
 								.attr('cy', coords.y)
 								.attr('r', 0)
@@ -937,10 +939,11 @@
 								.attr('stroke', settings.config.graph[index].color)
 								.attr('fill', '#fff')
 								.attr('data-value', data[i].value)
+								.attr('data-index', index)
 								.attr('data-xStep', i)
 								.transition()
 								.delay(i*20)
-								.attr('r', 4)
+								.attr('r', 2)
 								.ease(internalSettings.animateEasing)
 							structure.svg.graph.elements[index].elements.points.elements.push(circle);
 						}
@@ -970,7 +973,7 @@
 							clearTimeout(displayNoneTimer);
 
 							// label and value
-							var index = $(this).parent('g').attr('data-index');
+							var index = $(this).attr('data-index');
 							var value = $(this).attr('data-value');
 
 							structure.tooltip
