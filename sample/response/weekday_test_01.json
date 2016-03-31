@@ -4,19 +4,19 @@
 		"value": 0
 	}, {
 		"label": "mon",
-		"value": 0
+		"value": 2
 	}, {
 		"label": "tue",
 		"value": 0
 	}, {
 		"label": "wed",
-		"value": 0
+		"value": 0.03
 	}, {
 		"label": "thu",
 		"value": 0
 	}, {
 		"label": "fri",
-		"value": 0
+		"value": 0.01
 	}, {
 		"label": "sat",
 		"value": 0

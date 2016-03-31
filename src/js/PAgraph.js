@@ -1300,7 +1300,7 @@
 									.attr('y', h - (i*spacing))
 									.attr('text-anchor','end')
 									.attr('fill', settings.config.grid.y.label)
-									.text(structure.svg.grid.y.spacing[i])
+									.text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
 								structure.svg.label.y.elements.push(label);
 							}
 
@@ -1548,7 +1548,6 @@
 						structure.data[index] = data;
 						self.computedData = mergeAndClean(structure.data);
 						structure.svg.grid.y.spacing = Yspacing(mergeAndCleanArr(structure.data));
-
 						setTimeout(function() { dfrd.resolve('ok');	}, 10);
 
 					}
@@ -1605,6 +1604,7 @@
 						if (typeof data[i] != 'undefined') {
 							
 							var he = (data[i].value) ? parseInt( ( data[i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) ) : 1;
+							if (he < 1) { he = 1; }
 							var y = h - he;
 							if (settings.config.stacked && index > 0) {
 								var j = index * 1;
@@ -1727,10 +1727,12 @@
 
 							// label and value
 							var index = $(this).parent('g').attr('data-index');
-
+							
+							var formatTooltip = (settings.config.graph[index].format) ? settings.config.graph[index].format : settings.config.grid.y.format;
+							
 							structure.tooltip
 								.style('color', settings.config.graph[index].color)
-								.select('span').text(Number($(this).attr('data-value')).format(settings.config.graph[index].format));
+								.select('span').text(Number($(this).attr('data-value')).format(formatTooltip));
 								
 							structure.tooltip
 								.select('label').text(settings.config.graph[index].legend);
@@ -1880,9 +1882,13 @@
 
 			var max = getMaxValues(data);
 			var min = (settings.config.stacked) ? 0 : getMinValues(data);
-			
+						
 			if (max <= 1.5) {
 				multiplier = 10;
+			}
+			
+			if (max - min <= lines) {
+				multiplier = 1;
 			}
 			
 			min = min * multiplier;
@@ -1890,20 +1896,28 @@
 			
 			if (min == max) {return Array.apply(null, Array(lines+1)).map(function(e,i){ return min+(10*(i-1)) });	}
 
-			var percMin = (min) ? Math.ceil((max - min) * 0.05) : 0;
-			var percMax = Math.ceil((max - min) * 0.05);
-			min -= percMin;
-			max += percMax;
-			
-			var space = Math.round((max - min) / lines);
-			var divisor = (space.toString().length - 1) * 10 || 1;
-			var spacer = (Math.round(2 * space / divisor) / 2) * divisor
+			if (max - min > lines) {
+				var percMin = (min) ? Math.ceil((max - min) * 0.05) : 0;
+				var percMax = Math.ceil((max - min) * 0.05);
+				min -= percMin;
+				max += percMax;
 
+				var space = Math.round((max - min) / lines);
+				var divisor = (space.toString().length - 1) * 10 || 1;
+				var spacer = (Math.round(2 * space / divisor) / 2) * divisor
+				
+			} else {
+
+				var space = (max - min) / lines;
+				var spacer = space;
+				var multiplier = 1;
+			}
+			
 			var bottom = Math.floor(min / spacer) * spacer / multiplier;
 
 			var labels = [];
 			for (var i = 0; i <= lines; i++) {
-				labels.push(Number(bottom).format({ decimals: String(multiplier).length-1 }));
+				labels.push(Number(bottom));
 				bottom += spacer / multiplier;
 			}
 
