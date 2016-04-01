@@ -117,8 +117,9 @@
 		structure.tooltip = d3.selectAll(graph.get()).append('div')
 			.classed('PAtooltip', true);
 
-		structure.tooltip.append('span').text('3123');
-		structure.tooltip.append('label').text('metric');
+		structure.tooltip.append('span').classed('time', true).text('');
+		structure.tooltip.append('span').classed('metric', true).text('');
+		structure.tooltip.append('label').text('');
 
 		// svg
 		structure.svg.element = d3.selectAll(graph.get()).append('svg')
@@ -940,7 +941,7 @@
 								.attr('fill', '#fff')
 								.attr('data-value', data[i].value)
 								.attr('data-index', index)
-								.attr('data-xStep', i)
+								.attr('rel', i)
 								.transition()
 								.delay(i*20)
 								.attr('r', 2)
@@ -975,10 +976,16 @@
 							// label and value
 							var index = $(this).attr('data-index');
 							var value = $(this).attr('data-value');
+							var xIndex = $(this).attr('rel');
+							var time = graph.find('g.PAGlabelX > text:eq('+ xIndex +')').text();
+
+							structure.tooltip
+								.select('span.time').text(time)
+								.style('background-color', settings.config.graph[index].color)
 
 							structure.tooltip
 								.style('color', settings.config.graph[index].color)
-								.select('span').html(Number(value).format(settings.config.graph[index].format));
+								.select('span.metric').html(Number(value).format(settings.config.graph[index].format));
 
 							structure.tooltip
 								.select('label').text(settings.config.graph[index].legend);
@@ -1729,10 +1736,16 @@
 							var index = $(this).parent('g').attr('data-index');
 							
 							var formatTooltip = (settings.config.graph[index].format) ? settings.config.graph[index].format : settings.config.grid.y.format;
+							var xIndex = $(this).index();
+							var time = graph.find('g.PAGlabelX > text:eq('+ xIndex +')').text();
+
+							structure.tooltip
+								.select('span.time').text(time)
+								.style('background-color', settings.config.graph[index].color)
 							
 							structure.tooltip
 								.style('color', settings.config.graph[index].color)
-								.select('span').text(Number($(this).attr('data-value')).format(formatTooltip));
+								.select('span.metric').text(Number($(this).attr('data-value')).format(formatTooltip));
 								
 							structure.tooltip
 								.select('label').text(settings.config.graph[index].legend);
@@ -2007,9 +2020,8 @@
 		structure.tooltip = d3.selectAll(graph.get()).append('div')
 			.classed('PAtooltip', true);
 
-		structure.tooltip.append('span').text('3123');
-		structure.tooltip.append('label').text('metric');
-
+		structure.tooltip.append('span').classed('metric', true).text('');
+		structure.tooltip.append('label').text('');
 
 		structure.svg.element = d3.selectAll(graph.get()).append('svg')
 			.classed('PAGraph', true)
