@@ -132,6 +132,22 @@
 		structure.svg.label.y.group = structure.svg.element.append('g').classed('PAGlabelY', true);
 		structure.svg.graph.group = structure.svg.element.append('g').classed('PAGgraphs', true);
 		structure.svg.graph.circles = structure.svg.element.append('g').classed('PAGcircles', true);
+				
+		var gW = graph.width();
+		var t = null;
+		$(window)
+			.on('resize', function() {
+				
+				clearTimeout(t);
+				t = setTimeout(function() {
+					if (graph.width() != gW) {
+						gW = graph.width();
+						structure.svg.element.attr('width', graph.width())
+						graph.draw()
+					}
+				}, 100);
+				
+			})
 
 
 		var MODE = {
@@ -421,6 +437,8 @@
 				draw: function() {
 
 					var self = this;
+
+					self.initGridY();
 
 					promises = [];
 					promises.push(self.animateGridX(self.computedData[0]));
@@ -1147,6 +1165,7 @@
 					var elementsCount = 6;
 
 					var spacing = Math.floor(h / elementsCount);
+					structure.svg.grid.group.select('g.PAGgridY').remove();
 					structure.svg.grid.y.group = structure.svg.grid.group.append('g').classed('PAGgridY', true);
 
 
@@ -1206,12 +1225,12 @@
 					var spacing = Math.floor(w/startElements);
 					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
 					var rectW = spacing - settings.config.spacing - ((structure.svg.graph.elements.length-1) * offsetX);
-
+					
 					for (var i = 0; i < startElements; i++) {
 
 						var x = (i * spacing) + j + (spacing / 2) - (rectW / 2) + (index * offsetX);
 						var y = h-1;
-
+						
 						var rect = structure.svg.graph.elements[index].group.append('rect')
 							.attr('x', x)
 							.attr('y', y)
@@ -1330,8 +1349,15 @@
 					var h = graph.height();
 					var j = 0;
 					
+					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					
 					debug('animateGridX');
 					structure.svg.label.x.group.classed('PAhide', true)
+
+					var spacing = Math.floor(w/structure.data[0].length);
+					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
+					var rectW = spacing - settings.config.spacing; //Math.floor(spacing*0.7);
 
 					// fix the number of the rows
 					if (structure.svg.graph.elements[0].elements.area.length != structure.data[0].length) {
@@ -1352,14 +1378,7 @@
 							}, internalSettings.graphAnimationTime)
 							
 						}
-						
-
-						if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-						if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
-						var spacing = Math.floor(w/structure.data[0].length);
-						var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
-						var rectW = spacing - settings.config.spacing; //Math.floor(spacing*0.7);
-												
+																		
 						for (var index in structure.data) {
 
 							for (var i in structure.data[index]) {
@@ -1436,10 +1455,20 @@
 						}
 
 					}
-					// only fix the labels
+					// only fix the labels and positions
 					else {
+
 						for (var i in structure.data[0]) {
-							structure.svg.label.x.elements[i].text(structure.data[0][i].label);
+							
+							var xx = (i * spacing) + j + (spacing / 2);
+							
+							structure.svg.label.x.elements[i]
+								.transition()
+								.delay(internalSettings.graphAnimationTime / 4)
+								.duration(internalSettings.graphAnimationTime)
+								.attr('x', xx)
+								.text(settings.config.grid.x.format(structure.data[0][i].label));
+							
 						}
 					}
 
@@ -1568,6 +1597,8 @@
 					var self = this;
 
 					debug('draw')
+					
+					self.initGridY();
 
 					promises = [];
 					promises.push(self.animateLabelY());
@@ -1605,25 +1636,28 @@
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
 					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
 					var rectW = spacingX - settings.config.spacing - ((structure.svg.graph.elements.length-1)*offsetX);
-										
+								
 					for (var i in structure.svg.graph.elements[index].elements.area) {
-						
+												
+						var x = (i * spacingX) + j + (spacingX / 2) - (rectW / 2) + (index * offsetX);
+
 						if (typeof data[i] != 'undefined') {
 							
 							var he = (data[i].value) ? parseInt( ( data[i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) ) : 1;
 							if (he < 1) { he = 1; }
 							var y = h - he;
 							if (settings.config.stacked && index > 0) {
-								var j = index * 1;
-								while(j > 0) {
-									j = j-1;
-									var he0 = (structure.data[j][i].value) ? parseInt( ( structure.data[j][i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) ) : 1;
+								var p = index * 1;
+								while(p > 0) {
+									p = p-1;
+									var he0 = (structure.data[p][i].value) ? parseInt( ( structure.data[p][i].value * spacingY) - (structure.svg.grid.y.spacing[0] * spacingY ) ) : 1;
 									y = y - he0;
 								}
 							}
 													
 							structure.svg.graph.elements[index].elements.area[i].transition()
 								.duration(internalSettings.graphAnimationTime)
+								.attr('x', x)
 								.attr('y', y)
 								.attr('width', rectW)
 								.attr('height', he)
@@ -3411,8 +3445,8 @@
 	
 	function getRandomColor() {
 		return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
-	}	
-
+	}
+	
 }( jQuery ));
 
 String.prototype.capitalizeFirstLetter = function() { return this.charAt(0).toUpperCase() + this.slice(1); }

@@ -25,7 +25,7 @@
 	
 	<h1>Mode: bars - <em>stacked</em></h1>
 
-	<div id="graph_0" style="height: 500px; width: 1000px"></div>
+	<div id="graph_0" style="height: 500px; width: 70%"></div>
 	
 	<div style="position: absolute; right: 0; top: 0; padding: 10px;">
 		<button id="test_01">Test 01</button>
@@ -38,9 +38,10 @@
 	</div>
 
 	<script>	
-
+		
 	var graph = $('#graph_0').PAgraph({
 		mode: 'bars',
+		debug: true,
 		config: {
 			stacked: true,
 			spacing: 10,
@@ -76,7 +77,7 @@
 									
 				})
 			
-		}).click();
+		})
 
 		$('#test_02').on('click', function() {
 			
@@ -90,7 +91,7 @@
 				
 				})
 			
-		});
+		}).click();
 		
 		$('#test_03').on('click', function() {
 			
