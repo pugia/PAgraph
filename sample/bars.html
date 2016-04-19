@@ -25,12 +25,13 @@
 	
 	<h1>Mode: bars - <em>stacked</em></h1>
 
-	<div id="graph_0" style="height: 500px; width: 70%"></div>
+	<div id="graph_0" style="height: 200px; width: 200px"></div>
 	
 	<div style="position: absolute; right: 0; top: 0; padding: 10px;">
 		<button id="test_01">Test 01</button>
 		<button id="test_02">Test 02</button>
 		<button id="test_03">Test 03</button><br/><br/>
+		<button id="test_04">Test 04</button><br/><br/>
 		<button id="compare_01">Compare 01</button>
 		<button id="compare_02">Compare 02</button>
 		<button id="compare_03">Compare 03</button><br/><br>
@@ -91,19 +92,35 @@
 				
 				})
 			
-		}).click();
+		})
 		
 		$('#test_03').on('click', function() {
 			
 			$.getJSON('response/weekday_test_03.json', function(result) {
 					
-					$.when(graph.setData(result.data)).done(function() {
-						graph.draw();
+					$.when(graph.initGraph(0, '#ff2200')).done(function(index) { 
+						$.when(graph.setData(result.data)).done(function() {
+							graph.draw();
+						});
 					});
 				
 				})
 			
 		});
+
+		$('#test_04').on('click', function() {
+			
+			$.getJSON('response/weekday_test_04.json', function(result) {
+					
+					$.when(graph.initGraph(0, '#ff2200')).done(function(index) { 
+						$.when(graph.setData(result.data)).done(function() {
+							graph.draw();
+						});
+					});
+				
+				})
+			
+		}).click();
 
 		$('#compare_01').on('click', function() {
 			

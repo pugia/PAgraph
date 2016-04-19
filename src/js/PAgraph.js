@@ -1225,7 +1225,7 @@
 					var spacing = Math.floor(w/startElements);
 					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
 					var rectW = spacing - settings.config.spacing - ((structure.svg.graph.elements.length-1) * offsetX);
-					
+										
 					for (var i = 0; i < startElements; i++) {
 
 						var x = (i * spacing) + j + (spacing / 2) - (rectW / 2) + (index * offsetX);
@@ -1354,10 +1354,31 @@
 					
 					debug('animateGridX');
 					structure.svg.label.x.group.classed('PAhide', true)
+					
+					var spacing = settings.config.stacked;
 
-					var spacing = Math.floor(w/structure.data[0].length);
-					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
-					var rectW = spacing - settings.config.spacing; //Math.floor(spacing*0.7);
+					var spacingX = Math.floor(w/structure.data[0].length);
+					var offsetX = (settings.config.stacked) ? 0 : spacing / 2;					
+					var rectW = spacingX - spacing;
+
+					if (spacingX > 0) {
+	
+						while (rectW <= spacing) {
+							spacing = spacing-1;
+							offsetX = (settings.config.stacked) ? 0 : spacing / 2;
+							rectW = spacingX - spacing - ((structure.svg.graph.elements.length-1)*offsetX);
+						}
+						
+						if (spacing == 0) {
+							offsetX = 0;
+							rectW = w /structure.data[0].length;
+							spacingX = rectW;
+						}
+					} else {
+						offsetX = 0;
+						rectW = w /structure.data[0].length;
+						spacingX = rectW;
+					}
 
 					// fix the number of the rows
 					if (structure.svg.graph.elements[0].elements.area.length != structure.data[0].length) {
@@ -1383,7 +1404,7 @@
 
 							for (var i in structure.data[index]) {
 
-								var x = (i * spacing) + j + (spacing / 2) - (rectW / 2) + (index * offsetX);
+								var x = (i * spacingX) + j + (spacingX / 2) - (rectW / 2) + (index * offsetX);
 
 								if (structure.svg.graph.elements[index].elements.area[i]) {
 
@@ -1416,7 +1437,7 @@
 
 								if (index == 0) {
 
-									var xx = (i * spacing) + j + (spacing / 2);
+									var xx = (i * spacingX) + j + (spacingX / 2);
 									if (structure.svg.label.x.elements[i]) {
 
 										structure.svg.label.x.elements[i]
@@ -1460,7 +1481,7 @@
 
 						for (var i in structure.data[0]) {
 							
-							var xx = (i * spacing) + j + (spacing / 2);
+							var xx = (i * spacingX) + j + (spacingX / 2);
 							
 							structure.svg.label.x.elements[i]
 								.transition()
@@ -1631,12 +1652,32 @@
 
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
-
+					
+					var spacing = settings.config.spacing;
+					
 					var spacingX = Math.floor(w /data.length);
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
-					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
-					var rectW = spacingX - settings.config.spacing - ((structure.svg.graph.elements.length-1)*offsetX);
-								
+					var offsetX = (settings.config.stacked) ? 0 : spacing / 2;
+					var rectW = spacingX - spacing - ((structure.svg.graph.elements.length-1)*offsetX);
+					
+					if (spacingX > 0) {
+						while (rectW <= spacing) {
+							spacing = spacing-1;
+							offsetX = (settings.config.stacked) ? 0 : spacing / 2;
+							rectW = spacingX - spacing - ((structure.svg.graph.elements.length-1)*offsetX);
+						}
+						
+						if (spacing == 0) {
+							offsetX = 0;
+							rectW = w /data.length;
+							spacingX = rectW;
+						}
+					} else {
+						offsetX = 0;
+						rectW = w /data.length;
+						spacingX = rectW;
+					}
+										
 					for (var i in structure.svg.graph.elements[index].elements.area) {
 												
 						var x = (i * spacingX) + j + (spacingX / 2) - (rectW / 2) + (index * offsetX);

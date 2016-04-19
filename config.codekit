@@ -1737,6 +1737,17 @@
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1
 		},
+	"\/sample\/response\/weekday_test_04.json": {
+		"fileType": 524288,
+		"ignore": 1,
+		"ignoreWasSetByUser": 0,
+		"inputAbbreviatedPath": "\/sample\/response\/weekday_test_04.json",
+		"orderOutput": 0,
+		"outputAbbreviatedPath": "\/sample\/response\/weekday_test_04-min.json",
+		"outputPathIsOutsideProject": 0,
+		"outputPathIsSetByUser": 0,
+		"outputStyle": 1
+		},
 	"\/sample\/style.css": {
 		"fileType": 16,
 		"ignore": 0,
