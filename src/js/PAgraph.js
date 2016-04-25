@@ -10,7 +10,13 @@
 			mode: 'history',
 			filter: {  // only for history mode
 				mode: 'daily',
-				labels: ['daily', 'weekly', 'monthly']
+				labels: ['daily', 'weekly', 'monthly'],
+				limits: {
+					daily: 28, 
+					enable_weekly: 40,
+					enable_monthly: 60,
+					disable_weekly: 120
+				}
 			},
 			config: {
 				graph: [],
@@ -40,7 +46,7 @@
 
 		var graph = this;
 		graph.addClass('PAgraphContainer');
-
+				
 		var structure = {
 			legend: null,
 			tooltip: null,
@@ -196,7 +202,8 @@
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
-					var spacing = Math.floor(w / (elementsCount-1) );
+// 					var spacing = Math.floor(w / (elementsCount-1) ); BOH
+					var spacing = w / (elementsCount-1);
 					structure.svg.grid.x.group = structure.svg.grid.group.append('g').classed('PAGgridX', true);
 
 					for (var i = 0; i < elementsCount; i++) {
@@ -280,7 +287,8 @@
 
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; }
-					var spacing = Math.floor(w / (elementsCount-1) );
+// 					var spacing = Math.floor(w / (elementsCount-1) ); BOH
+					var spacing = w / (elementsCount-1);
 
 					var lineData = [];
 					for (var i = 0; i < elementsCount; i++) {
@@ -398,27 +406,29 @@
 
 							// show filters based on elements number
 							structure.filters.classed('PAhide', true);
-							if (structure.data[0].length >= 28) {
-
-								if (structure.data[0].length > 40 && settings.filter.mode == 'daily') { settings.filter.mode = 'weekly'; }
-								structure.filters.select('p[data-mode="daily"]').classed('PAhide', (structure.data[0].length > 60));
-								structure.filters.select('p[data-mode="monthly"]').classed('PAhide', (structure.data[0].length < 120));
-								if ( structure.data[0].length < 120 && settings.filter.mode == 'monthly' ) { settings.filter.mode = 'daily' };
-
-								structure.filters.selectAll('p').classed('selected', false);
-								structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
-								
-								
-								if (structure.data[0].length < 60 || structure.data[0].length >= 120) {
-									setTimeout(function() { structure.filters.classed('PAhide', false);	}, internalSettings.animateGridTime);
+							if (settings.filter.limits) {
+								if (structure.data[0].length >= settings.filter.limits.daily) {
+	
+									if (structure.data[0].length > settings.filter.limits.enable_weekly && settings.filter.mode == 'daily') { settings.filter.mode = 'weekly'; }
+									structure.filters.select('p[data-mode="daily"]').classed('PAhide', (structure.data[0].length > settings.filter.limits.enable_monthly));
+									structure.filters.select('p[data-mode="monthly"]').classed('PAhide', (structure.data[0].length < settings.filter.limits.disable_weekly));
+									if ( structure.data[0].length < settings.filter.limits.disable_weekly && settings.filter.mode == 'monthly' ) { settings.filter.mode = 'daily' };
+	
+									structure.filters.selectAll('p').classed('selected', false);
+									structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
+									
+									
+									if (structure.data[0].length < settings.filter.limits.enable_monthly || structure.data[0].length >= settings.filter.limits.disable_weekly) {
+										setTimeout(function() { structure.filters.classed('PAhide', false);	}, internalSettings.animateGridTime);
+									}
+	
+								} else {
+	
+									settings.filter.mode = 'daily';
+									structure.filters.selectAll('p').classed('selected', false);
+									structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
+	
 								}
-
-							} else {
-
-								settings.filter.mode = 'daily';
-								structure.filters.selectAll('p').classed('selected', false);
-								structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
-
 							}
 
 						}
@@ -531,7 +541,8 @@
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
-					var spacingX = (data.length == 1) ? w / 2 : Math.floor(w / (data.length - 1) );
+// 					var spacingX = (data.length == 1) ? w / 2 : Math.floor(w / (data.length - 1) ); BOH
+					var spacingX = (data.length == 1) ? w / 2 : w / (data.length - 1);
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
 
 					// remove circles
@@ -632,7 +643,8 @@
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
-					var spacingBefore = Math.floor(w / (actualPoints - 1) );
+// 					var spacingBefore = Math.floor(w / (actualPoints - 1) ); BOH
+					var spacingBefore = w / (actualPoints - 1);
 
 					// create flat path with the same point number of the grid to flatten smooth
 					var lineData = [];
@@ -730,7 +742,8 @@
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
-					var spacing = Math.floor(w / (elementsCount-1) );
+// 					var spacing = Math.floor(w / (elementsCount-1) ); BOH
+					var spacing = w / (elementsCount-1);
 
 					// fix the number of lines and animate
 					// add new lines outside the artboard
@@ -797,7 +810,8 @@
 					if (settings.config.grid.x.label) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label) {  j = internalSettings.labels.y.width; w = w - j; }
 
-					var spacing = Math.floor(w / (data.length-1) );
+// 					var spacing = Math.floor(w / (data.length-1) ); BOH
+					var spacing = w / (data.length-1);
 
 					// hide current labels
 					structure.svg.label.x.group.classed('PAhide', true)
