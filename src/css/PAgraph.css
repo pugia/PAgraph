@@ -458,14 +458,22 @@ div.PAoverlay {
   height: 58px;
   float: left;
 }
-.PACustomGender1 div.PAdata p span {
+.PACustomGender1 div.PAdata p span[data-value] {
   float: left;
-  height: 58px;
-  line-height: 58px;
+  height: 30px;
+  line-height: 40px;
   margin-left: 22px;
   font-size: 25px;
   font-family: 'Lato', sans-serif;
   font-weight: bold;
+  width: 90px;
+}
+.PACustomGender1 div.PAdata p span.PAlabel {
+  margin-left: 22px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 16px;
+  color: #d4d4d4;
 }
 .PACustomAgeDist ul {
   list-style: none;

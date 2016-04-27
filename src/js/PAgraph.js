@@ -2114,7 +2114,7 @@
 
 		structure.svg.element = d3.selectAll(graph.get()).append('svg')
 			.classed('PAGraph', true)
-			.attr('width', graph.width())
+			.attr('width', '100%')
 			.attr('height', graph.height());
 
 		structure.svg.radius = Math.min(graph.width(), graph.height() - 40) / 2;
@@ -2939,14 +2939,19 @@
 					pMale.html(self.male_icon)
 						.append('span')
 						.attr('data-value', 0)
-						.html(Number(0).format(settings.main.format))
+						.html(Number(0).format(settings.main.format));
+						console.log(pMale);
+					$(pMale[0]).find('span[data-value]')	
+							.after($('<span>').addClass('PAlabel').text(''));
 
 					// female
 					var pFemale = dataContainer.append('p')
 					pFemale.html(self.female_icon)
 						.append('span')
 						.attr('data-value', 0)
-						.html(Number(0).format(settings.compare.format))
+						.html(Number(0).format(settings.compare.format));
+					$(pFemale[0]).find('span[data-value]')	
+							.after($('<span>').addClass('PAlabel').text(''));
 
 					pMale.select('rect').style('fill', settings.main.color);
 					pFemale.select('rect').style('fill', settings.compare.color);
@@ -2990,8 +2995,10 @@
 
 					var self = this;
 										
-					graph.find('div.PAdata p:eq(0) > span').attr('data-value', data[0].value)
-					graph.find('div.PAdata p:eq(1) > span').attr('data-value', data[1].value)
+					graph.find('div.PAdata p:eq(0) > span[data-value]').attr('data-value', data[0].value)
+					graph.find('div.PAdata p:eq(0) > span.PAlabel').text(data[0].label)
+					graph.find('div.PAdata p:eq(1) > span[data-value]').attr('data-value', data[1].value)
+					graph.find('div.PAdata p:eq(1) > span.PAlabel').text(data[1].label)
 
 					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
 
