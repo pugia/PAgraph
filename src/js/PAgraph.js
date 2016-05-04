@@ -2185,10 +2185,11 @@
 				.range(colors);
 		}
 
-		function init_legend() {
+		function init_legend() {			
 			var client = $(structure.svg.element)[0][0];
 			var legend = structure.legend
 				.selectAll('p')
+				.remove()
 				.data(structure.svg.color.domain())
 				.enter()
 				.append('p')
@@ -2222,7 +2223,6 @@
 		init_legend();
 
 		function init_graph(data) {
-
 			var displayNoneTimer = null;
 
 			var slice = structure.svg.element.select('.slices').selectAll('path')
@@ -2940,7 +2940,6 @@
 						.append('span')
 						.attr('data-value', 0)
 						.html(Number(0).format(settings.main.format));
-						console.log(pMale);
 					$(pMale[0]).find('span[data-value]')	
 							.after($('<span>').addClass('PAlabel').text(''));
 
@@ -2995,9 +2994,9 @@
 
 					var self = this;
 										
-					graph.find('div.PAdata p:eq(0) > span[data-value]').attr('data-value', data[0].value)
+					graph.find('div.PAdata p:eq(0) > span[data-value]').attr('data-value', data[0].value || 0)
 					graph.find('div.PAdata p:eq(0) > span.PAlabel').text(data[0].label)
-					graph.find('div.PAdata p:eq(1) > span[data-value]').attr('data-value', data[1].value)
+					graph.find('div.PAdata p:eq(1) > span[data-value]').attr('data-value', data[1].value || 0)
 					graph.find('div.PAdata p:eq(1) > span.PAlabel').text(data[1].label)
 
 					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
