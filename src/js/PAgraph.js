@@ -2773,7 +2773,11 @@
 					var coeff = Math.abs(max - getMinValues(settings.data));
 					
 					// remove exceding li
-					graph.find('ul li:gt('+ (settings.data.length-1) +')').remove();
+					if (settings.data.length) {
+						graph.find('ul li:gt('+ (settings.data.length-1) +')').remove();
+					} else {
+						graph.find('ul li').remove();
+					}
 					
 					// zoomParams
 					var zoomStart = max / coeff;
