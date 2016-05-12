@@ -449,6 +449,12 @@
 					var self = this;
 
 					self.initGridY();
+					
+					graph.trigger({
+						type: 'draw', 
+						mode: settings.filter.mode,
+						computedData: self.computedData
+					});
 
 					promises = [];
 					promises.push(self.animateGridX(self.computedData[0]));
@@ -521,7 +527,7 @@
 
 					var allData = mergeAndClean(self.computedData);
 					structure.svg.grid.y.spacing = Yspacing(allData);
-
+					
 					self.draw();
 
 				},
