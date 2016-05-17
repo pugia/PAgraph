@@ -2169,10 +2169,11 @@
 			});
 		}
 
-		options.data = set_data(options.data);
+		// options.data = set_data(options.data);
 
 
 		function set_domain_and_range(data) {
+			console.log(data);
 			var colors = ["#6D96A1", "#596970", "#A9AEC5", "#553E5A", "#859680", "#8C4354", "#87B8C4", "#808F96"];
 			var domain = [];
 
@@ -2180,47 +2181,12 @@
 				domain.push(data[x].label);
 			}
 
+			console.log(domain);
+
 			structure.svg.color = d3.scale.ordinal()
 				.domain(domain)
 				.range(colors);
 		}
-
-		function init_legend() {			
-			var client = $(structure.svg.element)[0][0];
-			var legend = structure.legend
-				.selectAll('p')
-				.remove()
-				.data(structure.svg.color.domain())
-				.enter()
-				.append('p')
-				.attr('data-index', function(d, i) {
-					return i;
-				});
-
-			legend.append('span')
-				.attr('opacity', 0)
-				.transition()
-				.duration(500)
-				.delay(1000)
-				.attr('opacity', 1)
-				.style('background', structure.svg.color);
-
-			legend.append('label')
-				.attr('opacity', 0)
-				.transition()
-				.duration(500)
-				.delay(1000)
-				.attr('opacity', 1)
-				.text(function(d) {
-					return d;
-				});
-
-			legend.classed('small', legend[0].length > 3);
-		}
-
-		set_domain_and_range(options.data);
-		init_graph(options.data);
-		init_legend();
 
 		function init_graph(data) {
 			var displayNoneTimer = null;
@@ -2229,8 +2195,10 @@
 				.data(structure.svg.pie(data), structure.svg.key);
 
 			slice.enter()
-				.insert('path')
-				.style('fill', function(d) { return structure.svg.color(d.data.label); })
+				.append('path')
+				.style('fill', function(d) {
+					return structure.svg.color(d.data.label);
+				})
 				.attr('class', 'slice');
 
 			slice.transition().duration(1000)
@@ -2268,20 +2236,67 @@
 				}, 300);
 			});
 
-			slice.exit()
-				.remove();
+			slice.exit().remove();
+		}
+
+		function init_legend(data) {
+			var client = $(structure.svg.element)[0][0];
+
+			structure.legend.selectAll('p').remove();
+
+			var legend = structure.legend
+				.selectAll('p')
+				.data(data)
+				.enter()
+				.append('p')
+				.attr('data-index', function(d, i) {
+					return i;
+				});
+
+			legend.append('span')
+				.attr('opacity', 0)
+				.transition()
+				.duration(500)
+				.delay(1000)
+				.attr('opacity', 1)
+				.style('background', function(d) {
+					console.log(structure.svg.color(d.label));
+					return structure.svg.color(d.label);
+				});
+
+			legend.append('label')
+				.attr('opacity', 0)
+				.transition()
+				.duration(500)
+				.delay(1000)
+				.attr('opacity', 1)
+				.text(function(d) {
+					return d.label;
+				});
+
+			legend.classed('small', legend[0].length > 3);
+
 		}
 
 		graph.animate = function (data) {
-			structure.svg.element.select('slices').remove();
+
+			options.data = set_data(data);
+
+			init_graph(options.data);
+			init_legend(options.data);
+
+		};
+
+		graph.init = function(data) {
 
 			options.data = set_data(data);
 
 			set_domain_and_range(options.data);
 			init_graph(options.data);
 			init_legend(options.data);
-
 		};
+
+		graph.init(options.data);
 
 		return graph;
 	};

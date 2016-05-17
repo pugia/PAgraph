@@ -22,6 +22,8 @@
 
 <button id="test_01">Test 01</button>
 <button id="test_02">Test 02</button>
+<button id="test_03">Test 03</button>
+<button id="test_04">Test 04</button>
 
 
 <script>
@@ -43,6 +45,25 @@
             },
             {
                 label: "Twitter",
+                value: 15
+            }
+        ];
+
+        var data4 = [
+            {
+                label: "Somethin or another",
+                value: 20
+            },
+            {
+                label: "Vtonkake",
+                value: 40
+            },
+            {
+                label: "Alibaba",
+                value: 25
+            },
+            {
+                label: "Taylor Case",
                 value: 15
             }
         ];
@@ -90,6 +111,69 @@
             }
         ];
 
+        var data3 = [
+            {
+                label: "User Account",
+                value: 11
+            },
+            {
+                label: "Click-through",
+                value: 29
+            },
+            {
+                label: "Facebook",
+                value: 30
+            },
+            {
+                label: "Twitter",
+                value: 50
+            },
+            {
+                label: "fdsa",
+                value: 40
+            },
+            {
+                label: "blah blah",
+                value: 29
+            },
+            {
+                label: "boo",
+                value: 30
+            },
+            {
+                label: "dah",
+                value: 50
+            },
+            {
+                label: "lorem ipsum",
+                value: 40
+            },
+            {
+                label: "Click-through",
+                value: 29
+            },
+            {
+                label: "Facebook",
+                value: 30
+            },
+            {
+                label: "something else",
+                value: 50
+            },
+            {
+                label: "Click-through",
+                value: 29
+            },
+            {
+                label: "Facebook",
+                value: 30
+            },
+            {
+                label: "bleeeeehhhh",
+                value: 50
+            }
+        ];
+
         var graph = $('#graph_0').PAdonutchart({
             data: data1,
             settings: {
@@ -108,6 +192,15 @@
         $('#test_02').on('click', function () {
             graph.animate(data2);
         });
+
+        $('#test_03').on('click', function () {
+            graph.animate(data3);
+        });
+
+        $('#test_04').on('click', function () {
+            graph.animate(data4);
+        });
+
     });
 
 </script>
