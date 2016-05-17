@@ -140,15 +140,24 @@
 		structure.svg.graph.circles = structure.svg.element.append('g').classed('PAGcircles', true);
 				
 		var gW = graph.width();
+		var gH = graph.height();
 		var t = null;
 		$(window)
 			.on('resize', function() {
 				
 				clearTimeout(t);
 				t = setTimeout(function() {
-					if (graph.width() != gW) {
-						gW = graph.width();
-						structure.svg.element.attr('width', graph.width())
+					if (graph.width() != gW || graph.height() != gH) {
+
+						if (graph.width() != gW) {
+							gW = graph.width();
+							structure.svg.element.attr('width', graph.width())
+						}
+						if (graph.height() != gH) {
+							gH = graph.height();
+							structure.svg.element.attr('height', graph.height())
+						}
+					
 						graph.draw()
 					}
 				}, 100);
@@ -202,8 +211,8 @@
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
-// 					var spacing = Math.floor(w / (elementsCount-1) ); BOH
 					var spacing = w / (elementsCount-1);
+					structure.svg.grid.group.selectAll('g.PAGgridX line').remove();
 					structure.svg.grid.x.group = structure.svg.grid.group.append('g').classed('PAGgridX', true);
 
 					for (var i = 0; i < elementsCount; i++) {
@@ -232,6 +241,7 @@
 					var elementsCount = 6;
 
 					var spacing = Math.floor(h / elementsCount);
+					structure.svg.grid.group.selectAll('g.PAGgridY line').remove();
 					structure.svg.grid.y.group = structure.svg.grid.group.append('g').classed('PAGgridY', true);
 
 
@@ -287,7 +297,6 @@
 
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; }
-// 					var spacing = Math.floor(w / (elementsCount-1) ); BOH
 					var spacing = w / (elementsCount-1);
 
 					var lineData = [];
@@ -448,7 +457,15 @@
 
 					var self = this;
 
+					if (!self.computedData[0]) { return; }
+
 					self.initGridY();
+					
+					graph.trigger({
+						type: 'draw', 
+						mode: settings.filter.mode,
+						computedData: self.computedData
+					});
 
 					promises = [];
 					promises.push(self.animateGridX(self.computedData[0]));
@@ -521,7 +538,7 @@
 
 					var allData = mergeAndClean(self.computedData);
 					structure.svg.grid.y.spacing = Yspacing(allData);
-
+					
 					self.draw();
 
 				},
@@ -541,7 +558,6 @@
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
-// 					var spacingX = (data.length == 1) ? w / 2 : Math.floor(w / (data.length - 1) ); BOH
 					var spacingX = (data.length == 1) ? w / 2 : w / (data.length - 1);
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
 
@@ -643,7 +659,6 @@
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
-// 					var spacingBefore = Math.floor(w / (actualPoints - 1) ); BOH
 					var spacingBefore = w / (actualPoints - 1);
 
 					// create flat path with the same point number of the grid to flatten smooth
@@ -736,13 +751,13 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-
+					
+					if (!data) { return; }
 					var elementsCount = data.length;
 
 					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 
-// 					var spacing = Math.floor(w / (elementsCount-1) ); BOH
 					var spacing = w / (elementsCount-1);
 
 					// fix the number of lines and animate
@@ -804,13 +819,13 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-
+					
+					if (!data) { return; }
 					var elementsCount = data.length;
 
 					if (settings.config.grid.x.label) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label) {  j = internalSettings.labels.y.width; w = w - j; }
 
-// 					var spacing = Math.floor(w / (data.length-1) ); BOH
 					var spacing = w / (data.length-1);
 
 					// hide current labels
@@ -907,7 +922,8 @@
 					var w = graph.width();
 					var h = graph.height();
 					var j = 0;
-
+					
+					if (!data) { return; }
 					var elementsCount = data.length;
 
 					if (settings.config.grid.x.label) { h = h - internalSettings.labels.x.height; }
@@ -1315,6 +1331,7 @@
 					var j = 0;
 
 					debug('animateLabelY')
+					if (!data) { return; }
 					var elementsCount = data.length;
 
 					if (settings.config.grid.x.label) { h = h - internalSettings.labels.x.height; }
@@ -1367,10 +1384,13 @@
 					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
 					
 					debug('animateGridX');
+					if (!structure.data[0]) { return; }
+					
+					
 					structure.svg.label.x.group.classed('PAhide', true)
 					
 					var spacing = settings.config.stacked;
-
+					
 					var spacingX = Math.floor(w/structure.data[0].length);
 					var offsetX = (settings.config.stacked) ? 0 : spacing / 2;					
 					var rectW = spacingX - spacing;
@@ -2788,7 +2808,11 @@
 					var coeff = Math.abs(max - getMinValues(settings.data));
 					
 					// remove exceding li
-					graph.find('ul li:gt('+ (settings.data.length-1) +')').remove();
+					if (settings.data.length) {
+						graph.find('ul li:gt('+ (settings.data.length-1) +')').remove();
+					} else {
+						graph.find('ul li').remove();
+					}
 					
 					// zoomParams
 					var zoomStart = max / coeff;
