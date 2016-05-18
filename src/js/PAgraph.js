@@ -2197,15 +2197,12 @@
 
 
 		function set_domain_and_range(data) {
-			console.log(data);
 			var colors = ["#6D96A1", "#596970", "#A9AEC5", "#553E5A", "#859680", "#8C4354", "#87B8C4", "#808F96"];
 			var domain = [];
 
 			for(var x = 0; x < data.length; x++) {
 				domain.push(data[x].label);
 			}
-
-			console.log(domain);
 
 			structure.svg.color = d3.scale.ordinal()
 				.domain(domain)
@@ -2284,7 +2281,6 @@
 				.delay(1000)
 				.attr('opacity', 1)
 				.style('background', function(d) {
-					console.log(structure.svg.color(d.label));
 					return structure.svg.color(d.label);
 				});
 
