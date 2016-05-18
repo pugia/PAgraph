@@ -1556,7 +1556,11 @@
 
 					while (l1_size.x + l1_size.width + 10 > l2_size) {
 						nthChildX++; l2_index++;
-						l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
+						if (labelGroup.find('text:eq('+(l2_index)+')').length) {
+							l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
+						} else {
+							break;
+						}
 					}
 
 					if (nthChildX > 1) {
