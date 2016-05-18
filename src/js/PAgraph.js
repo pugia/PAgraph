@@ -151,18 +151,18 @@
 
 						if (graph.width() != gW) {
 							gW = graph.width();
-							structure.svg.element.attr('width', graph.width())
+							structure.svg.element.attr('width', graph.width());
 						}
 						if (graph.height() != gH) {
 							gH = graph.height();
-							structure.svg.element.attr('height', graph.height())
+							structure.svg.element.attr('height', graph.height());
 						}
 					
-						graph.draw()
+						graph.draw();
 					}
 				}, 100);
 				
-			})
+			});
 
 
 		var MODE = {
@@ -208,8 +208,8 @@
 
 					var elementsCount = 8;
 
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }
 
 					var spacing = w / (elementsCount-1);
 					structure.svg.grid.group.selectAll('g.PAGgridX line').remove();
@@ -235,8 +235,8 @@
 					var h = graph.height();
 					var j = 0;
 
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }
 
 					var elementsCount = 6;
 
@@ -275,16 +275,16 @@
 					var graphElements = $.extend(true, {}, graphElementsEmpty);
 
 					graphElements.group = structure.svg.graph.group.insert('g',':first-child')
-						.classed('PAGgraph', true)
+						.classed('PAGgraph', true);
 					structure.svg.graph.elements.push(graphElements);
 
 					var index = structure.svg.graph.elements.length - 1;
 					structure.svg.graph.elements[index].group.attr('data-index', index);
 
 					// create settings structure
-					var color = color || "#"+((1<<24)*Math.random()|0).toString(16);
-					var legend = legend || 'Graph '+index;
-					var format = format || null;
+					color = color || "#"+((1<<24)*Math.random()|0).toString(16);
+					legend = legend || 'Graph '+index;
+					format = format || null;
 
 					settings.config.graph.push({
 						color: color,
@@ -295,8 +295,8 @@
 					var elementsCount = structure.svg.grid.x.elements.length || 8;
 					structure.svg.element.attr('data-points', elementsCount);
 
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; }
 					var spacing = w / (elementsCount-1);
 
 					var lineData = [];
@@ -315,25 +315,25 @@
 						.attr('d', pathCoord)
 						.attr('stroke', settings.config.graph[index].color)
 						.attr('stroke-width', 1)
-						.attr('fill', 'none')
+						.attr('fill', 'none');
 					structure.svg.graph.elements[index].elements.line = lineG;
 
 					var areaG = structure.svg.graph.elements[index].group.append('path')
 						.classed('PAGgraphArea', true)
 						.attr('d', pathCoord)
 						.attr('stroke-width', 0)
-						.attr('fill', settings.config.graph[index].color)
+						.attr('fill', settings.config.graph[index].color);
 					structure.svg.graph.elements[index].elements.area = areaG;
 
 					// add label to legend
 					var p = structure.legend.append('p')
-						.attr('data-index', index)
+						.attr('data-index', index);
 					p.append('span')
 						.style('background', settings.config.graph[index].color);
 					p.append('label')
 						.text(settings.config.graph[index].legend);
 
-					setTimeout(function() { dfrd.resolve(index); }, elementsCount*25)
+					setTimeout(function() { dfrd.resolve(index); }, elementsCount*25);
 					return dfrd.promise();
 
 				},
@@ -348,7 +348,7 @@
 						.on('click', 'p[data-index]', function() {
 							var index = parseInt($(this).attr('data-index'));
 							self.moveOnFront(index);
-						})
+						});
 				},
 
 				// create filters menu
@@ -371,7 +371,7 @@
 							settings.filter.mode = $(this).attr('data-mode');
 							self.applyFilter();
 
-						})
+						});
 
 				},
 
@@ -380,17 +380,17 @@
 
 					var self = this;
 					var dfrd = $.Deferred();
-					var index = index || 0;
+					index = index || 0;
 
 					// empty stored data with different scale on index 0
-					if (structure.data[0] && structure.data.length && index == 0 && structure.data[0].length != data.length) {
+					if (structure.data[0] && structure.data.length && index === 0 && structure.data[0].length != data.length) {
 						structure.data = [];
 						self.computedData = [];
 					}
 
 					// check data's scale
-					if (!data || data.length == 0) { dfrd.reject('no'); }
-					if (index != 0 && structure.data[0] && structure.data[0].length != data.length) { console.log('Compare metric has a different scale'); dfrd.reject('no'); }
+					if (!data || data.length === 0) { dfrd.reject('no'); }
+					if (index !== 0 && structure.data[0] && structure.data[0].length != data.length) { console.log('Compare metric has a different scale'); dfrd.reject('no'); }
 					else {
 						
 						// filling edges
@@ -399,11 +399,11 @@
 							data.splice(0,null,{
 								label: '',
 								value: 0
-							})
+							});
 							data.splice(2,null,{
 								label: '',
 								value: 0
-							})
+							});
 							self.filledEdges = true;
 						}
 						
@@ -411,7 +411,7 @@
 						structure.data[index] = data;
 
 						// if it's first graph
-						if (index == 0) {
+						if (index === 0) {
 
 							// show filters based on elements number
 							structure.filters.classed('PAhide', true);
@@ -421,7 +421,7 @@
 									if (structure.data[0].length > settings.filter.limits.enable_weekly && settings.filter.mode == 'daily') { settings.filter.mode = 'weekly'; }
 									structure.filters.select('p[data-mode="daily"]').classed('PAhide', (structure.data[0].length > settings.filter.limits.enable_monthly));
 									structure.filters.select('p[data-mode="monthly"]').classed('PAhide', (structure.data[0].length < settings.filter.limits.disable_weekly));
-									if ( structure.data[0].length < settings.filter.limits.disable_weekly && settings.filter.mode == 'monthly' ) { settings.filter.mode = 'daily' };
+									if ( structure.data[0].length < settings.filter.limits.disable_weekly && settings.filter.mode == 'monthly' ) { settings.filter.mode = 'daily'; }
 	
 									structure.filters.selectAll('p').classed('selected', false);
 									structure.filters.select('p[data-mode="'+settings.filter.mode+'"]').classed('selected', true);
@@ -503,15 +503,15 @@
 					var self = this;
 					var dfrd = $.Deferred();
 					
-					var index = index || structure.data.length-1
+					index = index || structure.data.length-1;
 
 					$.when(self.flattenGraph(index))
 					.done(function() {
-						if (index == 0) { dfrd.reject(); }
+						if (index === 0) { dfrd.reject(); }
 						else {
 							structure.svg.graph.elements[index].group.remove();
 							structure.svg.graph.elements.splice(index,1);
-							graph.find('div.PAlegend > p[data-index='+index+']').remove()
+							graph.find('div.PAlegend > p[data-index='+index+']').remove();
 							delete structure.data[index];
 							self.computedData[index] = null;
 							dfrd.resolve();
@@ -519,7 +519,7 @@
 					})
 					.fail(function() {
 						dfrd.resolve();
-					})
+					});
 
 					return dfrd.promise();
 
@@ -555,8 +555,8 @@
 					var h = graph.height();
 					var j = 0;
 
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }
 
 					var spacingX = (data.length == 1) ? w / 2 : w / (data.length - 1);
 					var spacingY = (Math.floor(h / 6)) / (structure.svg.grid.y.spacing[1] - structure.svg.grid.y.spacing[0]);
@@ -587,13 +587,13 @@
 								'y': y
 							});
 
-							if (data[i].value == 0) {
+							if (+data[i].value === 0) {
 								linesData.push(lData);
 								lData = [];
 								lData.push({
 									'x': x,
 									'y': y
-								})
+								});
 							}
 						}
 
@@ -606,8 +606,8 @@
 						.y(function(d) { return d.y; })
 						.interpolate(internalSettings.graphLineInterpolation);
 
+					var pathCoord = '';
 					if (!settings.interpolateOnZero) {
-						var pathCoord = '';
 						for (var ld in linesData) {
 							pathCoord += lineF(linesData[ld]);
 						}
@@ -616,26 +616,26 @@
 						var m1 = re.exec(pathCoord)[0];
 						pathCoord = m1+pathCoord.replace(/M(.\d*),(.\d*)/gmi,'');
 					} else {
-						var pathCoord = lineF(lineData);
+						pathCoord = lineF(lineData);
 					}
 
 					// complete the area
 					pathCoordArea = pathCoord;
 					pathCoordArea += 'L'+ getMaxValues(lineData,'x') + ',' + h;
 					pathCoordArea += 'L'+ j + ',' + h;
-					pathCoordArea += 'L'+ j + ',' + lineData[0]['y'];
+					pathCoordArea += 'L'+ j + ',' + lineData[0].y;
 
 					structure.svg.graph.elements[index].elements.area.transition()
 						.duration(internalSettings.graphAnimationTime)
 						.attr('d', pathCoordArea)
-						.ease(internalSettings.animateEasing)
+						.ease(internalSettings.animateEasing);
 					structure.svg.graph.elements[index].elements.line.transition()
 						.duration(internalSettings.graphAnimationTime)
 						.attr('d', pathCoord)
 						.ease(internalSettings.animateEasing)
 						.each("end",function() {
 							self.animateCircles(data, index);
-						})
+						});
 
 				},
 
@@ -656,8 +656,8 @@
 
 					var actualPoints = parseInt(structure.svg.element.attr('data-points'));
 
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }
 
 					var spacingBefore = w / (actualPoints - 1);
 
@@ -679,7 +679,7 @@
 					pathCoordArea = pathCoord;
 					pathCoordArea += 'L'+ getMaxValues(lineData,'x') + ',' + (h+1);
 					pathCoordArea += 'L'+ j + ',' + (h+1);
-					pathCoordArea += 'L'+ j + ',' + lineData[0]['y'];
+					pathCoordArea += 'L'+ j + ',' + lineData[0].y;
 
 					// create a fake
 					if (self.computedData[index] && self.computedData[index].length) {
@@ -687,16 +687,16 @@
 						var spacingNext = Math.floor(w / (self.computedData[index].length - 1) );
 
 						// create flat path with the new grid number of points
-						var lineData = [];
-						for (var i = 0; i < self.computedData[index].length; i++) {
-							var x = (i * spacingNext)	+ j;
+						lineData = [];
+						for (i = 0; i < self.computedData[index].length; i++) {
+							var xx = (i * spacingNext)	+ j;
 							lineData.push({
-								'x': x,
+								'x': xx,
 								'y': h
 							});
 						}
 
-						var lineF = d3.svg.line()
+						lineF = d3.svg.line()
 							.x(function(d) { return d.x; })
 							.y(function(d) { return d.y; })
 							.interpolate(internalSettings.graphLineInterpolation);
@@ -704,7 +704,7 @@
 						pathCoordAreaNext = pathCoordNext;
 						pathCoordAreaNext += 'L'+ getMaxValues(lineData,'x') + ',' + (h+1);
 						pathCoordAreaNext += 'L'+ j + ',' + (h+1);
-						pathCoordAreaNext += 'L'+ j + ',' + lineData[0]['y'];
+						pathCoordAreaNext += 'L'+ j + ',' + lineData[0].y;
 
 					}
 
@@ -723,7 +723,7 @@
 						.ease(internalSettings.animateEasing)
 						.each('end', function() {
 							d3.select(this).attr('d', pathCoordAreaNext);
-						})
+						});
 
 					structure.svg.graph.elements[index].elements.line.transition()
 						.duration(internalSettings.graphAnimationTime)
@@ -732,7 +732,7 @@
 						.each('end', function() {
 							d3.select(this).attr('d', pathCoordNext);
 							dfrd.resolve();
-						})
+						});
 
 					return dfrd.promise();
 
@@ -755,8 +755,8 @@
 					if (!data) { return; }
 					var elementsCount = data.length;
 
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }
 
 					var spacing = w / (elementsCount-1);
 
@@ -783,7 +783,7 @@
 							.duration(internalSettings.animateGridTime)
 							.attr('x1', x)
 							.attr('x2', x)
-							.ease(internalSettings.animateEasing)
+							.ease(internalSettings.animateEasing);
 
 
 					}
@@ -843,7 +843,7 @@
 
 								structure.svg.label.x.elements[i].attr('x', x)
 									.text(settings.config.grid.x.format(data[i].label))
-									.attr('text-anchor', 'middle')
+									.attr('text-anchor', 'middle');
 
 							} else { // create new
 
@@ -852,7 +852,7 @@
 									.attr('y', h+internalSettings.labels.x.marginTop)
 									.attr('text-anchor','middle')
 									.attr('fill', settings.config.grid.x.label)
-									.text(settings.config.grid.x.format(data[i].label))
+									.text(settings.config.grid.x.format(data[i].label));
 								structure.svg.label.x.elements.push(label);
 
 							}
@@ -904,7 +904,7 @@
 							if (p > start+w) { 	return false;	}
 							x++;
 
-						})
+						});
 											
 					if (x > 1) {
 						structure.svg.label.x.group
@@ -924,7 +924,6 @@
 					var j = 0;
 					
 					if (!data) { return; }
-					var elementsCount = data.length;
 
 					if (settings.config.grid.x.label) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label) {  j = internalSettings.labels.y.width; w = w - j; }
@@ -941,7 +940,7 @@
 
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
-								structure.svg.label.y.elements[i].text(structure.svg.grid.y.spacing[i])
+								structure.svg.label.y.elements[i].text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
 
 							} else {
 																
@@ -974,7 +973,7 @@
 						
 						var append = true;
 						
-						if (self.filledEdges && (i == 0 || i == structure.svg.graph.elements[index].elements.points.coords.length-1)) {
+						if (self.filledEdges && (i === 0 || i == structure.svg.graph.elements[index].elements.points.coords.length-1)) {
 							append = false;
 						}
 						
@@ -1110,7 +1109,7 @@
 						for (var i in data) {
 
 							// first
-							if (i % 7 == 0) {
+							if (i % 7 === 0) {
 								tmpObj = $.extend(true, {}, tmpObjModel);
 								tmpObj.label = data[i].label;
 								newData.push(tmpObj);
@@ -1139,7 +1138,7 @@
 						for (var i in data) {
 
 							// first
-							if (i % 30 == 0) {
+							if (i % 30 === 0) {
 								tmpObj = $.extend(true, {}, tmpObjModel);
 								tmpObj.label = data[i].label;
 								newData.push(tmpObj);
@@ -1189,8 +1188,8 @@
 					var h = graph.height();
 					var j = 0;
 
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }
 
 					var elementsCount = 6;
 
@@ -1250,8 +1249,8 @@
 
 					debug('initGraph', index_wanted);
 					
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }
 					var spacing = Math.floor(w/startElements);
 					var offsetX = (settings.config.stacked) ? 0 : settings.config.spacing / 2;
 					var rectW = spacing - settings.config.spacing - ((structure.svg.graph.elements.length-1) * offsetX);
@@ -1282,7 +1281,7 @@
 					p.append('label')
 						.text(settings.config.graph[index].legend);
 
-					if (index == 0) { self.initLabelX(); }
+					if (index === 0) { self.initLabelX(); }
 
 					// resolve with index at the end of DOM creation
 					setTimeout(function() {	dfrd.resolve(index); }, startElements * 25);
@@ -1302,8 +1301,8 @@
 					var h = graph.height();
 					var j = 0;
 
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }
 					var spacing = Math.floor(w/startElements);
 
 					for (var i = 0; i < startElements; i++) {
@@ -1349,7 +1348,7 @@
 
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
-								structure.svg.label.y.elements[i].text(structure.svg.grid.y.spacing[i])
+								structure.svg.label.y.elements[i].text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
 
 							} else {
 								var label =  structure.svg.label.y.group.append('text')
@@ -1380,8 +1379,8 @@
 					var h = graph.height();
 					var j = 0;
 					
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }
 					
 					debug('animateGridX');
 					if (!structure.data[0]) { return; }
@@ -1403,7 +1402,7 @@
 							rectW = spacingX - spacing - ((structure.svg.graph.elements.length-1)*offsetX);
 						}
 						
-						if (spacing == 0) {
+						if (spacing === 0) {
 							offsetX = 0;
 							rectW = w /structure.data[0].length;
 							spacingX = rectW;
@@ -1469,7 +1468,7 @@
 
 								}
 
-								if (index == 0) {
+								if (index === 0) {
 
 									var xx = (i * spacingX) + j + (spacingX / 2);
 									if (structure.svg.label.x.elements[i]) {
@@ -1600,13 +1599,13 @@
 					var h = graph.height();
 					var j = 0;
 
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }					
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }					
 
 					debug('setData', index)
 
 					// empty stored data with different scale on index 0
-					if (structure.data.length && index == 0 && structure.data[0].length != data.length) {
+					if (structure.data.length && index === 0 && structure.data[0].length != data.length) {
 						structure.data = [];
 					}
 					
@@ -1635,7 +1634,7 @@
 					
 
 					// check data's scale
-					if (!data || data.length == 0) { dfrd.reject('no'); }
+					if (!data || data.length === 0) { dfrd.reject('no'); }
 					if (index != 0 && structure.data[0] && structure.data[0].length != data.length) { console.log('Compare metric has a different scale'); dfrd.reject('no'); }
 					else {
 
@@ -1688,8 +1687,8 @@
 					var h = graph.height();
 					var j = 0;
 
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
-					if (settings.config.grid.y.label != false) {  j = internalSettings.labels.y.width; w = w - j; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }
 					
 					var spacing = settings.config.spacing;
 					
@@ -1705,7 +1704,7 @@
 							rectW = spacingX - spacing - ((structure.svg.graph.elements.length-1)*offsetX);
 						}
 						
-						if (spacing == 0) {
+						if (spacing === 0) {
 							offsetX = 0;
 							rectW = w /data.length;
 							spacingX = rectW;
@@ -1761,7 +1760,7 @@
 					if (structure.data[index] == null) { dfrd.reject(); return dfrd.promise(); }
 
 					var h = graph.height();
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
 
 					structure.svg.graph.elements[0].group.classed('percentage', false);
 
@@ -1794,7 +1793,7 @@
 					$.when(self.flattenGraph(index))
 						.done(function() {
 							
-							if (index == 0) { dfrd.reject();  }
+							if (index === 0) { dfrd.reject();  }
 							else {					
 								delete structure.data[index];
 								structure.svg.graph.elements[index].group.remove();
@@ -1898,14 +1897,14 @@
 					if (structure.data[1] == null) return;
 
 					var h = graph.height();
-					if (settings.config.grid.x.label != false) { h = h - internalSettings.labels.x.height; }
+					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
 
 					for (var i in structure.data[0]) {
 
 						var diff = structure.data[0][i].value - structure.data[1][i].value;
 						var perc = Math.round(diff / structure.data[1][i].value * 100);
 
-						perc = (perc > 0) ? '+'+perc+'%' : (perc == 0) ? '' : perc+'%';
+						perc = (perc > 0) ? '+'+perc+'%' : (perc === 0) ? '' : perc+'%';
 
 						if (structure.svg.graph.elements[0].elements.points.elements[i]) {
 
@@ -2072,7 +2071,7 @@
 			$.each(arr, function(i,e) {
 				
 				$.each(e, function(j,f) {
-					if (i == 0) { result[j] = f }
+					if (i === 0) { result[j] = f }
 					else { 
 						if (settings.config.stacked) {
 							result[j].value += f.value	
@@ -2600,7 +2599,7 @@
 				.text(settings.secondary.value)
 				.addClass('PAcount PAsecondary')
 				.toggleClass('PAnegative', settings.secondary.value < 0)
-				.toggleClass('PAnull', settings.secondary.value == 0);
+				.toggleClass('PAnull', settings.secondary.value === 0);
 
 			var secondaryDescription = $('<p></p>')
 				.text(settings.secondary.description)
@@ -2665,7 +2664,7 @@
 					.html(settings.diff.value + settings.diff.format.after + ' ')
 					.addClass('PAcompare PAcount')
 					.toggleClass('PAnegative', settings.diff.value < 0)
-					.toggleClass('PAnull', settings.diff.value == 0);
+					.toggleClass('PAnull', settings.diff.value === 0);
 
 
 				var compare_description = $('<span></span>')
@@ -2680,7 +2679,7 @@
 					.text(settings.diff.value)
 					.addClass('PAcompare PAcount')
 					.toggleClass('PAnegative', settings.diff.value < 0)
-					.toggleClass('PAnull', settings.diff.value == 0);
+					.toggleClass('PAnull', settings.diff.value === 0);
 				graph.after(compareCounter)
 			}
 		}
@@ -3137,7 +3136,7 @@
 						graph.find('li span > span').not(fbar).addClass('PAhide');
 						fbar.toggleClass('PAhide');
 
-						graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length == 0)
+						graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length === 0)
 
 						var m = $(this).attr('data-male') * 1
 						var f = $(this).attr('data-female') * 1
@@ -3317,7 +3316,7 @@
 							var fbar = $(this).find('span > span');
 							fbar.removeClass('PAhide');
 
-							graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length == 0)
+							graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length === 0)
 
 							var m = $(this).attr('data-male') * 1;
 							var f = $(this).attr('data-female') * 1;
@@ -3336,7 +3335,7 @@
 							var fbar = $(this).find('span > span');
 							fbar.addClass('PAhide');
 
-							graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length == 0);
+							graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length === 0);
 
 							var ul = $(this).closest('ul');
 							var list = ul.find('li').toArray();
