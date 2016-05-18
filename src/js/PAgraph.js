@@ -2236,9 +2236,9 @@
 				structure.tooltip.style('display', 'block');
 				structure.tooltip.select('span').text(mouseover_object.data.label);
 				if(!!settings.after) {
-					structure.tooltip.select('label').text(mouseover_object.data.value + ' ' + settings.after);
+					structure.tooltip.select('label').html(mouseover_object.data.value + ' ' + settings.after);
 				} else {
-					structure.tooltip.select('label').text(mouseover_object.data.value);
+					structure.tooltip.select('label').html(mouseover_object.data.value);
 				}
 
 				var t = $(structure.tooltip[0][0]);
