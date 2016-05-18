@@ -2236,9 +2236,9 @@
 				structure.tooltip.style('display', 'block');
 				structure.tooltip.select('span').text(mouseover_object.data.label);
 				if(!!settings.after) {
-					structure.tooltip.select('label').html(mouseover_object.data.value + ' ' + settings.after);
+					structure.tooltip.select('label').text(mouseover_object.data.value + ' ' + settings.after);
 				} else {
-					structure.tooltip.select('label').html(mouseover_object.data.value);
+					structure.tooltip.select('label').text(mouseover_object.data.value);
 				}
 
 				var t = $(structure.tooltip[0][0]);
@@ -2599,7 +2599,7 @@
 				.text(settings.secondary.value)
 				.addClass('PAcount PAsecondary')
 				.toggleClass('PAnegative', settings.secondary.value < 0)
-				.toggleClass('PAnull', +settings.secondary.value === 0);
+				.toggleClass('PAnull', settings.secondary.value == 0);
 
 			var secondaryDescription = $('<p></p>')
 				.text(settings.secondary.description)
@@ -2609,7 +2609,7 @@
 			graph.append(counterContainer);
 			counterContainer.append(mainCounter);
 			counterContainer.append(secondaryContainer);
-			if(settings.secondary.value || +settings.secondary.value === 0) secondaryContainer.append(secondaryCounter);
+			if(settings.secondary.value || settings.secondary.value == 0) secondaryContainer.append(secondaryCounter);
 			if(settings.secondary.description) secondaryContainer.append(secondaryDescription);
 		} else {
 			var mainContainer = $('<div></div>')
