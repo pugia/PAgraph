@@ -383,7 +383,7 @@
 					index = index || 0;
 
 					// empty stored data with different scale on index 0
-					if (structure.data[0] && structure.data.length && index === 0 && structure.data[0].length != data.length) {
+					if (structure.data[0] && structure.data.length && +index === 0 && structure.data[0].length != data.length) {
 						structure.data = [];
 						self.computedData = [];
 					}
@@ -411,7 +411,7 @@
 						structure.data[index] = data;
 
 						// if it's first graph
-						if (index === 0) {
+						if (+index === 0) {
 
 							// show filters based on elements number
 							structure.filters.classed('PAhide', true);
@@ -507,7 +507,7 @@
 
 					$.when(self.flattenGraph(index))
 					.done(function() {
-						if (index === 0) { dfrd.reject(); }
+						if (+index === 0) { dfrd.reject(); }
 						else {
 							structure.svg.graph.elements[index].group.remove();
 							structure.svg.graph.elements.splice(index,1);
@@ -973,7 +973,7 @@
 						
 						var append = true;
 						
-						if (self.filledEdges && (i === 0 || i == structure.svg.graph.elements[index].elements.points.coords.length-1)) {
+						if (self.filledEdges && (+i === 0 || i == structure.svg.graph.elements[index].elements.points.coords.length-1)) {
 							append = false;
 						}
 						
@@ -1281,7 +1281,7 @@
 					p.append('label')
 						.text(settings.config.graph[index].legend);
 
-					if (index === 0) { self.initLabelX(); }
+					if (+index === 0) { self.initLabelX(); }
 
 					// resolve with index at the end of DOM creation
 					setTimeout(function() {	dfrd.resolve(index); }, startElements * 25);
@@ -1402,7 +1402,7 @@
 							rectW = spacingX - spacing - ((structure.svg.graph.elements.length-1)*offsetX);
 						}
 						
-						if (spacing === 0) {
+						if (+spacing === 0) {
 							offsetX = 0;
 							rectW = w /structure.data[0].length;
 							spacingX = rectW;
@@ -1468,7 +1468,7 @@
 
 								}
 
-								if (index === 0) {
+								if (+index === 0) {
 
 									var xx = (i * spacingX) + j + (spacingX / 2);
 									if (structure.svg.label.x.elements[i]) {
@@ -1605,7 +1605,7 @@
 					debug('setData', index)
 
 					// empty stored data with different scale on index 0
-					if (structure.data.length && index === 0 && structure.data[0].length != data.length) {
+					if (structure.data.length && +index === 0 && structure.data[0].length != data.length) {
 						structure.data = [];
 					}
 					
@@ -1704,7 +1704,7 @@
 							rectW = spacingX - spacing - ((structure.svg.graph.elements.length-1)*offsetX);
 						}
 						
-						if (spacing === 0) {
+						if (+spacing === 0) {
 							offsetX = 0;
 							rectW = w /data.length;
 							spacingX = rectW;
@@ -1793,7 +1793,7 @@
 					$.when(self.flattenGraph(index))
 						.done(function() {
 							
-							if (index === 0) { dfrd.reject();  }
+							if (+index === 0) { dfrd.reject();  }
 							else {					
 								delete structure.data[index];
 								structure.svg.graph.elements[index].group.remove();
@@ -1904,7 +1904,7 @@
 						var diff = structure.data[0][i].value - structure.data[1][i].value;
 						var perc = Math.round(diff / structure.data[1][i].value * 100);
 
-						perc = (perc > 0) ? '+'+perc+'%' : (perc === 0) ? '' : perc+'%';
+						perc = (perc > 0) ? '+'+perc+'%' : (+perc === 0) ? '' : perc+'%';
 
 						if (structure.svg.graph.elements[0].elements.points.elements[i]) {
 
@@ -2071,7 +2071,7 @@
 			$.each(arr, function(i,e) {
 				
 				$.each(e, function(j,f) {
-					if (i === 0) { result[j] = f }
+					if (+i === 0) { result[j] = f }
 					else { 
 						if (settings.config.stacked) {
 							result[j].value += f.value	
@@ -2599,7 +2599,7 @@
 				.text(settings.secondary.value)
 				.addClass('PAcount PAsecondary')
 				.toggleClass('PAnegative', settings.secondary.value < 0)
-				.toggleClass('PAnull', settings.secondary.value === 0);
+				.toggleClass('PAnull', +settings.secondary.value === 0);
 
 			var secondaryDescription = $('<p></p>')
 				.text(settings.secondary.description)
@@ -2609,7 +2609,7 @@
 			graph.append(counterContainer);
 			counterContainer.append(mainCounter);
 			counterContainer.append(secondaryContainer);
-			if(settings.secondary.value || settings.secondary.value === 0) secondaryContainer.append(secondaryCounter);
+			if(settings.secondary.value || +settings.secondary.value === 0) secondaryContainer.append(secondaryCounter);
 			if(settings.secondary.description) secondaryContainer.append(secondaryDescription);
 		} else {
 			var mainContainer = $('<div></div>')
@@ -2649,7 +2649,7 @@
 			graph.removeClass('PAinactive');
 		}
 
-		if (settings.diff.value || settings.diff.value === 0) {
+		if (settings.diff.value || +settings.diff.value === 0) {
 
 			var compareCounter;
 
@@ -2664,7 +2664,7 @@
 					.html(settings.diff.value + settings.diff.format.after + ' ')
 					.addClass('PAcompare PAcount')
 					.toggleClass('PAnegative', settings.diff.value < 0)
-					.toggleClass('PAnull', settings.diff.value === 0);
+					.toggleClass('PAnull', +settings.diff.value === 0);
 
 
 				var compare_description = $('<span></span>')
@@ -2679,7 +2679,7 @@
 					.text(settings.diff.value)
 					.addClass('PAcompare PAcount')
 					.toggleClass('PAnegative', settings.diff.value < 0)
-					.toggleClass('PAnull', settings.diff.value === 0);
+					.toggleClass('PAnull', +settings.diff.value === 0);
 				graph.after(compareCounter)
 			}
 		}
