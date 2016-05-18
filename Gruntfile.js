@@ -35,7 +35,7 @@ module.exports = function(grunt) {
     },
 		watch: {
 		  scripts: {
-		    files: ['Gruntfile.js', 'src/js/PAgraph.js'],
+		    files: ['Gruntfile.js', 'src/js/PAgraph.js', 'src/css/PAgraph.less'],
 		    tasks: ['jshint', 'uglify', 'less', 'cssmin'],
 		    options: {
 		      spawn: false,
