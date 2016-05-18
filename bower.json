@@ -29,8 +29,8 @@
     "bower_components",
     "config.codekit",
     "package.json",
-    "data.php",
-    "sample"
+    "sample",
+    "Gruntfile.js"
   ],
   "private": false
 }
