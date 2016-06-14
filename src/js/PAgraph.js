@@ -940,7 +940,7 @@
 
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
-								structure.svg.label.y.elements[i].text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
+								structure.svg.label.y.elements[i].text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format));
 
 							} else {
 																
@@ -949,7 +949,7 @@
 									.attr('y', h - (i*spacing))
 									.attr('text-anchor','end')
 									.attr('fill', settings.config.grid.y.label)
-									.text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
+									.text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format));
 								structure.svg.label.y.elements.push(label);
 							}
 
@@ -960,7 +960,7 @@
 					setTimeout(function() {
 						// show current labels
 						structure.svg.label.y.group.classed('PAhide', false);
-					}, internalSettings.animateGridTime*2)
+					}, internalSettings.animateGridTime*2);
 
 				},
 
@@ -992,7 +992,7 @@
 								.transition()
 								.delay(i*20)
 								.attr('r', 2)
-								.ease(internalSettings.animateEasing)
+								.ease(internalSettings.animateEasing);
 							structure.svg.graph.elements[index].elements.points.elements.push(circle);
 						}
 					}
@@ -1028,7 +1028,7 @@
 
 							structure.tooltip
 								.select('span.time').text(time)
-								.style('background-color', settings.config.graph[index].color)
+								.style('background-color', settings.config.graph[index].color);
 
 							structure.tooltip
 								.style('color', settings.config.graph[index].color)
@@ -1042,25 +1042,25 @@
 
 							var t = $(structure.tooltip[0][0]),
 								w = t.width(),
-								h = t.height()
+								h = t.height();
 
 							var px = $(this).attr('cx'),
-								py = $(this).attr('cy')
+								py = $(this).attr('cy');
 
 							var top = py - h - 20,
-								left= px - parseInt(w/2)-10
+								left= px - parseInt(w/2)-10;
 
 							t.css('top', top)
 								.css('left',left)
-								.addClass('show')
+								.addClass('show');
 
 						})
 						.on('mouseout', 'circle', function() {
 							structure.tooltip.classed('show', false);
 							displayNoneTimer = setTimeout(function() {
 								structure.tooltip.style('display', 'none');
-							}, 300)
-						})
+							}, 300);
+						});
 
 				},
 
@@ -1077,10 +1077,10 @@
 				applyFilterToData: function(data, filter) {
 
 					var self = this;
-					var filter = filter || 'daily';
 					var newData = data;
+						filter = filter || 'daily';
 
-					if (data == null) { return null; }
+					if (data === null) { return null; }
 
 					switch(filter) {
 						case 'weekly': newData = weekly(data); break;
@@ -1203,7 +1203,7 @@
 						var line =  structure.svg.grid.y.group.append('line')
 							.attr('x1', j).attr('y1', h - (i*spacing))
 							.attr('x2', graph.width()).attr('y2', h - (i*spacing))
-							.attr('stroke', settings.config.grid.y.color)
+							.attr('stroke', settings.config.grid.y.color);
 						structure.svg.grid.y.elements.push(line);
 
 					}
@@ -1229,7 +1229,7 @@
 					var graphElements = $.extend(true, {}, graphElementsEmpty);
 
 					graphElements.group = structure.svg.graph.group.insert('g',':first-child')
-						.classed('PAGgraph', true)
+						.classed('PAGgraph', true);
 					graphElements.elements.area = [];
 					structure.svg.graph.elements.push(graphElements);
 
@@ -1237,9 +1237,9 @@
 					structure.svg.graph.elements[index].group.attr('data-index', index);
 
 					// create settings structure
-					var color = color || "#"+((1<<24)*Math.random()|0).toString(16);
-					var legend = legend || 'Graph '+index;
-					var format = format || null;
+					color = color || "#"+((1<<24)*Math.random()|0).toString(16);
+					legend = legend || 'Graph '+index;
+					format = format || null;
 
 					settings.config.graph.push({
 						color: color,
@@ -1268,14 +1268,14 @@
 							.attr('rx', settings.config.rectRadius)
 							.attr('ry', settings.config.rectRadius)
 							.attr('fill', settings.config.graph[index].color)
-							.style('opacity', 0)
+							.style('opacity', 0);
 						structure.svg.graph.elements[index].elements.area.push(rect);
 
 					}
 
 					// add label to legend
 					var p = structure.legend.append('p')
-						.attr('data-index', index)
+						.attr('data-index', index);
 					p.append('span')
 						.style('background', settings.config.graph[index].color);
 					p.append('label')
@@ -1295,7 +1295,7 @@
 					var self = this;
 					var startElements = 5;
 					
-					debug('initLabelX')
+					debug('initLabelX');
 					
 					var w = graph.width();
 					var h = graph.height();
@@ -1313,7 +1313,7 @@
 							.attr('x', x)
 							.attr('y', h+internalSettings.labels.x.marginTop)
 							.attr('text-anchor','middle')
-							.attr('fill', settings.config.grid.x.label)
+							.attr('fill', settings.config.grid.x.label);
 						structure.svg.label.x.elements.push(label);
 
 					}
@@ -1329,7 +1329,7 @@
 					var h = graph.height();
 					var j = 0;
 
-					debug('animateLabelY')
+					debug('animateLabelY');
 					if (!data) { return; }
 					var elementsCount = data.length;
 
@@ -1348,7 +1348,7 @@
 
 							if (structure.svg.label.y.elements[i]) { // move existing and update text
 
-								structure.svg.label.y.elements[i].text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
+								structure.svg.label.y.elements[i].text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format));
 
 							} else {
 								var label =  structure.svg.label.y.group.append('text')
@@ -1356,7 +1356,7 @@
 									.attr('y', h - (i*spacing))
 									.attr('text-anchor','end')
 									.attr('fill', settings.config.grid.y.label)
-									.text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format))
+									.text(Number(structure.svg.grid.y.spacing[i]).format(settings.config.grid.y.format));
 								structure.svg.label.y.elements.push(label);
 							}
 
@@ -1367,7 +1367,7 @@
 					setTimeout(function() {
 						// show current labels
 						structure.svg.label.y.group.classed('PAhide', false);
-					}, internalSettings.animateGridTime*2)
+					}, internalSettings.animateGridTime*2);
 
 				},
 
@@ -1386,7 +1386,7 @@
 					if (!structure.data[0]) { return; }
 					
 					
-					structure.svg.label.x.group.classed('PAhide', true)
+					structure.svg.label.x.group.classed('PAhide', true);
 					
 					var spacing = settings.config.stacked;
 					
@@ -1429,7 +1429,7 @@
 								
 							setTimeout(function() {
 								structure.svg.label.x.elements = structure.svg.label.x.elements.slice(0,structure.data[0].length);
-							}, internalSettings.graphAnimationTime)
+							}, internalSettings.graphAnimationTime);
 							
 						}
 																		
@@ -1445,7 +1445,7 @@
 										.transition()
 										.duration(internalSettings.graphAnimationTime)
 										.attr('width', rectW)
-										.attr('x', x)
+										.attr('x', x);
 
 								} 
 								else {
@@ -1459,11 +1459,11 @@
 										.attr('rx', settings.config.rectRadius)
 										.attr('ry', settings.config.rectRadius)
 										.attr('fill', settings.config.graph[index].color)
-										.attr('opacity', 0)
+										.attr('opacity', 0);
 									rect
 										.transition()
 										.delay(internalSettings.graphAnimationTime / 4)
-										.duration(internalSettings.graphAnimationTime)
+										.duration(internalSettings.graphAnimationTime);
 									structure.svg.graph.elements[index].elements.area.push(rect);
 
 								}
@@ -1475,7 +1475,7 @@
 
 										structure.svg.label.x.elements[i]
 											.transition()
-											.duration(internalSettings.graphAnimationTime / 4)
+											.duration(internalSettings.graphAnimationTime / 4);
 
 										structure.svg.label.x.elements[i]
 											.transition()
@@ -1492,12 +1492,12 @@
 											.attr('y', h+internalSettings.labels.x.marginTop)
 											.attr('text-anchor','middle')
 											.attr('fill', settings.config.grid.x.label)
-											.text(settings.config.grid.x.format(structure.data[0][i].label))
+											.text(settings.config.grid.x.format(structure.data[0][i].label));
 
 										label
 											.transition()
 											.delay(internalSettings.graphAnimationTime / 4)
-											.duration(internalSettings.graphAnimationTime)
+											.duration(internalSettings.graphAnimationTime);
 
 										structure.svg.label.x.elements.push(label);
 									}
@@ -1542,7 +1542,7 @@
 					debug('hideThickLabels');
 					
 					var self = this;
-					var labelGroup = graph.find('g.PAGlabelX')					
+					var labelGroup = graph.find('g.PAGlabelX');
 					var nthChildX = 1;
 					var l1_index = 1;
 					var l1_element = labelGroup.find('text:eq('+(l1_index)+')');
@@ -1581,7 +1581,7 @@
 							.css('font-family', element.css('font-family'))
 							.css('font-weight', element.css('font-weight'))
 							.css('font-size', element.css('font-size'))
-							.css('text-transform', element.css('text-transform'))
+							.css('text-transform', element.css('text-transform'));
 						var w = fake.width(); fake.remove();
 						return w;
 					}
@@ -1602,7 +1602,7 @@
 					if (settings.config.grid.x.label !== false) { h = h - internalSettings.labels.x.height; }
 					if (settings.config.grid.y.label !== false) {  j = internalSettings.labels.y.width; w = w - j; }					
 
-					debug('setData', index)
+					debug('setData', index);
 
 					// empty stored data with different scale on index 0
 					if (structure.data.length && +index === 0 && structure.data[0].length != data.length) {
@@ -1628,7 +1628,7 @@
 						
 						setTimeout(function() {
 							structure.svg.graph.elements[index].elements.area = structure.svg.graph.elements[index].elements.area.slice(0,data.length);
-						}, internalSettings.graphAnimationTime)
+						}, internalSettings.graphAnimationTime);
 						
 					}
 					
@@ -1654,7 +1654,7 @@
 
 					var self = this;
 
-					debug('draw')
+					debug('draw');
 					
 					self.initGridY();
 
@@ -1681,7 +1681,7 @@
 				animateGraph: function(data, index) {
 					var self = this;
 					var index = index || 0;
-					debug('animateGraph', index)
+					debug('animateGraph', index);
 					
 					var w = graph.width();
 					var h = graph.height();
@@ -1741,7 +1741,7 @@
 								.attr('height', he)
 								.attr('data-value', data[i].value)
 								.style('opacity', 1)
-								.ease(internalSettings.animateEasing)
+								.ease(internalSettings.animateEasing);
 						
 						}	
 							
@@ -1771,7 +1771,7 @@
 							.duration(internalSettings.graphAnimationTime)
 							.attr('y', h-1)
 							.attr('height', 1)
-							.ease(internalSettings.animateEasing)
+							.ease(internalSettings.animateEasing);
 
 					}
 
@@ -1788,7 +1788,7 @@
 					var self = this;
 					var dfrd = $.Deferred();
 					
-					var index = index || structure.svg.graph.elements.length-1
+					var index = index || structure.svg.graph.elements.length-1;
 										
 					$.when(self.flattenGraph(index))
 						.done(function() {
@@ -1798,12 +1798,12 @@
 								delete structure.data[index];
 								structure.svg.graph.elements[index].group.remove();
 								structure.svg.graph.elements.pop();
-								graph.find('div.PAlegend > p[data-index='+index+']').remove()
+								graph.find('div.PAlegend > p[data-index='+index+']').remove();
 								self.computedData = mergeAndClean(structure.data);
 								structure.svg.grid.y.spacing = Yspacing(mergeAndCleanArr(structure.data));
 								dfrd.resolve();
 							}
-						})
+						});
 
 					return dfrd.promise();
 
@@ -1818,7 +1818,7 @@
 						.on('click', 'p[data-index]', function() {
 							var index = parseInt($(this).attr('data-index'));
 							self.moveOnFront(index);
-						})
+						});
 
 
 				},
@@ -1853,7 +1853,7 @@
 
 							structure.tooltip
 								.select('span.time').text(time)
-								.style('background-color', settings.config.graph[index].color)
+								.style('background-color', settings.config.graph[index].color);
 							
 							structure.tooltip
 								.style('color', settings.config.graph[index].color)
@@ -1867,26 +1867,26 @@
 
 							var t = $(structure.tooltip[0][0]),
 								w = t.width(),
-								h = t.height()
+								h = t.height();
 
 							var px = $(this).attr('x'),
 								py = $(this).attr('y'),
-								pw = $(this).attr('width')
+								pw = $(this).attr('width');
 
 							var top = py - h - 8,
-								left= px - parseInt((w/2) - (pw/2)) - 10
+								left= px - parseInt((w/2) - (pw/2)) - 10;
 
 							t.css('top', top)
 								.css('left',left)
-								.addClass('show')
+								.addClass('show');
 
 						})
 						.on('mouseout', 'g.PAGgraph > rect', function() {
 							structure.tooltip.classed('show', false);
 							displayNoneTimer = setTimeout(function() {
 								structure.tooltip.style('display', 'none');
-							}, 300)
-						})
+							}, 300);
+						});
 
 				},
 
@@ -1920,7 +1920,7 @@
 								.attr('y', h - (internalSettings.labels.x.marginTop/2))
 								.attr('text-anchor','middle')
 								.attr('fill', '#fff')
-								.text(perc)
+								.text(perc);
 
 							structure.svg.graph.elements[0].elements.points.elements.push(text);
 
@@ -1929,7 +1929,7 @@
 
 					setTimeout(function() {
 						structure.svg.graph.elements[0].group.classed('percentage', true);
-					}, internalSettings.graphAnimationTime)
+					}, internalSettings.graphAnimationTime);
 
 
 				},
@@ -1941,13 +1941,13 @@
 					var g = graph.find('g.PAGgraphs');
 					g.find('g.PAGgraph[data-index='+index+']').appendTo(g);
 
-				},
+				}
 
 			},
 			
 			vertical_bar: $.extend(true, null, this.bars)
 
-		}
+		};
 
 		MODE[settings.mode].init();
 
@@ -1969,7 +1969,7 @@
 		};
 		
 		graph.getFormat = function() {
-			return settings.config.grid.y.format
+			return settings.config.grid.y.format;
 		};
 
 		graph.removeGraph = function(index) {
@@ -1982,17 +1982,17 @@
 
 			MODE[settings.mode].draw();
 
-		}
+		};
 
 		graph.setLegendLabel = function(label, index) {
 
 			MODE[settings.mode].setLegendLabel(label, index);
 
-		}
+		};
 		
 		if (settings.debug) {
-			graph.structure = structure
-			graph.MODE = MODE
+			graph.structure = structure;
+			graph.MODE = MODE;
 		}
 
 		function getRandomColor() {
@@ -2019,7 +2019,7 @@
 			min = min * multiplier;
 			max = max * multiplier;
 			
-			if (min == max) {return Array.apply(null, Array(lines+1)).map(function(e,i){ return min+(10*(i-1)) });	}
+			if (min == max) {return Array.apply(null, Array(lines+1)).map(function(e,i){ return min+(10*(i-1)); });	}
 
 			if (max - min > lines) {
 				var percMin = (min) ? Math.ceil((max - min) * 0.05) : 0;
@@ -2029,7 +2029,7 @@
 
 				var space = Math.round((max - min) / lines);
 				var divisor = (space.toString().length - 1) * 10 || 1;
-				var spacer = (Math.round(2 * space / divisor) / 2) * divisor
+				var spacer = (Math.round(2 * space / divisor) / 2) * divisor;
 				
 			} else {
 
@@ -2071,15 +2071,15 @@
 			$.each(arr, function(i,e) {
 				
 				$.each(e, function(j,f) {
-					if (+i === 0) { result[j] = f }
+					if (+i === 0) { result[j] = f; }
 					else { 
 						if (settings.config.stacked) {
-							result[j].value += f.value	
+							result[j].value += f.value;
 						} else {
 							result.push(f);
 						}
 					}
-				})
+				});
 				
 			});
 			return result;
@@ -2087,6 +2087,7 @@
 		}
 
 		function debug() {
+			
 			if (settings.debug) { console.debug(arguments);	}
 		}
 
@@ -2166,7 +2167,13 @@
 		function trim_data(data, limit, label) {
 			if(data.length > limit) {
 				var sorted_array = data.sort(function(a, b) {
-					return a.value - b.value;
+					if(a.label === label) { return -1; }
+					if(a.label !== label && (a.label === "Other" || a.label === "Others")) { return -1; }
+
+					if(b.label === label) { return 1; }
+					if(b.label !== label && (b.label === "Other" || b.label === "Others")) { return 1; }
+
+					return (a.value - b.value);
 				});
 				var descending = sorted_array.reverse();
 				var other = descending.splice(limit - 1, data.length);
@@ -2174,6 +2181,7 @@
 				other.map(function(key) {
 					sum += key.value;
 				});
+
 				descending[descending.length] = {
 					label:label,
 					value:sum
@@ -2188,7 +2196,7 @@
 				data = trim_data(data, settings.entry_limit.number, settings.entry_limit.label);
 			}
 			return data.map(function(set) {
-				return { label:set.label, value:set.value }
+				return { label:set.label, value:set.value };
 			});
 		}
 
@@ -2227,7 +2235,7 @@
 					return function(t) {
 						d.endAngle = i(t);
 						return structure.svg.arc(d);
-					}
+					};
 				});
 
 			slice.on('mouseover', function() {
@@ -2245,7 +2253,7 @@
 
 				t.addClass('show')
 					.css('left', d3.event.layerX + 10  + 'px')
-					.css('top', d3.event.layerY + 10 + "px")
+					.css('top', d3.event.layerY + 10 + "px");
 
 			});
 
@@ -2369,7 +2377,7 @@
 					y: h / 2
 				};
 
-				var damper = .1;
+				var damper = 0.1;
 
 				var max_amount = d3.max(data, function(d) {
 					return d.value;
@@ -2403,7 +2411,7 @@
 				var force = d3.layout.force()
 					.nodes(nodes)
 					.size([w * 0.6, h])
-					.gravity(.1)
+					.gravity(0.1)
 					.charge(charge)
 					.on('tick', tick)
 					.start();
@@ -2429,14 +2437,14 @@
 						return d.x + (center.x - d.x) * (damper + 0.02) * e.alpha;
 					}).attr('cy', function(d) {
 						return d.y + (center.y - d.y) * (damper + 0.02) * e.alpha;
-					})
+					});
 				}
 
 				function gravity(alpha) {
 					return function(d) {
 						d.y += (d.cy - d.y) * alpha;
 						d.x += (d.cx - d.x) * alpha;
-					}
+					};
 				}
 
 				function collide(alpha) {
@@ -2462,8 +2470,8 @@
 								}
 							}
 							return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
-						})
-					}
+						});
+					};
 				}
 
 				function init_legend() {
@@ -2680,7 +2688,7 @@
 					.addClass('PAcompare PAcount')
 					.toggleClass('PAnegative', settings.diff.value < 0)
 					.toggleClass('PAnull', +settings.diff.value === 0);
-				graph.after(compareCounter)
+				graph.after(compareCounter);
 			}
 		}
 
@@ -2743,7 +2751,7 @@
 		graph
 			.attr('data-value', settings.number)
 			.removeClass('positive negative');
-		graph.html(Number(previous).format(settings.format))
+		graph.html(Number(previous).format(settings.format));
 		if (settings.number > 0) {
 			graph.addClass('positive');
 		}
@@ -2822,7 +2830,7 @@
 						var v = settings.data[i].value;
 						if (v instanceof Object) {
 							var t = 0;
-							$.each(v,function(i,e) { t += e });
+							$.each(v,function(i,e) { t += e; });
 							v = t;
 						}
 						
@@ -2844,7 +2852,7 @@
 							// bar
 							li.append('div').append('span')
 								.attr('data-perc', val)
-								.style('background', colors[0])
+								.style('background', colors[0]);
 
 							// value
 							li.append('span').classed('v', true)
@@ -2864,13 +2872,13 @@
 								var perc = parseInt(value / v * 100);
 								var color = (typeof colors[x] == 'undefined') ? getRandomColor() : colors[x];
 								remain = remain - perc;
-								span.attr('data-'+key, value)
+								span.attr('data-'+key, value);
 								innerSpan = 	container.append('span')
 										.attr('data-perc', perc)
 										.attr('data-key', key)
-										.style('background', color)
+										.style('background', color);
 								x++;
-							})
+							});
 							// fix rounding in percentage
 							if (remain > 0) {
 								innerSpan.attr('data-perc', parseInt(innerSpan.attr('data-perc'))+remain);
@@ -2887,8 +2895,8 @@
 				animate: function() {
 
 					graph.find('span[data-perc]').each(function() {
-						$(this).width(parseInt($(this).attr('data-perc'))+'%')
-					})
+						$(this).width(parseInt($(this).attr('data-perc'))+'%');
+					});
 
 					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
 
@@ -2973,7 +2981,7 @@
 					var dataContainer = d3.selectAll(graph.get()).append('div')
 						.classed('PAdata', true);
 					// male
-					var pMale = dataContainer.append('p')
+					var pMale = dataContainer.append('p');
 					pMale.html(self.male_icon)
 						.append('span')
 						.attr('data-value', 0)
@@ -2982,7 +2990,7 @@
 							.after($('<span>').addClass('PAlabel').text(''));
 
 					// female
-					var pFemale = dataContainer.append('p')
+					var pFemale = dataContainer.append('p');
 					pFemale.html(self.female_icon)
 						.append('span')
 						.attr('data-value', 0)
@@ -3008,13 +3016,13 @@
 						.append("g")
 						.attr('width', h)
 						.attr('height', h)
-						.attr("transform", "translate(" + ((h/2)+stroke) + "," + ((h/2)+stroke) + ")")
+						.attr("transform", "translate(" + ((h/2)+stroke) + "," + ((h/2)+stroke) + ")");
 
 					var background = svg.append("path")
 						.datum({endAngle: τ})
 						.style('stroke', settings.main.color)
 						.style('stroke-width', stroke)
-						.attr("d", arc)
+						.attr("d", arc);
 
 					// Add the foreground arc in orange, currently showing 12.7%.
 					self.donutForeground = svg.append("path")
@@ -3032,10 +3040,10 @@
 
 					var self = this;
 										
-					graph.find('div.PAdata p:eq(0) > span[data-value]').attr('data-value', data[0].value || 0)
-					graph.find('div.PAdata p:eq(0) > span.PAlabel').text(data[0].label)
-					graph.find('div.PAdata p:eq(1) > span[data-value]').attr('data-value', data[1].value || 0)
-					graph.find('div.PAdata p:eq(1) > span.PAlabel').text(data[1].label)
+					graph.find('div.PAdata p:eq(0) > span[data-value]').attr('data-value', data[0].value || 0);
+					graph.find('div.PAdata p:eq(0) > span.PAlabel').text(data[0].label);
+					graph.find('div.PAdata p:eq(1) > span[data-value]').attr('data-value', data[1].value || 0);
+					graph.find('div.PAdata p:eq(1) > span.PAlabel').text(data[1].label);
 
 					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, 100, true);
 
@@ -3085,9 +3093,9 @@
 					// detail male/female data
 					var detail = d3.selectAll(graph.get()).append('div').classed('PAdetail hide', true);
 					var detailM = detail.append('p').classed('PAmale', true).html(self.male_icon).style('color', settings.main.color);
-					var datailMT = detailM.append('label')
+					var datailMT = detailM.append('label');
 					var detailF = detail.append('p').classed('PAfemale', true).html(self.female_icon).style('color', settings.compare.color);
-					var detailFT = detailF.append('label')
+					var detailFT = detailF.append('label');
 
 					// params to zoom on the data
 					var max = 0, min = 100;
@@ -3102,25 +3110,25 @@
 
 						var li = ul.append('li')
 							.attr('data-male', settings.data[i].value.m)
-							.attr('data-female', settings.data[i].value.f)
+							.attr('data-female', settings.data[i].value.f);
 						var perc = settings.data[i].value.m + settings.data[i].value.f;
 						if (perc > 0) {
 
 							// label
 							li.append('label')
-								.text(settings.data[i].label)
+								.text(settings.data[i].label);
 
 							// bar
 							var bar  = li.append('div').append('span')
 								.attr('data-perc', perc / coeff)
-								.style('background', settings.main.color)
+								.style('background', settings.main.color);
 
 							// female bar
 							var percf = settings.data[i].value.f / (perc);
 							bar.append('span')
 								.classed('PAhide', true)
 								.attr('data-perc', percf * 100)
-								.style('background', settings.compare.color)
+								.style('background', settings.compare.color);
 
 							// value
 							li.append('span').html(Number(perc).format(settings.main.format))
@@ -3136,10 +3144,10 @@
 						graph.find('li span > span').not(fbar).addClass('PAhide');
 						fbar.toggleClass('PAhide');
 
-						graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length === 0)
+						graph.find('div.PAdetail').toggleClass('hide', graph.find('li span > span:not(.PAhide)').length === 0);
 
-						var m = $(this).attr('data-male') * 1
-						var f = $(this).attr('data-female') * 1
+						var m = $(this).attr('data-male') * 1;
+						var f = $(this).attr('data-female') * 1;
 						var percm = m / (m+f) * 100;
 
 						datailMT.attr('data-value', percm);
@@ -3147,7 +3155,7 @@
 
 						animateNumber(graph.find('div.PAdetail label[data-value]'), 1000, settings.main.format, null , true);
 
-					})
+					});
 
 				},
 
@@ -3180,24 +3188,24 @@
 						// create missing rows
 						if (!element[0][0]) {
 
-							var element = d3.selectAll(graph.get()).select('ul').append('li')
+							var element = d3.selectAll(graph.get()).select('ul').append('li');
 
 							if (perc > 0) {
 
 								// label
-								element.append('label')
+								element.append('label');
 
 								// bar
-								var bar  = element.append('div').append('span').style('background', settings.main.color)
+								var bar  = element.append('div').append('span').style('background', settings.main.color);
 
 								// female bar
 								var percf = data[i].value.f / (data[i].value.m + data[i].value.f);
 								bar.append('span')
 									.classed('PAhide', true)
-									.style('background', settings.compare.color)
+									.style('background', settings.compare.color);
 
 								// value
-								element.append('span').html(Number(perc).format(settings.main.format))
+								element.append('span').html(Number(perc).format(settings.main.format));
 
 							}
 
@@ -3205,7 +3213,7 @@
 
 						element
 							.attr('data-male', data[i].value.m)
-							.attr('data-female', data[i].value.f)
+							.attr('data-female', data[i].value.f);
 
 						element
 							.select('label').text(data[i].label);
@@ -3217,7 +3225,7 @@
 							.select('div > span').attr('data-perc', perc / coeff)
 							.select('span')
 							.classed('PAhide', true)
-							.attr('data-perc', percf)
+							.attr('data-perc', percf);
 
 						element
 							.select('span[data-value]').attr('data-value', perc);
@@ -3229,7 +3237,7 @@
 
 
 					graph.find('span[data-perc]').each(function() {
-						$(this).width(parseInt($(this).attr('data-perc'))+'%')
+						$(this).width(parseInt($(this).attr('data-perc'))+'%');
 					});
 					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, null, true);
 
@@ -3282,25 +3290,25 @@
 
 						var li = ul.append('li')
 							.attr('data-male', settings.data[i].value.m)
-							.attr('data-female', settings.data[i].value.f)
+							.attr('data-female', settings.data[i].value.f);
 						var perc = settings.data[i].value.m + settings.data[i].value.f;
 						if (perc > 0) {
 
 							// label
 							li.append('label')
-								.text(settings.data[i].label)
+								.text(settings.data[i].label);
 
 							// bar
 							var bar  = li.append('div').append('span')
 								.attr('data-perc', perc / coeff)
-								.style('background', settings.main.color)
+								.style('background', settings.main.color);
 
 							// female bar
 							var percf = settings.data[i].value.f / (perc);
 							bar.append('span')
 								.classed('PAhide', true)
 								.attr('data-perc', percf * 100)
-								.style('background', settings.compare.color)
+								.style('background', settings.compare.color);
 
 							// value
 							li.append('span').html(Number(perc).format(settings.main.format))
@@ -3415,24 +3423,24 @@
 						// create missing rows
 						if (!element[0][0]) {
 
-							var element = d3.selectAll(graph.get()).select('ul').append('li')
+							var element = d3.selectAll(graph.get()).select('ul').append('li');
 
 							if (perc > 0) {
 
 								// label
-								element.append('label')
+								element.append('label');
 
 								// bar
-								var bar  = element.append('div').append('span').style('background', settings.main.color)
+								var bar  = element.append('div').append('span').style('background', settings.main.color);
 
 								// female bar
 								var percf = data[i].value.f / (data[i].value.m + data[i].value.f);
 								bar.append('span')
 									.classed('PAhide', true)
-									.style('background', settings.compare.color)
+									.style('background', settings.compare.color);
 
 								// value
-								element.append('span').html(Number(perc).format(settings.main.format))
+								element.append('span').html(Number(perc).format(settings.main.format));
 
 							}
 
@@ -3440,7 +3448,7 @@
 
 						element
 							.attr('data-male', data[i].value.m)
-							.attr('data-female', data[i].value.f)
+							.attr('data-female', data[i].value.f);
 
 						element
 							.select('label').text(data[i].label);
@@ -3451,7 +3459,7 @@
 							.select('div > span').attr('data-perc', perc)
 							.select('span')
 							.classed('PAhide', true)
-							.attr('data-perc', percf)
+							.attr('data-perc', percf);
 
 						element
 							.select('span[data-value]').attr('data-value', perc);
@@ -3460,7 +3468,7 @@
 					}
 
 					graph.find('span[data-perc]').each(function() {
-						$(this).width(parseInt($(this).attr('data-perc'))+'%')
+						$(this).width(parseInt($(this).attr('data-perc'))+'%');
 					});
 					animateNumber(graph.find('span[data-value]'), 1000, settings.main.format, null, true);
 				}
@@ -3519,8 +3527,8 @@
 		return Math.max.apply( null, Object.keys( data ).map(function (key) { 
 			var t = data[key][k];
 			if (t instanceof Object) {
-				var p = 0; $.each(t,function(i,e) { p += e }); t = p;
-			} 
+				var p = 0; $.each(t,function(i,e) { p += e; }); t = p;
+			}
 			return t;	
 		}));
 	}
@@ -3530,7 +3538,7 @@
 		return Math.min.apply( null, Object.keys( data ).map(function (key) {
 			var t = data[key][k];
 			if (t instanceof Object) {
-				var p = 0; $.each(t,function(i,e) { p += e }); t = p;
+				var p = 0; $.each(t,function(i,e) { p += e; }); t = p;
 			} 
 			return t;	
 		}));
@@ -3548,7 +3556,7 @@
 	
 }( jQuery ));
 
-String.prototype.capitalizeFirstLetter = function() { return this.charAt(0).toUpperCase() + this.slice(1); }
+String.prototype.capitalizeFirstLetter = function() { return this.charAt(0).toUpperCase() + this.slice(1); };
 
 // Format number
 // start from http://stackoverflow.com/questions/149055/how-can-i-format-numbers-as-money-in-javascript
@@ -3572,23 +3580,23 @@ Number.prototype.format = function(settings) {
 	      return {
 		      number: parseFloat((num / si[i].value).toFixed(10).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1")),
 		      symbol: si[i].symbol
-		    }
+		    };
 	    }
 	  }
 	  return {
 		  number: parseFloat(num),
 		  symbol: ''
-		}
+		};
 	}	
 	
 	if (settings.trimK) {
 		var nf = nFormatter(this);
 		number = nf.number;
-		after = nf.symbol + after
+		after = nf.symbol + after;
 	}
 		
 	var re = '\\d(?=(\\d{3})+' + (settings.decimals > 0 ? '\\D' : '$') + ')',
 		number = number.toFixed(Math.max(0, ~~settings.decimals)),
 		formatted = (settings.decimal ? number.replace('.', settings.decimal) : number).replace(new RegExp(re, 'g'), '$&' + (settings.thousand || ''));
 	return (settings.before || '') + formatted + after;
-}
+};
