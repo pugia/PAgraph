@@ -2820,7 +2820,7 @@
 					} else {
 						graph.find('ul li').remove();
 					}
-					
+
 					// zoomParams
 					var zoomStart = max / coeff;
 
@@ -2840,7 +2840,7 @@
 						if (lis[0][i]) {
 
 							li.select('label').text(settings.data[i].label);
-							li.select('div > span').attr('data-perc', val);
+							li.select('div > span').attr('data-perc', v);
 							li.select('span.v').attr('data-value', v);
 
 						} else {
@@ -2851,7 +2851,7 @@
 
 							// bar
 							li.append('div').append('span')
-								.attr('data-perc', val)
+								.attr('data-perc', v)
 								.style('background', colors[0]);
 
 							// value
@@ -2869,12 +2869,13 @@
 							var innerSpan = null;
 							var x = 1;
 							$.each(settings.data[i].value, function(key,value) {
-								var perc = parseInt(value / v * 100);
+								var perc = parseInt(v );
 								var color = (typeof colors[x] == 'undefined') ? getRandomColor() : colors[x];
 								remain = remain - perc;
 								span.attr('data-'+key, value);
+								console.log(perc);
 								innerSpan = 	container.append('span')
-										.attr('data-perc', perc)
+										.attr('data-perc', v)
 										.attr('data-key', key)
 										.style('background', color);
 								x++;
