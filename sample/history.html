@@ -11,7 +11,7 @@
 	<script src="../bower_components/d3/d3.min.js" charset="utf-8"></script>
 
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
-	<script src="../dist/js/PAgraph.min.js"></script>
+	<script src="../src/js/PAgraph.js"></script>
 			
 </head>
 <body>	
@@ -45,7 +45,8 @@
 			config: {
 				grid: {
 					x: {
-						format: function(v) {
+						format: function(v,m) {
+							console.log(m);
 							var r = v.substr(0,2) + ' ' + v.substr(2,3);
 							return r;
 						}
@@ -225,7 +226,7 @@
 				
 				})
 			
-		}).click();
+		})
 
 		$('#load200').on('click', function() {
 
@@ -239,6 +240,19 @@
 				})
 			
 		})
+		
+		$('#test').on('click', function() {
+		console.log('test');
+			$.getJSON('response/history_test_365gg.json')
+				.done(function(result) {
+					console.log(result);
+					$.when(graph.setData(result.data)).done(function() {
+						graph.draw();						
+					})
+				
+				})
+			
+		}).click();
 		
 		$('#compare200').on('click', function() {
 

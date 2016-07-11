@@ -25,7 +25,7 @@
 						show: true,
 						color: '#E2E6E9',
 						label: '#C1C1C1',
-						format: function(v) { return v; }
+						format: function(v,m) { return v; }
 					},
 					y: {
 						show: true,
@@ -842,7 +842,7 @@
 							if (structure.svg.label.x.elements[i]) { // move existing and update text
 
 								structure.svg.label.x.elements[i].attr('x', x)
-									.text(settings.config.grid.x.format(data[i].label))
+									.text(settings.config.grid.x.format(data[i].label, settings.filter.mode))
 									.attr('text-anchor', 'middle');
 
 							} else { // create new
@@ -852,7 +852,7 @@
 									.attr('y', h+internalSettings.labels.x.marginTop)
 									.attr('text-anchor','middle')
 									.attr('fill', settings.config.grid.x.label)
-									.text(settings.config.grid.x.format(data[i].label));
+									.text(settings.config.grid.x.format(data[i].label, settings.filter.mode));
 								structure.svg.label.x.elements.push(label);
 
 							}
@@ -1138,7 +1138,7 @@
 						for (var i in data) {
 
 							// first
-							if (i % 30 === 0) {
+							if (i % 31 === 0) {
 								tmpObj = $.extend(true, {}, tmpObjModel);
 								tmpObj.label = data[i].label;
 								newData.push(tmpObj);
@@ -1482,7 +1482,7 @@
 											.delay(internalSettings.graphAnimationTime / 4)
 											.duration(internalSettings.graphAnimationTime)
 											.attr('x', xx)
-											.text(settings.config.grid.x.format(structure.data[0][i].label));
+											.text(settings.config.grid.x.format(structure.data[0][i].label, settings.filter.mode));
 
 
 									} else {
@@ -1492,7 +1492,7 @@
 											.attr('y', h+internalSettings.labels.x.marginTop)
 											.attr('text-anchor','middle')
 											.attr('fill', settings.config.grid.x.label)
-											.text(settings.config.grid.x.format(structure.data[0][i].label));
+											.text(settings.config.grid.x.format(structure.data[0][i].label, settings.filter.mode));
 
 										label
 											.transition()
@@ -1521,7 +1521,7 @@
 								.delay(internalSettings.graphAnimationTime / 4)
 								.duration(internalSettings.graphAnimationTime)
 								.attr('x', xx)
-								.text(settings.config.grid.x.format(structure.data[0][i].label));
+								.text(settings.config.grid.x.format(structure.data[0][i].label, settings.filter.mode));
 							
 						}
 					}
