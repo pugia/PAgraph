@@ -1551,17 +1551,20 @@
 						x: l1_element.position().left
 					};
 					var l2_index = 2;
+					var l2 = labelGroup.find('text:eq('+(l2_index)+')');
+					if (l2.length) {
 					var l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
 
-					while (l1_size.x + l1_size.width + 10 > l2_size) {
-						nthChildX++; l2_index++;
-						if (labelGroup.find('text:eq('+(l2_index)+')').length) {
-							l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
-						} else {
-							break;
+						while (l1_size.x + l1_size.width + 10 > l2_size) {
+							nthChildX++; l2_index++;
+							if (labelGroup.find('text:eq('+(l2_index)+')').length) {
+								l2_size = labelGroup.find('text:eq('+(l2_index)+')').position().left;
+							} else {
+								break;
+							}
 						}
+					
 					}
-
 					if (nthChildX > 1) {
 						structure.svg.label.x.group
 							.classed('PAhide', true)

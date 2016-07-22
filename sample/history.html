@@ -9,7 +9,8 @@
 
 	<script src="../bower_components/jquery/jquery.min.js" charset="utf-8"></script>
 	<script src="../bower_components/d3/d3.min.js" charset="utf-8"></script>
-
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
 	<link href="../src/css/PAgraph.css" rel="stylesheet" type="text/css">
 	<script src="../src/js/PAgraph.js"></script>
 			
@@ -38,7 +39,8 @@
 	</div>
 
 	<script>	
-	
+		
+		moment.locale('it')
 		var graph = $('#graph_0').PAgraph({
 			mode: 'history',
 			debug: true,
@@ -46,9 +48,18 @@
 				grid: {
 					x: {
 						format: function(v,m) {
-							console.log(m);
-							var r = v.substr(0,2) + ' ' + v.substr(2,3);
-							return r;
+							var a = moment(v, 'MMM DD');
+							
+							if (m == 'monthly') {
+								return moment(a).format('MMM');
+							}
+							
+							if (m == 'weekly') {
+								return moment(moment(a).format('1 W GG'), 'E W GG').format('MMM D');
+							}
+							
+							return v;
+
 						}
 					},
 					y: {
